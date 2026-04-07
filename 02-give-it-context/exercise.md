@@ -26,13 +26,13 @@ Alternative: any real project you own where you'd like Claude's help.
 
 ```bash
 cd ~/repos/tsd-exercise-01  # or your chosen project
-cp ~/repos/TSD_AI_Workflow/01-bootstrap-a-repo/templates/CLAUDE.md.template ./CLAUDE.md
+cp ~/repos/AI_Workflow/01-bootstrap-a-repo/templates/CLAUDE.md.template ./CLAUDE.md
 ```
 
 If the project already has a `CLAUDE.md`, back it up first:
 ```bash
 cp CLAUDE.md CLAUDE.md.bak
-cp ~/repos/TSD_AI_Workflow/01-bootstrap-a-repo/templates/CLAUDE.md.template ./CLAUDE.md
+cp ~/repos/AI_Workflow/01-bootstrap-a-repo/templates/CLAUDE.md.template ./CLAUDE.md
 ```
 
 ### 3. Fill in the template (10 min)

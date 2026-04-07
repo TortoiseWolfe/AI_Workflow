@@ -77,7 +77,7 @@ For these, the assembly line is genuinely faster because it's running 27 Claudes
 - **A real project** with `.claude/roles/`, `docs/interoffice/`, and the supporting scripts (see ScriptHammer and TurtleWolfe for reference implementations)
 - **Comfort with Chapter 04.** If the SpecKit loop still feels foreign, this will overwhelm you.
 - **Patience.** The first week of running the assembly line is learning the lifecycle commands and watching things break.
-- **The full 65-command kit installed.** Run `bash ~/repos/TSD_AI_Workflow/03-slash-commands/install-full-kit.sh` first.
+- **The full 65-command kit installed.** Run `bash ~/repos/AI_Workflow/03-slash-commands/install-full-kit.sh` first.
 
 ---
 

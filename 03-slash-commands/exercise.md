@@ -19,7 +19,7 @@ mkdir -p .claude/commands
 ### 2. Copy all 30 starter-kit commands
 
 ```bash
-cp ~/repos/TSD_AI_Workflow/03-slash-commands/starter-kit/.claude/commands/*.md \
+cp ~/repos/AI_Workflow/03-slash-commands/starter-kit/.claude/commands/*.md \
    .claude/commands/
 ```
 
@@ -72,7 +72,7 @@ You should see lint + type-check run, then a commit land with a message like `ch
 If you want the orchestration, governance, wireframe pipeline, and knowledge curation commands (Chapter 05 territory), run the install script:
 
 ```bash
-bash ~/repos/TSD_AI_Workflow/03-slash-commands/install-full-kit.sh
+bash ~/repos/AI_Workflow/03-slash-commands/install-full-kit.sh
 ```
 
 This copies the remaining 35 commands from `~/repos/Claude_Commandz/global/.claude/commands/` into your **global** `~/.claude/commands/` (not per-project — these are personal commands).

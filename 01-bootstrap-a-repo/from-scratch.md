@@ -33,15 +33,15 @@ cd ~/repos/my-new-project
 git init
 
 # 3. Copy the templates
-cp ~/repos/TSD_AI_Workflow/01-bootstrap-a-repo/templates/CLAUDE.md.template ./CLAUDE.md
-cp ~/repos/TSD_AI_Workflow/01-bootstrap-a-repo/templates/gitignore.template ./.gitignore
-cp ~/repos/TSD_AI_Workflow/01-bootstrap-a-repo/templates/docker-compose.yml.template ./docker-compose.yml
-cp ~/repos/TSD_AI_Workflow/01-bootstrap-a-repo/templates/env.example.template ./.env.example
+cp ~/repos/AI_Workflow/01-bootstrap-a-repo/templates/CLAUDE.md.template ./CLAUDE.md
+cp ~/repos/AI_Workflow/01-bootstrap-a-repo/templates/gitignore.template ./.gitignore
+cp ~/repos/AI_Workflow/01-bootstrap-a-repo/templates/docker-compose.yml.template ./docker-compose.yml
+cp ~/repos/AI_Workflow/01-bootstrap-a-repo/templates/env.example.template ./.env.example
 
 # 4. Copy the two Day-1 commands
 mkdir -p .claude/commands
-cp ~/repos/TSD_AI_Workflow/03-slash-commands/starter-kit/.claude/commands/prep.md .claude/commands/
-cp ~/repos/TSD_AI_Workflow/03-slash-commands/starter-kit/.claude/commands/commit.md .claude/commands/
+cp ~/repos/AI_Workflow/03-slash-commands/starter-kit/.claude/commands/prep.md .claude/commands/
+cp ~/repos/AI_Workflow/03-slash-commands/starter-kit/.claude/commands/commit.md .claude/commands/
 
 # 5. Fill in the placeholders in CLAUDE.md and docker-compose.yml
 $EDITOR CLAUDE.md docker-compose.yml

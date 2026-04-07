@@ -78,7 +78,7 @@ The starter kit is 30 commands. TurtleWolfe's full live setup is **65 commands**
 When you're ready, the [exercise](exercise.md) ends with a one-line install for the full set:
 
 ```bash
-bash ~/repos/TSD_AI_Workflow/03-slash-commands/install-full-kit.sh
+bash ~/repos/AI_Workflow/03-slash-commands/install-full-kit.sh
 ```
 
 That copies the remaining 35 commands from `~/repos/Claude_Commandz/global/.claude/commands/` into your global `~/.claude/commands/`. (You only need to do this once globally — it's not per-project.)

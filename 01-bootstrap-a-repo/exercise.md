@@ -130,7 +130,7 @@ If any box is unchecked, re-read the relevant step and try again. Don't move on 
 | `/prep` dumps a whole summary | You're editing the wrong `prep.md` file — it should be 12 lines, not 100. Copy it fresh from `hello-world-ai/.claude/commands/prep.md`. |
 | `/commit` fails on lint | Read the lint error. Ask Claude: `fix the lint error`. Re-run `/commit`. |
 | `docker compose up` says "no service named ..." | You renamed `hello-world-ai` in `docker-compose.yml` but not consistently. Re-check the service name. |
-| The commit has no Claude Code footer | You're probably on an old version of `.claude/commands/commit.md`. Check it matches `TSD_AI_Workflow/03-slash-commands/starter-kit/.claude/commands/commit.md`. |
+| The commit has no Claude Code footer | You're probably on an old version of `.claude/commands/commit.md`. Check it matches `AI_Workflow/03-slash-commands/starter-kit/.claude/commands/commit.md`. |
 
 ---
 

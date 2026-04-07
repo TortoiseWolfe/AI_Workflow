@@ -9,7 +9,7 @@
 # Install them when you're ready for Chapter 05.
 #
 # Run from anywhere:
-#   bash ~/repos/TSD_AI_Workflow/03-slash-commands/install-full-kit.sh
+#   bash ~/repos/AI_Workflow/03-slash-commands/install-full-kit.sh
 #
 # Idempotent — safe to re-run. Skips files that already exist unless --force.
 
@@ -108,6 +108,6 @@ echo "Source: $SRC"
 echo "Destination: $DST"
 echo
 echo "Note: most of these need additional infrastructure to be useful."
-echo "See Chapter 05 of TSD_AI_Workflow:"
-echo "  ~/repos/TSD_AI_Workflow/05-advanced-orchestration/"
+echo "See Chapter 05 of AI_Workflow:"
+echo "  ~/repos/AI_Workflow/05-advanced-orchestration/"
 echo "═══════════════════════════════════════════"

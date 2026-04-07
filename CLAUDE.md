@@ -4,7 +4,7 @@ Instructions for Claude Code when editing **this teaching repo**.
 
 ## What this repo is
 
-`TSD_AI_Workflow` is a curriculum that teaches TSD interns how TurtleWolfe uses Claude Code. It is **documentation and exercises**, not code. Source of truth for the structure lives at `/home/TurtleWolfe/.claude/plans/snuggly-jumping-yao.md`.
+`AI_Workflow` is a curriculum that teaches TSD interns how TurtleWolfe uses Claude Code. It is **documentation and exercises**, not code. Source of truth for the structure lives at `/home/TurtleWolfe/.claude/plans/snuggly-jumping-yao.md`.
 
 ## Non-negotiables
 
