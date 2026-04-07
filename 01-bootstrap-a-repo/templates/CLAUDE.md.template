@@ -1,0 +1,110 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code when working with this repository.
+
+## Core Development Principles
+
+1. **Proper Solutions Over Quick Fixes** — Implement correctly the first time
+2. **Root Cause Analysis** — Fix underlying issues, not symptoms
+3. **Stability Over Speed** — {{PROJECT_NAME}} is a {{production template | side project | learning exercise}}
+4. **Clean Architecture** — Follow established patterns consistently
+5. **No Technical Debt** — Never commit TODOs or workarounds
+
+## Docker-First Development (MANDATORY)
+
+**CRITICAL:** {{PROJECT_NAME}} requires Docker. Local {{pnpm | npm | pip | cargo}} commands are not supported.
+
+### NEVER Install Packages Locally
+
+```bash
+# FORBIDDEN — never run these on the host
+{{pnpm | npm | pip | cargo}} install
+{{pnpm | npm | pip | cargo}} add <package>
+
+# CORRECT — always use Docker
+docker compose exec {{DOCKER_SERVICE}} {{pnpm | npm | pip | cargo}} install
+docker compose exec {{DOCKER_SERVICE}} {{pnpm | npm | pip | cargo}} add <package>
+```
+
+### NEVER Use sudo — Use Docker Instead
+
+When permission errors show up, **never** `sudo chown`. Use Docker:
+
+```bash
+# WRONG
+sudo chown -R $USER:$USER node_modules
+
+# CORRECT
+docker compose exec {{DOCKER_SERVICE}} rm -rf node_modules
+docker compose down && docker compose up
+```
+
+## Secrets: Never Hardcoded in Committed Files
+
+**CRITICAL:** No secret, token, key, or credential may appear as a literal value in any committed file.
+
+1. All secrets go in `.env` (gitignored). No exceptions.
+2. Committed files use `${VAR:-placeholder}` where `placeholder` is inert (e.g., `set-in-env-file`).
+3. `.env.example` shows variable names only with commented-out or placeholder values.
+4. If gitleaks flags a real secret, the fix is to remove it — never allowlist.
+
+## Essential Commands
+
+```bash
+# Start development
+docker compose up
+
+# Run the app inside the container
+docker compose exec {{DOCKER_SERVICE}} {{pnpm run dev | python main.py | go run . | cargo run}}
+
+# Run tests
+docker compose exec {{DOCKER_SERVICE}} {{pnpm test | pytest | go test ./... | cargo test}}
+
+# Lint
+docker compose exec {{DOCKER_SERVICE}} {{pnpm run lint | ruff check | golangci-lint run | cargo clippy}}
+
+# Type check (if applicable)
+docker compose exec {{DOCKER_SERVICE}} {{pnpm run type-check | mypy . | — | — }}
+```
+
+## Stack
+
+- **{{STACK}}** — e.g., "Next.js 15 + React 19 + TypeScript + Tailwind 4"
+- **Package manager:** {{pnpm | npm | pip | cargo}}
+- **Node version:** {{N/A or e.g. 22}}
+- **Database:** {{none | Postgres | Supabase | ...}}
+
+## Project Structure
+
+```
+{{PROJECT_NAME}}/
+├── README.md
+├── CLAUDE.md
+├── docker-compose.yml
+├── .env.example
+├── .claude/
+│   └── commands/
+├── src/
+└── tests/
+```
+
+Add project-specific paths here as they emerge.
+
+## Testing Stack
+
+- **Unit:** {{Vitest | pytest | go test | cargo test}}
+- **E2E:** {{Playwright | — }}
+- **Accessibility:** {{Pa11y | — }}
+
+## Deployment
+
+{{GitHub Pages | Vercel | self-hosted | not yet}}.
+
+---
+
+## Notes for Claude
+
+- Respect Docker-first. If you catch yourself about to run `npm install` or `pip install` on the host, stop and use `docker compose exec`.
+- Respect the secrets rule. If you see a hardcoded API key anywhere in a committed file, flag it and fix it before touching anything else.
+- Follow the repo's existing patterns before introducing new ones. If you don't know what the pattern is, read a nearby file first.
+- Never summarize this CLAUDE.md when loaded. Just read it and be ready.

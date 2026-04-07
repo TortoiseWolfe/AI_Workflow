@@ -1,0 +1,29 @@
+# Minimal Docker-first dev setup. Replace {{PLACEHOLDERS}} before first commit.
+#
+# Services:
+#   {{DOCKER_SERVICE}} - the main app container
+#
+# Add databases (postgres, redis, etc.) as additional services.
+
+services:
+  {{DOCKER_SERVICE}}:
+    image: node:22-alpine  # change for your stack (python:3.12-slim, golang:1.22, rust:1.78, etc.)
+    container_name: {{PROJECT_NAME}}
+    working_dir: /app
+    ports:
+      - "3000:3000"  # adjust for your framework
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules  # named volume keeps deps inside container
+    environment:
+      NODE_ENV: development
+      # Secrets come from .env — use ${VAR:-placeholder} pattern, never hardcode
+      # DATABASE_URL: ${DATABASE_URL:-set-in-env-file}
+    command: sh -c "corepack enable && pnpm install && pnpm run dev"
+    # For other stacks, replace command:
+    # Python:  sh -c "pip install -r requirements.txt && python main.py"
+    # Go:      sh -c "go mod download && go run ."
+    # Rust:    sh -c "cargo install cargo-watch && cargo watch -x run"
+
+volumes:
+  node_modules:
