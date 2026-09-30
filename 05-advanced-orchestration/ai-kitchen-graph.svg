@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="840" viewBox="0 0 1200 840" role="img" aria-label="A task goes from me to the head chef (Claude Code on Opus), which hands it to the director line: an Opus planner writes specs, Haiku or Sonnet cooks work in separate worktrees, tests in Docker decide pass or fail, a Jev check is logged on the side, and a blind Opus reviewer tastes before merge and push. Only results return to the head chef. Muse exchanges notes with the head chef through Gmail. The OpenClaw tray shows notifications and runs short commands I approve. The tmux crew and the MoltBot co-host are planned.">
+<style><![CDATA[
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=Literata:opsz,wght@7..72,600&family=JetBrains+Mono:wght@400&display=swap");
+svg{
+  --paper:#f3f4f1; --ink:#1d2327; --muted:#5d676d; --rule:#cfd4d2; --panel:#e8ebe8;
+  --opus:#eb6834; --opus-bg:#fbe1d6;
+  --cheap:#1baf7a; --cheap-bg:#d4f1e5;
+  --ext:#2a78d6; --ext-bg:#dbe8f8;
+  --tool:#6b6a66; --tool-bg:#eeeeec;
+  --map:#fcfcfb; --ink2:#3f4549; --edge:#5b6368;
+  --display:"Barlow Condensed","Arial Narrow",sans-serif; --body:"Literata",Georgia,serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+color:var(--edge)}
+/* SVG classes (page CSS styles inline SVG; nothing inside the SVG) */
+.bx{stroke-width:2.2}
+.band-o{stroke:var(--opus)} .band-c{stroke:var(--cheap)} .band-e{stroke:var(--ext)} .band-t{stroke:var(--tool)}
+.hb{stroke-width:7;stroke-linecap:butt;fill:none}
+.sw-opus{fill:var(--opus)} .sw-cheap{fill:var(--cheap)} .sw-ext{fill:var(--ext)} .sw-tool{fill:var(--tool)}
+.opus{fill:var(--opus-bg);stroke:var(--opus)} .cheap{fill:var(--cheap-bg);stroke:var(--cheap)}
+.ext{fill:var(--ext-bg);stroke:var(--ext)} .tool{fill:var(--tool-bg);stroke:var(--tool)}
+.band{fill:none;stroke:var(--rule);stroke-width:1.2}
+.shadow{stroke-dasharray:8 5} .planned{stroke-dasharray:3 5;opacity:.9}
+.e{fill:none;stroke:var(--edge);stroke-width:1.8}
+.t{fill:var(--ink);font-family:var(--body);font-size:17px;font-weight:600}
+.s{fill:var(--ink2);font-family:var(--mono);font-size:13px}
+.l{fill:var(--ink2);font-family:var(--mono);font-size:13px}
+.bt{fill:var(--ink2);font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+
+]]></style>
+<rect x="0" y="0" width="1200" height="840" fill="#fcfcfb"/>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<rect class="band" x="462" y="26" width="732" height="266" rx="8"/>
+<text class="bt" x="478" y="54">The line · director workflow · live in 4 repos</text>
+<rect class="bx opus" x="478" y="84" width="124" height="80" rx="5"/>
+<line class="hb band-o" x1="479" y1="88.5" x2="601" y2="88.5"/>
+<text class="t" x="540" y="118" text-anchor="middle">Plan</text>
+<text class="s" x="540" y="140" text-anchor="middle">Opus</text>
+<text class="s" x="540" y="158" text-anchor="middle">writes specs</text>
+<rect class="bx cheap" x="624" y="84" width="124" height="80" rx="5"/>
+<line class="hb band-c" x1="625" y1="88.5" x2="747" y2="88.5"/>
+<text class="t" x="686" y="118" text-anchor="middle">Cooks</text>
+<text class="s" x="686" y="140" text-anchor="middle">Haiku / Sonnet</text>
+<text class="s" x="686" y="158" text-anchor="middle">own worktree</text>
+<rect class="bx tool" x="770" y="84" width="124" height="80" rx="5"/>
+<line class="hb band-t" x1="771" y1="88.5" x2="893" y2="88.5"/>
+<text class="t" x="832" y="118" text-anchor="middle">Tests</text>
+<text class="s" x="832" y="140" text-anchor="middle">in Docker</text>
+<text class="s" x="832" y="158" text-anchor="middle">code decides</text>
+<rect class="bx opus" x="916" y="84" width="124" height="80" rx="5"/>
+<line class="hb band-o" x1="917" y1="88.5" x2="1039" y2="88.5"/>
+<text class="t" x="978" y="118" text-anchor="middle">Blind taste</text>
+<text class="s" x="978" y="140" text-anchor="middle">Opus</text>
+<text class="s" x="978" y="158" text-anchor="middle">pass / revise</text>
+<rect class="bx tool" x="1062" y="84" width="124" height="80" rx="5"/>
+<line class="hb band-t" x1="1063" y1="88.5" x2="1185" y2="88.5"/>
+<text class="t" x="1124" y="118" text-anchor="middle">GitHub</text>
+<text class="s" x="1124" y="140" text-anchor="middle">merge + push</text>
+<text class="s" x="1124" y="158" text-anchor="middle">by head chef</text>
+<path class="e" d="M602,124 H622" marker-end="url(#ah)"/>
+<text class="l" x="613.0" y="76" text-anchor="middle">specs</text>
+<path class="e" d="M748,124 H768" marker-end="url(#ah)"/>
+<text class="l" x="759.0" y="76" text-anchor="middle">commit</text>
+<path class="e" d="M894,124 H914" marker-end="url(#ah)"/>
+<text class="l" x="905.0" y="76" text-anchor="middle">tests pass</text>
+<path class="e" d="M1040,124 H1060" marker-end="url(#ah)"/>
+<text class="l" x="1051.0" y="76" text-anchor="middle">pass</text>
+<path class="e shadow" d="M840,164 V194" marker-end="url(#ah)"/>
+<text class="l" x="848" y="184">diff</text>
+<rect class="bx ext shadow" x="806" y="196" width="124" height="52" rx="5"/>
+<text class="t" x="868" y="220" text-anchor="middle" style="font-size:15px">Jev check</text>
+<text class="s" x="868" y="238" text-anchor="middle">logged only</text>
+<path class="e" d="M790,164 V210 H700 V166" marker-end="url(#ah)"/>
+<text class="l" x="745" y="202" text-anchor="middle">fail: retry</text>
+<path class="e" d="M990,164 V258 H676 V166" marker-end="url(#ah)"/>
+<text class="l" x="833" y="280" text-anchor="middle">revise (max 2)</text>
+<path class="e" d="M1124,164 V312 H420 V338" marker-end="url(#ah)"/>
+<text class="l" x="772" y="306" text-anchor="middle">results only · the cooks&#x27; working history is thrown away</text>
+<path class="e" d="M400,340 V124 H476" marker-end="url(#ah)"/>
+<text class="l" x="392" y="240" text-anchor="end">goal + repo</text>
+<rect class="bx tool" x="16" y="352" width="160" height="96" rx="5" style="stroke-width:2.8"/>
+<line class="hb band-t" x1="17" y1="356.5" x2="175" y2="356.5"/>
+<text class="t" x="96" y="386" text-anchor="middle">You</text>
+<text class="s" x="96" y="408" text-anchor="middle">decide · approve</text>
+<text class="s" x="96" y="426" text-anchor="middle">anything outward</text>
+<rect class="bx opus" x="230" y="340" width="200" height="120" rx="5"/>
+<line class="hb band-o" x1="231" y1="344.5" x2="429" y2="344.5"/>
+<text class="t" x="330" y="374" text-anchor="middle">Head chef</text>
+<text class="s" x="330" y="396" text-anchor="middle">Claude Code · Opus</text>
+<text class="s" x="330" y="414" text-anchor="middle">holds the plan,</text>
+<text class="s" x="330" y="432" text-anchor="middle">not the work</text>
+<path class="e" d="M176,378 H228" marker-end="url(#ah)"/>
+<text class="l" x="203" y="370" text-anchor="middle">task</text>
+<path class="e" d="M230,424 H178" marker-end="url(#ah)"/>
+<text class="l" x="203" y="442" text-anchor="middle">OK?</text>
+<rect class="bx tool" x="560" y="360" width="160" height="86" rx="5"/>
+<line class="hb band-t" x1="561" y1="364.5" x2="719" y2="364.5"/>
+<text class="t" x="640" y="396" text-anchor="middle">Gmail</text>
+<text class="s" x="640" y="418" text-anchor="middle">notes, not orders</text>
+<rect class="bx ext" x="860" y="356" width="200" height="94" rx="5"/>
+<line class="hb band-e" x1="861" y1="360.5" x2="1059" y2="360.5"/>
+<text class="t" x="960" y="390" text-anchor="middle">Muse</text>
+<text class="s" x="960" y="412" text-anchor="middle">Meta&#x27;s cloud agent</text>
+<text class="s" x="960" y="430" text-anchor="middle">my calendar + mail</text>
+<path class="e" d="M430,384 H558" marker-end="url(#ah)"/>
+<text class="l" x="495" y="376" text-anchor="middle">draft</text>
+<path class="e" d="M560,418 H432" marker-end="url(#ah)"/>
+<text class="l" x="495" y="438" text-anchor="middle">if sent by me</text>
+<path class="e" d="M860,384 H722" marker-end="url(#ah)"/>
+<text class="l" x="790" y="376" text-anchor="middle">sends (I OK it)</text>
+<path class="e" d="M720,418 H858" marker-end="url(#ah)"/>
+<text class="l" x="790" y="438" text-anchor="middle">reads at 7:45 am</text>
+<rect class="bx cheap" x="230" y="512" width="200" height="76" rx="5"/>
+<line class="hb band-c" x1="231" y1="516.5" x2="429" y2="516.5"/>
+<text class="t" x="330" y="548" text-anchor="middle">Researchers</text>
+<text class="s" x="330" y="570" text-anchor="middle">Sonnet · look things up</text>
+<path class="e" d="M300,460 V510" marker-end="url(#ah)"/>
+<text class="l" x="292" y="490" text-anchor="end">question</text>
+<path class="e" d="M360,512 V462" marker-end="url(#ah)"/>
+<text class="l" x="368" y="490">summary</text>
+<rect class="bx tool" x="560" y="510" width="160" height="90" rx="5"/>
+<line class="hb band-t" x1="561" y1="514.5" x2="719" y2="514.5"/>
+<text class="t" x="640" y="544" text-anchor="middle">OpenClaw tray</text>
+<text class="s" x="640" y="566" text-anchor="middle">Windows toasts +</text>
+<text class="s" x="640" y="584" text-anchor="middle">short commands</text>
+<path class="e" d="M430,446 H500 V555 H558" marker-end="url(#ah)"/>
+<text class="l" x="506" y="500">notify / run</text>
+<rect class="bx ext planned" x="860" y="510" width="180" height="90" rx="5"/>
+<text class="t" x="950" y="544" text-anchor="middle">OpenClaw agent</text>
+<text class="s" x="950" y="566" text-anchor="middle">no model yet</text>
+<text class="s" x="950" y="584" text-anchor="middle">(blocked)</text>
+<path class="e planned" d="M720,555 H858" marker-end="url(#ah)"/>
+<text class="l" x="790" y="547" text-anchor="middle">would think</text>
+<rect class="bx ext planned" x="1060" y="510" width="134" height="90" rx="5"/>
+<text class="t" x="1127" y="544" text-anchor="middle">Jev decider</text>
+<text class="s" x="1127" y="566" text-anchor="middle">idle for now</text>
+<text class="s" x="1127" y="584" text-anchor="middle">(needs a model)</text>
+<path class="e planned" d="M1040,555 H1058" marker-end="url(#ah)"/>
+<path class="e" d="M96,448 V626 H640 V602" marker-end="url(#ah)"/>
+<text class="l" x="112" y="648">approve each command, every time</text>
+<rect class="bx tool" x="16" y="672" width="220" height="80" rx="5"/>
+<line class="hb band-t" x1="17" y1="676.5" x2="235" y2="676.5"/>
+<text class="t" x="126" y="706" text-anchor="middle">Memory shelf</text>
+<text class="s" x="126" y="728" text-anchor="middle">read at every start</text>
+<text class="s" x="126" y="746" text-anchor="middle">lessons written back</text>
+<rect class="bx opus planned" x="260" y="672" width="330" height="80" rx="5"/>
+<text class="t" x="425" y="706" text-anchor="middle">Crew · tmux assembly line</text>
+<text class="s" x="425" y="728" text-anchor="middle">26 roles + an Operator</text>
+<text class="s" x="425" y="746" text-anchor="middle">planned: a model per role</text>
+<rect class="bx ext planned" x="614" y="672" width="250" height="80" rx="5"/>
+<text class="t" x="739" y="706" text-anchor="middle">MoltBot</text>
+<text class="s" x="739" y="728" text-anchor="middle">Twitch co-host on the LAN</text>
+<text class="s" x="739" y="746" text-anchor="middle">planned</text>
+<rect class="band" x="890" y="672" width="304" height="80" rx="6"/>
+<path class="e" d="M906,690 H944"/>
+<text class="s" x="954" y="694">live</text>
+<path class="e shadow" d="M906,712 H944"/>
+<text class="s" x="954" y="716">shadow: logged only</text>
+<path class="e planned" d="M906,734 H944"/>
+<text class="s" x="954" y="738">planned or blocked</text>
+<rect class="band" x="16" y="772" width="1178" height="54" rx="6"/>
+<rect class="sw-opus" x="36" y="789" width="20" height="20" rx="4"/>
+<text class="s" x="66" y="804">Opus · judgment, expensive</text>
+<rect class="sw-cheap" x="316" y="789" width="20" height="20" rx="4"/>
+<text class="s" x="346" y="804">Haiku / Sonnet · hands, cheap</text>
+<rect class="sw-ext" x="626" y="789" width="20" height="20" rx="4"/>
+<text class="s" x="656" y="804">another company&#x27;s AI</text>
+<rect class="sw-tool" x="936" y="789" width="20" height="20" rx="4"/>
+<text class="s" x="966" y="804">tool or person</text>
+</svg>
