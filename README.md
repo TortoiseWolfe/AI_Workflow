@@ -43,6 +43,11 @@ Chapters are independent. You can read 03 before 02 if you're in a hurry. But th
 
 Plus [`principles/`](principles/) — the *why* behind every rule, one file per principle, one war story each.
 
+## Pictures of the workflow
+
+- [**The AI Kitchen map**](05-advanced-orchestration/ai-kitchen-map.html) ([PDF](05-advanced-orchestration/ai-kitchen-map.pdf)): the whole current setup on one page. An Opus "head chef" hands work to cheap Haiku/Sonnet cooks in separate git worktrees, tests decide pass or fail, and a blind Opus review tastes before anything ships.
+- [**Head chef, line cooks**](05-advanced-orchestration/head-chef-line-cooks.html): why it's built this way. What the "let cheap agents do the grunt work" advice gets right, why local models don't fit an 8 GB card, and how the first real run went.
+
 ## The companion starter repo
 
 Chapter 01's exercise has you clone [`hello-world-ai`](https://github.com/TurtleWolfe/hello-world-ai) (a companion repo) as a starting point instead of bootstrapping from zero. It's a minimal Next.js + Docker setup with the 10-command starter kit already installed at `.claude/commands/`. First commit: under 15 minutes from `git clone` to `docker compose up` to a shipped change.

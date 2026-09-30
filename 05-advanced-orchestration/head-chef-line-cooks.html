@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Head Chef, Line Cooks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one narrow reading column; each section is a folded shop ticket, one open at a time. */
+:root{
+  --paper:#f3f4f1; --ink:#1d2327; --muted:#5d676d; --rule:#cfd4d2; --fact-bg:#e8ebe8;
+  --accent:#b8412c; --ok:#2f6b4f; --warn:#9a6a12;
+  --display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --body:"Literata",Georgia,serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#15191b; --ink:#e3e6e4; --muted:#97a1a6; --rule:#2c3337; --fact-bg:#1c2225;
+  --accent:#e0735c; --ok:#6fb892; --warn:#d6a54a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#15191b; --ink:#e3e6e4; --muted:#97a1a6; --rule:#2c3337; --fact-bg:#1c2225;
+  --accent:#e0735c; --ok:#6fb892; --warn:#d6a54a; color-scheme:dark}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;padding-inline:16px;padding-block:40px 64px}
+.wrap{max-width:44rem;margin:0 auto;display:grid;gap:28px}
+header{display:grid;gap:10px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(2.2rem,6vw,3.4rem);line-height:1;margin:0;text-wrap:balance;letter-spacing:.01em}
+h1 em{font-style:normal;color:var(--accent)}
+.lede{margin:0;max-width:62ch}
+.how{font-family:var(--mono);font-size:13px;color:var(--muted);margin:0}
+.tickets{display:grid;gap:0;border-top:1px solid var(--rule)}
+details.t{border-bottom:1px solid var(--rule)}
+details.t>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:3.2rem 1fr auto;gap:12px;align-items:baseline;padding:16px 4px}
+details.t>summary::-webkit-details-marker{display:none}
+.tno{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.tname{font-family:var(--display);font-weight:600;font-size:1.45rem;line-height:1.15;text-wrap:balance}
+.chev{font-family:var(--mono);color:var(--accent);transition:transform .15s}
+details[open]>summary .chev{transform:rotate(90deg)}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.body{padding:0 4px 22px 3.2rem;display:grid;gap:14px;min-width:0}
+.body p{margin:0;max-width:64ch}
+.fact{margin:0;padding:10px 12px;margin-left:18px;border-left:2px solid var(--rule);background:var(--fact-bg);font-family:var(--mono);font-size:12.5px;line-height:1.55;color:var(--muted);white-space:pre-wrap;overflow-x:auto;min-width:0}
+.fact a{color:inherit}
+details.n{border:1px solid var(--rule);border-radius:3px}
+details.n>summary{cursor:pointer;padding:10px 12px;display:flex;gap:10px;align-items:baseline}
+details.n>summary::marker{color:var(--accent)}
+details.n>.fact{margin:0 12px 12px 18px}
+.pill{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;padding:1px 6px;border:1px solid currentColor;border-radius:2px;white-space:nowrap}
+.pill.ok{color:var(--ok)} .pill.part{color:var(--warn)} .pill.no{color:var(--accent)}
+.stack{display:grid;gap:8px}
+footer{font-family:var(--mono);font-size:12px;color:var(--muted);border-top:1px solid var(--rule);padding-top:14px}
+@media (max-width:520px){details.t>summary{grid-template-columns:2.2rem 1fr auto}.body{padding-left:4px}}
+@media (prefers-reduced-motion:reduce){.chev{transition:none}}
+</style>
+<style>body{margin:0}</style>
+</head>
+<body>
+
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">TurtleWolfe · $200 plan review · 2026-09-30</div>
+  <h1>Head chef, <em>line cooks</em></h1>
+  <p class="lede">You were handed advice: let Claude plan and review, and let cheap helpers do the chopping. The idea is right. The kitchen it assumes isn't the one you have.</p>
+  <p class="how">Each ticket opens one at a time. Plain line on top; the checkable fact underneath.</p>
+</header>
+
+<div class="tickets">
+
+<details class="t"><summary><span class="tno">T-01</span><span class="tname">What the advice gets right</span><span class="chev">›</span></summary>
+<div class="body">
+<p>A head chef shouldn't dice onions. Paying top rate for renames and boilerplate wastes the plan's weekly allowance on work a junior could do.</p>
+<pre class="fact">Anthropic support: "Opus costs several times more per turn than Sonnet,
+and Sonnet more than Haiku." Max plans have a weekly limit across all models.
+Today ~/.claude/settings.json runs every session and subagent on Opus at xhigh.</pre>
+<p>The part to keep: someone decides, someone does, and someone checks before anything is served.</p>
+<pre class="fact">This already runs here un-generalised: the game-demo gauntlet,
+a weekly review of a collaborator's merges, ada-stair's planted-fault reviews.</pre>
+</div></details>
+
+<details class="t"><summary><span class="tno">T-02</span><span class="tname">Why a local agent farm doesn't fit this machine</span><span class="chev">›</span></summary>
+<div class="body">
+<p>The advice assumes a big prep kitchen. This one has a single small counter: the graphics card can hold a short recipe card, not the whole cookbook a coding agent needs open.</p>
+<pre class="fact">RTX 3070 Ti, 8 GB VRAM, ~1.2 GB held by the Windows desktop (no iGPU on the i7-12700KF).
+Ollama: coding agents need "at least 64000 tokens" of context.
+Named models: qwen3-coder:30b 19 GB, glm-4.7-flash ~23 GB VRAM at 64k, gpt-oss:20b 14 GB.</pre>
+<p>You've already tested this. In February a mid-size local model on this card fumbled its tools and drifted into other languages.</p>
+<pre class="fact">TranScripts/Claude_Edited/MoltBot/model-upgrade-plan-2026-02-01.md:
+Qwen2.5 14B failed tool calls; Llama 3.1 8B became primary.</pre>
+<p>Pointing Claude Code itself at a local model is off the menu too: unsupported, slower, and it can step outside your subscription.</p>
+<pre class="fact">code.claude.com/docs/en/llm-gateway: Anthropic "doesn't support routing Claude Code
+to non-Claude models through any gateway." Ollama's Anthropic API has no prompt caching.</pre>
+</div></details>
+
+<details class="t"><summary><span class="tno">T-03</span><span class="tname">The cheap cooks you already pay for</span><span class="chev">›</span></summary>
+<div class="body">
+<p>Your subscription comes with a whole brigade, not just the head chef. Haiku and Sonnet cost the plan less per turn and follow instructions reliably.</p>
+<pre class="fact">API price ratio Opus 5.5 : Sonnet 5.5 : Haiku 4.5 = 4 : 2 : 1 per token.
+Max weighting isn't published; /usage before and after the pilot is the real measure.</pre>
+<p>So the worker tier is Haiku for mechanical edits, Sonnet for straightforward builds, and Opus only to plan and to review.</p>
+<pre class="fact">~/.claude/agents/: shell-proxy (haiku), worker-mechanical (haiku),
+worker-builder (sonnet, effort medium), reviewer-senior (opus, effort high).
+Haiku gets no effort setting: Haiku 4.5 rejects the parameter.</pre>
+</div></details>
+
+<details class="t"><summary><span class="tno">T-04</span><span class="tname">How the director workflow runs a shift</span><span class="chev">›</span></summary>
+<div class="body">
+<p>The head chef writes the tickets. Each cook gets their own station, so nobody bumps elbows. A thermometer checks every plate before the chef tastes it.</p>
+<pre class="fact">~/.claude/workflows/director.js
+1 Plan (Opus): goal → items {tier, files[], check_cmd, accept_cmd}; no two items share a file
+2 Baseline: pin origin/main SHA; checks must be green, acceptance must be red, before work
+3 Per item: git worktree ../&lt;repo&gt;-wf-&lt;id&gt; → worker commits → checker runs the tests
+4 Review (Opus, blind): spec + diff only; revise at most twice, then hand back</pre>
+<p>If a cook burns a dish twice, it goes to a more senior cook, and after that back to the chef. Nothing is served on a cook's say-so.</p>
+<pre class="fact">Retry once at the same tier → escalate haiku→sonnet → capped.
+The checker's exit codes are parsed in plain script; worker self-reports are ignored.</pre>
+<p>The first shift is five small jobs in ada-stair-generator, and one planted mistake to see if the chef catches it.</p>
+<pre class="fact">P1 Docker suite parity · P2 .dockerignore · P3 compose init · P4 components.rb (sonnet) · P5 README
+Local Docker is the CI stand-in: GitHub Actions blocked by billing since 2026-09-22.</pre>
+</div></details>
+
+<details class="t"><summary><span class="tno">T-05</span><span class="tname">Claim by claim</span><span class="chev">›</span></summary>
+<div class="body">
+<p>Every claim in the advice was checked against its source. None were invented, but several were stale or stretched.</p>
+<div class="stack">
+<details class="n"><summary><span class="pill part">narrower</span>Anthropic raised limits with a SpaceX compute deal</summary>
+<pre class="fact">True (2026-05-06), but it doubled the five-hour window only. Weekly caps were not raised.
+anthropic.com/news/higher-limits-spacex</pre></details>
+<details class="n"><summary><span class="pill ok">true</span>Ollama runs Claude Code, Codex and OpenCode on local models</summary>
+<pre class="fact">`ollama launch` (2026-01-23). Needs ≥64k context; default is 4k under 24 GB VRAM.
+docs.ollama.com/integrations/claude-code · docs.ollama.com/context-length</pre></details>
+<details class="n"><summary><span class="pill part">stale</span>Ollama recommends Qwen3-Coder, GLM-4.7-Flash, GPT-OSS</summary>
+<pre class="fact">That was January's list. Current docs name newer models, and all of them overflow 8 GB at 64k.</pre></details>
+<details class="n"><summary><span class="pill part">misdated</span>Twitch cut Affiliate requirements in May 2026</summary>
+<pre class="fact">Numbers right: 4 hours, 4 different days, ≥3 average viewers on each, 25 followers.
+The cut dates from ~June 2025. The May 2026 post opened Bits and subs to non-Affiliates.
+blog.twitch.tv/en/2026/05/13/monetization-for-all/</pre></details>
+<details class="n"><summary><span class="pill ok">true</span>Affiliates can now get Twitch sponsorships</summary>
+<pre class="fact">2026-08-20, but only after "Creator Sponsorship Certification." Brands still choose.</pre></details>
+<details class="n"><summary><span class="pill ok">true</span>Amazon Associates allows Twitch gear lists</summary>
+<pre class="fact">Allowed, with the rules in T-06. affiliate-program.amazon.com/help/node/topic/GJ64G2W6MJ2N7CXP</pre></details>
+</div>
+</div></details>
+
+<details class="t"><summary><span class="tno">T-06</span><span class="tname">Stream rules that bite</span><span class="chev">›</span></summary>
+<div class="body">
+<p>If you recommend gear out loud, you say the disclosure out loud too. Written links need it written right next to them.</p>
+<pre class="fact">"As an Amazon Associate I earn from qualifying purchases."
+Disclosure "in the medium in which the recommendation was provided."</pre>
+<div class="stack">
+<details class="n"><summary>No prices on screen or in panels</summary>
+<pre class="fact">Prices may only be shown if Amazon serves them or via its PA/Creators API.
+The parts bin stores no prices at all; pages say "Check price".</pre></details>
+<details class="n"><summary>No rewards tied to buying through your links</summary>
+<pre class="fact">No giveaways, no "bookmark my link", no shorteners that hide the Amazon destination.</pre></details>
+<details class="n"><summary>Three sales in 180 days or the account lapses</summary>
+<pre class="fact">So sign up once /builds has traffic, not before.</pre></details>
+<details class="n"><summary>SketchUp Make can't be on a paid stream</summary>
+<pre class="fact">SketchUp Make 2017 is licensed non-commercial. The virtual PC builds render in
+Blender headless, already in ada-stair-generator's compose.yaml.</pre></details>
+</div>
+</div></details>
+
+<details class="t"><summary><span class="tno">T-07</span><span class="tname">Who does what: Claude, Muse, OpenClaw, Jev</span><span class="chev">›</span></summary>
+<div class="body">
+<p>Four helpers, four jobs. Claude runs the kitchen. Muse runs the front desk: calendar and mail. OpenClaw rings the bell and fetches things from the Windows side. Jev is a quick yes-or-no at the pass.</p>
+<div class="stack">
+<details class="n"><summary>Muse and Claude leave notes in your Gmail</summary>
+<pre class="fact">Muse → Claude: self-email "[MUSE&gt;CC] …"; trusted only if Gmail marks it SENT.
+Claude → Muse: a draft "[CC&gt;MUSE] …" (Claude has no send tool). Muse's draft access is being tested.
+Notes are information, never orders. No client details: Muse's connector data can train Meta's AI.</pre></details>
+<details class="n"><summary>OpenClaw rings the bell and runs short Windows jobs</summary>
+<pre class="fact">Notify: POST /hooks/wake with its own narrow token. Each ping costs one OpenAI turn.
+Windows jobs: tray MCP system.run, sandboxed, no network, 30 s limit.
+Its master key stays out of Claude's reach (deny rule added today).</pre></details>
+<details class="n"><summary>Jev decides small things inside OpenClaw</summary>
+<pre class="fact">TypeSafe's decision-only model, 70–500 ms, $0.042 per M input, ~$5/month free credit.
+Official plugin @openclaw/typesafe. Can be nudged by injected text: never the only gate.
+Only typesafe.ai; ~670 lookalike domains appeared in its first week.</pre></details>
+</div>
+</div></details>
+
+<details class="t"><summary><span class="tno">T-08</span><span class="tname">Parked, and why</span><span class="chev">›</span></summary>
+<div class="body">
+<p>The photo-reading local model waits. It would save almost nothing and needs an hour of your own labelling before it could be trusted. It makes a better episode later.</p>
+<pre class="fact">Design kept: qwen3.5:4b in a "vision" compose profile; adopt only if it beats Haiku on a
+24-photo gold set you label yourself.</pre>
+<p>No second company's coder yet: Codex is on the free plan. An OpenClaw worker would need its master key, so it waits too.</p>
+<pre class="fact">Revisit both if the pilot shows Haiku and Sonnet fall short.</pre>
+</div></details>
+
+<details class="t"><summary><span class="tno">T-09</span><span class="tname">How the first shift went</span><span class="chev">›</span></summary>
+<div class="body">
+<p>Five tickets went out to the cooks. Four came back right the first time, passed the thermometer and passed the head chef's taste. None had to be handed up to a more senior cook.</p>
+<pre class="fact">ada-stair-generator, landed as 443188a on main:
+docker-suite-parity (haiku) · dockerignore (haiku) · compose-init (haiku) · components-lib (sonnet)
+first-pass checks 5/5 · Opus first-round pass 4/5 · escalations 0
+Issue #1 closed; epic #3 layer 1 started.</pre>
+<p>The fifth ticket failed for a reason the kitchen can learn from. Two cooks worked on dishes that depended on each other without being able to see each other's plates. The README described a Dockerfile that another cook was changing at the same time.</p>
+<pre class="fact">readme-sync capped after 2 review rounds; finished by hand after merge.
+Fix: the planner now merges coupled items or keeps them for Opus.</pre>
+<p>The head chef also overreached: while writing the tickets, it cooked one dish itself to check the recipe. That was most of the bill.</p>
+<pre class="fact">API-equivalent: $4.74 actual vs $8.03 if every token were Opus (~41% cheaper).
+Opus was $3.50 of it, mostly the planner building and testing the Sonnet item itself.
+Fix: planner now runs as the read-only Plan agent.</pre>
+<p>Then we tested the taster. We slipped in a dish with one wrong number and a menu edited to match it. The chef caught both.</p>
+<pre class="fact">Planted: 5/8" plywood at 9/16" (spec 19/32"), test changed to agree; the suite passed.
+reviewer-senior (blind): "revise"; flagged components.rb:27 and the test protecting the error.</pre>
+</div></details>
+
+
+
+</div>
+<footer>Sources verified 2026-09-30. A companion to the AI Kitchen map in this chapter. Numbers that come from press rather than the vendor are marked as such in the plan.</footer>
+</div>
+
+<script>
+document.querySelectorAll('details.t').forEach(function(d){
+  d.addEventListener('toggle',function(){
+    if(!d.open) return;
+    document.querySelectorAll('details.t[open]').forEach(function(o){ if(o!==d) o.open=false; });
+  });
+});
+</script>
+
+</body>
+</html>
