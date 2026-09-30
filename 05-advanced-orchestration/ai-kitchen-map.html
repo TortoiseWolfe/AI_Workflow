@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,22 +26,23 @@
 /* Layout: one wide map (scrolls sideways inside its frame on phones), then the rules, then click-to-open notes. */
 :root{
   --paper:#f3f4f1; --ink:#1d2327; --muted:#5d676d; --rule:#cfd4d2; --panel:#e8ebe8;
-  --opus:#b8412c; --opus-bg:#f6e3dd;
-  --cheap:#2f6b4f; --cheap-bg:#e1efe7;
-  --ext:#2b5d8a; --ext-bg:#e2ebf4;
-  --tool:#5d676d; --tool-bg:#eceeec;
+  --opus:#eb6834; --opus-bg:#fbe1d6;
+  --cheap:#1baf7a; --cheap-bg:#d4f1e5;
+  --ext:#2a78d6; --ext-bg:#dbe8f8;
+  --tool:#6b6a66; --tool-bg:#eeeeec;
+  --map:#fcfcfb; --ink2:#3f4549; --edge:#5b6368;
   --display:"Barlow Condensed","Arial Narrow",sans-serif; --body:"Literata",Georgia,serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --paper:#15191b; --ink:#e3e6e4; --muted:#97a1a6; --rule:#2c3337; --panel:#1c2225;
-  --opus:#e0735c; --opus-bg:#3a211b; --cheap:#6fb892; --cheap-bg:#1b2e24; --ext:#79a9d6; --ext-bg:#1b2836;
-  --tool:#97a1a6; --tool-bg:#20272a; color-scheme:dark}}
+  --opus:#d95926; --opus-bg:#3a2218; --cheap:#199e70; --cheap-bg:#15302a; --ext:#3987e5; --ext-bg:#172a40;
+  --tool:#9a9992; --tool-bg:#26282a; --map:#1c2225; --ink2:#c3c9cc; --edge:#98a1a6; color-scheme:dark}}
 :root[data-theme="dark"]{
   --paper:#15191b; --ink:#e3e6e4; --muted:#97a1a6; --rule:#2c3337; --panel:#1c2225;
-  --opus:#e0735c; --opus-bg:#3a211b; --cheap:#6fb892; --cheap-bg:#1b2e24; --ext:#79a9d6; --ext-bg:#1b2836;
-  --tool:#97a1a6; --tool-bg:#20272a; color-scheme:dark}
+  --opus:#d95926; --opus-bg:#3a2218; --cheap:#199e70; --cheap-bg:#15302a; --ext:#3987e5; --ext-bg:#172a40;
+  --tool:#9a9992; --tool-bg:#26282a; --map:#1c2225; --ink2:#c3c9cc; --edge:#98a1a6; color-scheme:dark}
 body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;padding-inline:16px;padding-block:36px 64px}
-.wrap{max-width:74rem;margin:0 auto;display:grid;gap:30px}
+.wrap{max-width:80rem;margin:0 auto;display:grid;gap:30px}
 .narrow{max-width:46rem}
 header{display:grid;gap:10px;border-bottom:2px solid var(--ink);padding-bottom:18px}
 .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -50,20 +51,23 @@ h1 em{font-style:normal;color:var(--opus)}
 h2{font-family:var(--display);font-weight:600;font-size:1.6rem;margin:0}
 .lede{margin:0;max-width:62ch}
 figure{margin:0;display:grid;gap:10px}
-.mapframe{overflow-x:auto;border:1px solid var(--rule);background:var(--panel);border-radius:4px}
-.mapframe svg{display:block;min-width:900px;width:100%;height:auto;color:var(--ink)}
-figcaption{font-size:14px;color:var(--muted);max-width:70ch}
+.mapframe{overflow-x:auto;border:1px solid var(--rule);background:var(--map);border-radius:6px}
+.mapframe svg{display:block;min-width:980px;width:100%;height:auto;color:var(--edge)}
+figcaption{font-size:15px;color:var(--muted);max-width:70ch}
 /* SVG classes (page CSS styles inline SVG; nothing inside the SVG) */
-.bx{stroke-width:1.6}
+.bx{stroke-width:2.2}
+.band-o{stroke:var(--opus)} .band-c{stroke:var(--cheap)} .band-e{stroke:var(--ext)} .band-t{stroke:var(--tool)}
+.hb{stroke-width:7;stroke-linecap:butt;fill:none}
+.sw-opus{fill:var(--opus)} .sw-cheap{fill:var(--cheap)} .sw-ext{fill:var(--ext)} .sw-tool{fill:var(--tool)}
 .opus{fill:var(--opus-bg);stroke:var(--opus)} .cheap{fill:var(--cheap-bg);stroke:var(--cheap)}
 .ext{fill:var(--ext-bg);stroke:var(--ext)} .tool{fill:var(--tool-bg);stroke:var(--tool)}
 .band{fill:none;stroke:var(--rule);stroke-width:1.2}
-.shadow{stroke-dasharray:7 4} .planned{stroke-dasharray:2 4;opacity:.72}
-.e{fill:none;stroke:var(--muted);stroke-width:1.5}
-.t{fill:var(--ink);font-family:var(--body);font-size:14px;font-weight:600}
-.s{fill:var(--muted);font-family:var(--mono);font-size:11px}
-.l{fill:var(--muted);font-family:var(--mono);font-size:11px}
-.bt{fill:var(--muted);font-family:var(--display);font-size:15px;letter-spacing:.06em;text-transform:uppercase}
+.shadow{stroke-dasharray:8 5} .planned{stroke-dasharray:3 5;opacity:.9}
+.e{fill:none;stroke:var(--edge);stroke-width:1.8}
+.t{fill:var(--ink);font-family:var(--body);font-size:17px;font-weight:600}
+.s{fill:var(--ink2);font-family:var(--mono);font-size:13px}
+.l{fill:var(--ink2);font-family:var(--mono);font-size:13px}
+.bt{fill:var(--ink2);font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
 .rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:12px}
 .rule{border-top:3px solid var(--ink);padding-top:8px;min-width:0}
 .rule b{font-family:var(--display);font-size:1.25rem;font-weight:600;display:block;line-height:1.15}
@@ -74,16 +78,15 @@ figcaption{font-size:14px;color:var(--muted);max-width:70ch}
 details.t2{border-bottom:1px solid var(--rule)}
 details.t2>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:1.2rem 1fr auto;gap:10px;align-items:center;padding:14px 4px}
 details.t2>summary::-webkit-details-marker{display:none}
-.dot{width:12px;height:12px;border-radius:2px;border:2px solid}
-.dot.opus{background:var(--opus-bg);border-color:var(--opus)} .dot.cheap{background:var(--cheap-bg);border-color:var(--cheap)}
-.dot.ext{background:var(--ext-bg);border-color:var(--ext)} .dot.tool{background:var(--tool-bg);border-color:var(--tool)}
+.dot{width:16px;height:16px;border-radius:3px}
+.dot.opus{background:var(--opus)} .dot.cheap{background:var(--cheap)} .dot.ext{background:var(--ext)} .dot.tool{background:var(--tool)}
 .zn{font-family:var(--display);font-weight:600;font-size:1.35rem;line-height:1.15;text-wrap:balance}
 .chev{font-family:var(--mono);color:var(--opus);transition:transform .15s}
 details[open]>summary .chev{transform:rotate(90deg)}
 summary:focus-visible{outline:2px solid var(--opus);outline-offset:2px}
 .body{padding:0 4px 20px 2.4rem;display:grid;gap:12px;min-width:0}
 .body p{margin:0;max-width:64ch}
-.fact{margin:0 0 0 18px;padding:10px 12px;border-left:2px solid var(--rule);background:var(--panel);font-family:var(--mono);font-size:12.5px;line-height:1.55;color:var(--muted);white-space:pre-wrap;overflow-x:auto;min-width:0}
+.fact{margin:0 0 0 18px;padding:10px 12px;border-left:2px solid var(--rule);background:var(--panel);font-family:var(--mono);font-size:13.5px;line-height:1.55;color:var(--muted);white-space:pre-wrap;overflow-x:auto;min-width:0}
 footer{font-family:var(--mono);font-size:12px;color:var(--muted);border-top:1px solid var(--rule);padding-top:14px}
 @media (max-width:520px){.body{padding-left:4px}}
 @media (prefers-reduced-motion:reduce){.chev{transition:none}}
@@ -103,165 +106,148 @@ footer{font-family:var(--mono);font-size:12px;color:var(--muted);border-top:1px 
 
 <figure>
 <div class="mapframe">
-<svg viewBox="0 0 1200 745" role="img" aria-label="A task goes from me to the head chef (Claude Code on Opus), which hands it to the director line: an Opus planner writes specs, Haiku or Sonnet cooks work in separate worktrees, tests in Docker decide pass or fail, a Jev check is logged on the side, and a blind Opus reviewer tastes before merge and push. Only results return to the head chef. Muse exchanges notes with the head chef through Gmail. The OpenClaw tray shows notifications and runs short commands I approve. The tmux crew and the MoltBot co-host are planned.">
-  <defs>
-    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
-  </defs>
-
-  <!-- The line: director workflow -->
-  <rect class="band" x="470" y="28" width="712" height="234" rx="6"/>
-  <text class="bt" x="486" y="52">The line · director workflow · live in 4 repos</text>
-  <text class="l" x="608" y="72" text-anchor="middle">specs</text>
-  <text class="l" x="742" y="72" text-anchor="middle">commit</text>
-  <text class="l" x="876" y="72" text-anchor="middle">tests pass</text>
-  <text class="l" x="1010" y="72" text-anchor="middle">pass</text>
-
-  <rect class="bx opus" x="486" y="78" width="110" height="74" rx="4"/>
-  <text class="t" x="541" y="104" text-anchor="middle">Plan</text>
-  <text class="s" x="541" y="124" text-anchor="middle">Opus</text>
-  <text class="s" x="541" y="140" text-anchor="middle">writes specs</text>
-
-  <rect class="bx cheap" x="620" y="78" width="110" height="74" rx="4"/>
-  <text class="t" x="675" y="104" text-anchor="middle">Cooks</text>
-  <text class="s" x="675" y="124" text-anchor="middle">Haiku / Sonnet</text>
-  <text class="s" x="675" y="140" text-anchor="middle">own worktree</text>
-
-  <rect class="bx tool" x="754" y="78" width="110" height="74" rx="4"/>
-  <text class="t" x="809" y="104" text-anchor="middle">Tests</text>
-  <text class="s" x="809" y="124" text-anchor="middle">in Docker</text>
-  <text class="s" x="809" y="140" text-anchor="middle">code decides</text>
-
-  <rect class="bx opus" x="888" y="78" width="110" height="74" rx="4"/>
-  <text class="t" x="943" y="104" text-anchor="middle">Blind taste</text>
-  <text class="s" x="943" y="124" text-anchor="middle">Opus</text>
-  <text class="s" x="943" y="140" text-anchor="middle">pass / revise</text>
-
-  <rect class="bx tool" x="1022" y="78" width="110" height="74" rx="4"/>
-  <text class="t" x="1077" y="104" text-anchor="middle">GitHub</text>
-  <text class="s" x="1077" y="124" text-anchor="middle">merge + push</text>
-  <text class="s" x="1077" y="140" text-anchor="middle">by head chef</text>
-
-  <path class="e" d="M596,115 H618" marker-end="url(#ah)"/>
-  <path class="e" d="M730,115 H752" marker-end="url(#ah)"/>
-  <path class="e" d="M864,115 H886" marker-end="url(#ah)"/>
-  <path class="e" d="M998,115 H1020" marker-end="url(#ah)"/>
-
-  <!-- Jev hangs off the line: it scores, it never gates -->
-  <path class="e shadow" d="M820,152 V178" marker-end="url(#ah)"/>
-  <text class="l" x="826" y="170">diff</text>
-  <rect class="bx ext shadow" x="800" y="180" width="110" height="46" rx="4"/>
-  <text class="t" x="855" y="199" text-anchor="middle" style="font-size:13px">Jev check</text>
-  <text class="s" x="855" y="216" text-anchor="middle">logged only</text>
-
-  <!-- loops back to the cooks -->
-  <path class="e" d="M772,152 V194 H676 V154" marker-end="url(#ah)"/>
-  <text class="l" x="724" y="186" text-anchor="middle">fail: retry</text>
-  <path class="e" d="M960,152 V244 H654 V154" marker-end="url(#ah)"/>
-  <text class="l" x="807" y="258" text-anchor="middle">revise (max 2)</text>
-
-  <!-- results back to the head chef, and the goal going out -->
-  <path class="e" d="M1077,152 V282 H420 V308" marker-end="url(#ah)"/>
-  <text class="l" x="750" y="276" text-anchor="middle">results only · the cooks' working history is thrown away</text>
-  <path class="e" d="M400,310 V115 H484" marker-end="url(#ah)"/>
-  <text class="l" x="392" y="215" text-anchor="end">goal + repo</text>
-
-  <!-- You and the head chef -->
-  <rect class="bx tool" x="20" y="320" width="150" height="90" rx="4" style="stroke-width:2.4"/>
-  <text class="t" x="95" y="350" text-anchor="middle">You</text>
-  <text class="s" x="95" y="370" text-anchor="middle">decide · approve</text>
-  <text class="s" x="95" y="386" text-anchor="middle">anything outward</text>
-
-  <rect class="bx opus" x="230" y="310" width="200" height="110" rx="4"/>
-  <text class="t" x="330" y="338" text-anchor="middle">Head chef</text>
-  <text class="s" x="330" y="358" text-anchor="middle">Claude Code · Opus</text>
-  <text class="s" x="330" y="378" text-anchor="middle">holds the plan,</text>
-  <text class="s" x="330" y="394" text-anchor="middle">not the work</text>
-
-  <path class="e" d="M170,345 H228" marker-end="url(#ah)"/>
-  <text class="l" x="200" y="339" text-anchor="middle">task</text>
-  <path class="e" d="M230,385 H172" marker-end="url(#ah)"/>
-  <text class="l" x="200" y="401" text-anchor="middle">OK?</text>
-
-  <!-- Front of house: Muse through Gmail -->
-  <rect class="bx tool" x="560" y="325" width="150" height="80" rx="4"/>
-  <text class="t" x="635" y="355" text-anchor="middle">Gmail</text>
-  <text class="s" x="635" y="375" text-anchor="middle">notes, not orders</text>
-
-  <rect class="bx ext" x="840" y="325" width="180" height="80" rx="4"/>
-  <text class="t" x="930" y="353" text-anchor="middle">Muse</text>
-  <text class="s" x="930" y="373" text-anchor="middle">Meta's cloud agent</text>
-  <text class="s" x="930" y="389" text-anchor="middle">my calendar + mail</text>
-
-  <path class="e" d="M430,350 H558" marker-end="url(#ah)"/>
-  <text class="l" x="495" y="342" text-anchor="middle">draft</text>
-  <path class="e" d="M560,382 H432" marker-end="url(#ah)"/>
-  <text class="l" x="495" y="398" text-anchor="middle">if sent by me</text>
-  <path class="e" d="M840,350 H712" marker-end="url(#ah)"/>
-  <text class="l" x="775" y="342" text-anchor="middle">sends (I OK it)</text>
-  <path class="e" d="M710,382 H838" marker-end="url(#ah)"/>
-  <text class="l" x="775" y="398" text-anchor="middle">reads at 7:45 am</text>
-
-  <!-- Researchers -->
-  <rect class="bx cheap" x="230" y="470" width="200" height="70" rx="4"/>
-  <text class="t" x="330" y="498" text-anchor="middle">Researchers</text>
-  <text class="s" x="330" y="518" text-anchor="middle">Sonnet · look things up</text>
-  <path class="e" d="M300,420 V468" marker-end="url(#ah)"/>
-  <text class="l" x="292" y="448" text-anchor="end">question</text>
-  <path class="e" d="M360,470 V422" marker-end="url(#ah)"/>
-  <text class="l" x="368" y="448">summary</text>
-
-  <!-- Windows side: OpenClaw -->
-  <rect class="bx tool" x="560" y="470" width="150" height="80" rx="4"/>
-  <text class="t" x="635" y="498" text-anchor="middle">OpenClaw tray</text>
-  <text class="s" x="635" y="518" text-anchor="middle">Windows toasts +</text>
-  <text class="s" x="635" y="534" text-anchor="middle">short commands</text>
-  <path class="e" d="M430,405 H500 V510 H558" marker-end="url(#ah)"/>
-  <text class="l" x="506" y="452">notify / run</text>
-
-  <rect class="bx ext planned" x="840" y="470" width="180" height="80" rx="4"/>
-  <text class="t" x="930" y="498" text-anchor="middle">OpenClaw agent</text>
-  <text class="s" x="930" y="518" text-anchor="middle">no model yet</text>
-  <text class="s" x="930" y="534" text-anchor="middle">(blocked)</text>
-  <path class="e planned" d="M710,510 H838" marker-end="url(#ah)"/>
-  <text class="l" x="775" y="502" text-anchor="middle">would think</text>
-
-  <rect class="bx ext planned" x="1046" y="470" width="136" height="80" rx="4"/>
-  <text class="t" x="1114" y="498" text-anchor="middle">Jev decider</text>
-  <text class="s" x="1114" y="518" text-anchor="middle">idle until the</text>
-  <text class="s" x="1114" y="534" text-anchor="middle">agent has a model</text>
-  <path class="e planned" d="M1020,510 H1044" marker-end="url(#ah)"/>
-
-  <path class="e" d="M95,410 V576 H635 V552" marker-end="url(#ah)"/>
-  <text class="l" x="110" y="594">approve each command, every time</text>
-
-  <!-- Planned + supporting -->
-  <rect class="bx tool" x="20" y="630" width="200" height="80" rx="4"/>
-  <text class="t" x="120" y="658" text-anchor="middle">Memory shelf</text>
-  <text class="s" x="120" y="678" text-anchor="middle">read at every start</text>
-  <text class="s" x="120" y="694" text-anchor="middle">lessons written back</text>
-
-  <rect class="bx opus planned" x="250" y="630" width="300" height="80" rx="4"/>
-  <text class="t" x="400" y="658" text-anchor="middle">Crew · tmux assembly line</text>
-  <text class="s" x="400" y="678" text-anchor="middle">26 roles + an Operator</text>
-  <text class="s" x="400" y="694" text-anchor="middle">planned: a model per role</text>
-
-  <rect class="bx ext planned" x="580" y="630" width="220" height="80" rx="4"/>
-  <text class="t" x="690" y="658" text-anchor="middle">MoltBot</text>
-  <text class="s" x="690" y="678" text-anchor="middle">Twitch co-host on the LAN</text>
-  <text class="s" x="690" y="694" text-anchor="middle">planned</text>
-
-  <!-- Legend -->
-  <rect class="band" x="830" y="626" width="352" height="106" rx="4"/>
-  <path class="e" d="M846,650 H874"/><text class="s" x="880" y="654">live</text>
-  <path class="e shadow" d="M846,674 H874"/><text class="s" x="880" y="678">shadow</text>
-  <path class="e planned" d="M846,698 H874"/><text class="s" x="880" y="702">planned / blocked</text>
-  <rect class="bx opus" x="1010" y="642" width="12" height="12"/><text class="s" x="1028" y="653">Opus · judgment</text>
-  <rect class="bx cheap" x="1010" y="664" width="12" height="12"/><text class="s" x="1028" y="675">Haiku/Sonnet · hands</text>
-  <rect class="bx ext" x="1010" y="686" width="12" height="12"/><text class="s" x="1028" y="697">another company's AI</text>
-  <rect class="bx tool" x="1010" y="708" width="12" height="12"/><text class="s" x="1028" y="719">tool or person</text>
+<svg viewBox="0 0 1200 840" role="img" aria-label="A task goes from me to the head chef (Claude Code on Opus), which hands it to the director line: an Opus planner writes specs, Haiku or Sonnet cooks work in separate worktrees, tests in Docker decide pass or fail, a Jev check is logged on the side, and a blind Opus reviewer tastes before merge and push. Only results return to the head chef. Muse exchanges notes with the head chef through Gmail. The OpenClaw tray shows notifications and runs short commands I approve. The tmux crew and the MoltBot co-host are planned.">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<rect class="band" x="462" y="26" width="732" height="266" rx="8"/>
+<text class="bt" x="478" y="54">The line · director workflow · live in 4 repos</text>
+<rect class="bx opus" x="478" y="84" width="124" height="80" rx="5"/>
+<line class="hb band-o" x1="479" y1="88.5" x2="601" y2="88.5"/>
+<text class="t" x="540" y="118" text-anchor="middle">Plan</text>
+<text class="s" x="540" y="140" text-anchor="middle">Opus</text>
+<text class="s" x="540" y="158" text-anchor="middle">writes specs</text>
+<rect class="bx cheap" x="624" y="84" width="124" height="80" rx="5"/>
+<line class="hb band-c" x1="625" y1="88.5" x2="747" y2="88.5"/>
+<text class="t" x="686" y="118" text-anchor="middle">Cooks</text>
+<text class="s" x="686" y="140" text-anchor="middle">Haiku / Sonnet</text>
+<text class="s" x="686" y="158" text-anchor="middle">own worktree</text>
+<rect class="bx tool" x="770" y="84" width="124" height="80" rx="5"/>
+<line class="hb band-t" x1="771" y1="88.5" x2="893" y2="88.5"/>
+<text class="t" x="832" y="118" text-anchor="middle">Tests</text>
+<text class="s" x="832" y="140" text-anchor="middle">in Docker</text>
+<text class="s" x="832" y="158" text-anchor="middle">code decides</text>
+<rect class="bx opus" x="916" y="84" width="124" height="80" rx="5"/>
+<line class="hb band-o" x1="917" y1="88.5" x2="1039" y2="88.5"/>
+<text class="t" x="978" y="118" text-anchor="middle">Blind taste</text>
+<text class="s" x="978" y="140" text-anchor="middle">Opus</text>
+<text class="s" x="978" y="158" text-anchor="middle">pass / revise</text>
+<rect class="bx tool" x="1062" y="84" width="124" height="80" rx="5"/>
+<line class="hb band-t" x1="1063" y1="88.5" x2="1185" y2="88.5"/>
+<text class="t" x="1124" y="118" text-anchor="middle">GitHub</text>
+<text class="s" x="1124" y="140" text-anchor="middle">merge + push</text>
+<text class="s" x="1124" y="158" text-anchor="middle">by head chef</text>
+<path class="e" d="M602,124 H622" marker-end="url(#ah)"/>
+<text class="l" x="613.0" y="76" text-anchor="middle">specs</text>
+<path class="e" d="M748,124 H768" marker-end="url(#ah)"/>
+<text class="l" x="759.0" y="76" text-anchor="middle">commit</text>
+<path class="e" d="M894,124 H914" marker-end="url(#ah)"/>
+<text class="l" x="905.0" y="76" text-anchor="middle">tests pass</text>
+<path class="e" d="M1040,124 H1060" marker-end="url(#ah)"/>
+<text class="l" x="1051.0" y="76" text-anchor="middle">pass</text>
+<path class="e shadow" d="M840,164 V194" marker-end="url(#ah)"/>
+<text class="l" x="848" y="184">diff</text>
+<rect class="bx ext shadow" x="806" y="196" width="124" height="52" rx="5"/>
+<text class="t" x="868" y="220" text-anchor="middle" style="font-size:15px">Jev check</text>
+<text class="s" x="868" y="238" text-anchor="middle">logged only</text>
+<path class="e" d="M790,164 V210 H700 V166" marker-end="url(#ah)"/>
+<text class="l" x="745" y="202" text-anchor="middle">fail: retry</text>
+<path class="e" d="M990,164 V258 H676 V166" marker-end="url(#ah)"/>
+<text class="l" x="833" y="280" text-anchor="middle">revise (max 2)</text>
+<path class="e" d="M1124,164 V312 H420 V338" marker-end="url(#ah)"/>
+<text class="l" x="772" y="306" text-anchor="middle">results only · the cooks&#x27; working history is thrown away</text>
+<path class="e" d="M400,340 V124 H476" marker-end="url(#ah)"/>
+<text class="l" x="392" y="240" text-anchor="end">goal + repo</text>
+<rect class="bx tool" x="16" y="352" width="160" height="96" rx="5" style="stroke-width:2.8"/>
+<line class="hb band-t" x1="17" y1="356.5" x2="175" y2="356.5"/>
+<text class="t" x="96" y="386" text-anchor="middle">You</text>
+<text class="s" x="96" y="408" text-anchor="middle">decide · approve</text>
+<text class="s" x="96" y="426" text-anchor="middle">anything outward</text>
+<rect class="bx opus" x="230" y="340" width="200" height="120" rx="5"/>
+<line class="hb band-o" x1="231" y1="344.5" x2="429" y2="344.5"/>
+<text class="t" x="330" y="374" text-anchor="middle">Head chef</text>
+<text class="s" x="330" y="396" text-anchor="middle">Claude Code · Opus</text>
+<text class="s" x="330" y="414" text-anchor="middle">holds the plan,</text>
+<text class="s" x="330" y="432" text-anchor="middle">not the work</text>
+<path class="e" d="M176,378 H228" marker-end="url(#ah)"/>
+<text class="l" x="203" y="370" text-anchor="middle">task</text>
+<path class="e" d="M230,424 H178" marker-end="url(#ah)"/>
+<text class="l" x="203" y="442" text-anchor="middle">OK?</text>
+<rect class="bx tool" x="560" y="360" width="160" height="86" rx="5"/>
+<line class="hb band-t" x1="561" y1="364.5" x2="719" y2="364.5"/>
+<text class="t" x="640" y="396" text-anchor="middle">Gmail</text>
+<text class="s" x="640" y="418" text-anchor="middle">notes, not orders</text>
+<rect class="bx ext" x="860" y="356" width="200" height="94" rx="5"/>
+<line class="hb band-e" x1="861" y1="360.5" x2="1059" y2="360.5"/>
+<text class="t" x="960" y="390" text-anchor="middle">Muse</text>
+<text class="s" x="960" y="412" text-anchor="middle">Meta&#x27;s cloud agent</text>
+<text class="s" x="960" y="430" text-anchor="middle">my calendar + mail</text>
+<path class="e" d="M430,384 H558" marker-end="url(#ah)"/>
+<text class="l" x="495" y="376" text-anchor="middle">draft</text>
+<path class="e" d="M560,418 H432" marker-end="url(#ah)"/>
+<text class="l" x="495" y="438" text-anchor="middle">if sent by me</text>
+<path class="e" d="M860,384 H722" marker-end="url(#ah)"/>
+<text class="l" x="790" y="376" text-anchor="middle">sends (I OK it)</text>
+<path class="e" d="M720,418 H858" marker-end="url(#ah)"/>
+<text class="l" x="790" y="438" text-anchor="middle">reads at 7:45 am</text>
+<rect class="bx cheap" x="230" y="512" width="200" height="76" rx="5"/>
+<line class="hb band-c" x1="231" y1="516.5" x2="429" y2="516.5"/>
+<text class="t" x="330" y="548" text-anchor="middle">Researchers</text>
+<text class="s" x="330" y="570" text-anchor="middle">Sonnet · look things up</text>
+<path class="e" d="M300,460 V510" marker-end="url(#ah)"/>
+<text class="l" x="292" y="490" text-anchor="end">question</text>
+<path class="e" d="M360,512 V462" marker-end="url(#ah)"/>
+<text class="l" x="368" y="490">summary</text>
+<rect class="bx tool" x="560" y="510" width="160" height="90" rx="5"/>
+<line class="hb band-t" x1="561" y1="514.5" x2="719" y2="514.5"/>
+<text class="t" x="640" y="544" text-anchor="middle">OpenClaw tray</text>
+<text class="s" x="640" y="566" text-anchor="middle">Windows toasts +</text>
+<text class="s" x="640" y="584" text-anchor="middle">short commands</text>
+<path class="e" d="M430,446 H500 V555 H558" marker-end="url(#ah)"/>
+<text class="l" x="506" y="500">notify / run</text>
+<rect class="bx ext planned" x="860" y="510" width="180" height="90" rx="5"/>
+<text class="t" x="950" y="544" text-anchor="middle">OpenClaw agent</text>
+<text class="s" x="950" y="566" text-anchor="middle">no model yet</text>
+<text class="s" x="950" y="584" text-anchor="middle">(blocked)</text>
+<path class="e planned" d="M720,555 H858" marker-end="url(#ah)"/>
+<text class="l" x="790" y="547" text-anchor="middle">would think</text>
+<rect class="bx ext planned" x="1060" y="510" width="134" height="90" rx="5"/>
+<text class="t" x="1127" y="544" text-anchor="middle">Jev decider</text>
+<text class="s" x="1127" y="566" text-anchor="middle">idle for now</text>
+<text class="s" x="1127" y="584" text-anchor="middle">(needs a model)</text>
+<path class="e planned" d="M1040,555 H1058" marker-end="url(#ah)"/>
+<path class="e" d="M96,448 V626 H640 V602" marker-end="url(#ah)"/>
+<text class="l" x="112" y="648">approve each command, every time</text>
+<rect class="bx tool" x="16" y="672" width="220" height="80" rx="5"/>
+<line class="hb band-t" x1="17" y1="676.5" x2="235" y2="676.5"/>
+<text class="t" x="126" y="706" text-anchor="middle">Memory shelf</text>
+<text class="s" x="126" y="728" text-anchor="middle">read at every start</text>
+<text class="s" x="126" y="746" text-anchor="middle">lessons written back</text>
+<rect class="bx opus planned" x="260" y="672" width="330" height="80" rx="5"/>
+<text class="t" x="425" y="706" text-anchor="middle">Crew · tmux assembly line</text>
+<text class="s" x="425" y="728" text-anchor="middle">26 roles + an Operator</text>
+<text class="s" x="425" y="746" text-anchor="middle">planned: a model per role</text>
+<rect class="bx ext planned" x="614" y="672" width="250" height="80" rx="5"/>
+<text class="t" x="739" y="706" text-anchor="middle">MoltBot</text>
+<text class="s" x="739" y="728" text-anchor="middle">Twitch co-host on the LAN</text>
+<text class="s" x="739" y="746" text-anchor="middle">planned</text>
+<rect class="band" x="890" y="672" width="304" height="80" rx="6"/>
+<path class="e" d="M906,690 H944"/>
+<text class="s" x="954" y="694">live</text>
+<path class="e shadow" d="M906,712 H944"/>
+<text class="s" x="954" y="716">shadow: logged only</text>
+<path class="e planned" d="M906,734 H944"/>
+<text class="s" x="954" y="738">planned or blocked</text>
+<rect class="band" x="16" y="772" width="1178" height="54" rx="6"/>
+<rect class="sw-opus" x="36" y="789" width="20" height="20" rx="4"/>
+<text class="s" x="66" y="804">Opus · judgment, expensive</text>
+<rect class="sw-cheap" x="316" y="789" width="20" height="20" rx="4"/>
+<text class="s" x="346" y="804">Haiku / Sonnet · hands, cheap</text>
+<rect class="sw-ext" x="626" y="789" width="20" height="20" rx="4"/>
+<text class="s" x="656" y="804">another company&#x27;s AI</text>
+<rect class="sw-tool" x="936" y="789" width="20" height="20" rx="4"/>
+<text class="s" x="966" y="804">tool or person</text>
 </svg>
 </div>
-<figcaption>How a task moves. The head chef never cooks: it hands a goal to the line, and only results come back, which keeps its memory small and cheap. Tests decide pass or fail in code before the Opus reviewer spends anything, and the Jev check is recorded next to that verdict but decides nothing yet. A note from Muse is trusted only if Gmail shows it was sent from my own account. Solid means live, dashed means shadow, dotted means planned or blocked.</figcaption>
+<figcaption>How a task moves. The head chef never cooks: it hands a goal to the line, and only results come back, which keeps its memory small and cheap. Tests decide pass or fail in code before the Opus reviewer spends anything, and the Jev check is recorded next to that verdict but decides nothing yet. A note from Muse is trusted only if Gmail shows it was sent from my own account. A solid color band marks what is live; dashed means shadow, dotted means planned or blocked. Colors: orange is the expensive model, green the cheap ones, blue another company's AI, gray a tool or a person.</figcaption>
 </figure>
 <section class="narrow" style="display:grid;gap:14px">
   <h2>The rules the kitchen runs on</h2>
