@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TurtleWolfe's AI Kitchen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one wide map (scrolls sideways inside its frame on phones), then the rules, then click-to-open notes. */
+:root{
+  --paper:#f3f4f1; --ink:#1d2327; --muted:#5d676d; --rule:#cfd4d2; --panel:#e8ebe8;
+  --opus:#b8412c; --opus-bg:#f6e3dd;
+  --cheap:#2f6b4f; --cheap-bg:#e1efe7;
+  --ext:#2b5d8a; --ext-bg:#e2ebf4;
+  --tool:#5d676d; --tool-bg:#eceeec;
+  --display:"Barlow Condensed","Arial Narrow",sans-serif; --body:"Literata",Georgia,serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#15191b; --ink:#e3e6e4; --muted:#97a1a6; --rule:#2c3337; --panel:#1c2225;
+  --opus:#e0735c; --opus-bg:#3a211b; --cheap:#6fb892; --cheap-bg:#1b2e24; --ext:#79a9d6; --ext-bg:#1b2836;
+  --tool:#97a1a6; --tool-bg:#20272a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#15191b; --ink:#e3e6e4; --muted:#97a1a6; --rule:#2c3337; --panel:#1c2225;
+  --opus:#e0735c; --opus-bg:#3a211b; --cheap:#6fb892; --cheap-bg:#1b2e24; --ext:#79a9d6; --ext-bg:#1b2836;
+  --tool:#97a1a6; --tool-bg:#20272a; color-scheme:dark}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;padding-inline:16px;padding-block:36px 64px}
+.wrap{max-width:74rem;margin:0 auto;display:grid;gap:30px}
+.narrow{max-width:46rem}
+header{display:grid;gap:10px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(2.2rem,6vw,3.4rem);line-height:1;margin:0;text-wrap:balance}
+h1 em{font-style:normal;color:var(--opus)}
+h2{font-family:var(--display);font-weight:600;font-size:1.6rem;margin:0}
+.lede{margin:0;max-width:62ch}
+figure{margin:0;display:grid;gap:10px}
+.mapframe{overflow-x:auto;border:1px solid var(--rule);background:var(--panel);border-radius:4px}
+.mapframe svg{display:block;min-width:900px;width:100%;height:auto;color:var(--ink)}
+figcaption{font-size:14px;color:var(--muted);max-width:70ch}
+/* SVG classes (page CSS styles inline SVG; nothing inside the SVG) */
+.bx{stroke-width:1.6}
+.opus{fill:var(--opus-bg);stroke:var(--opus)} .cheap{fill:var(--cheap-bg);stroke:var(--cheap)}
+.ext{fill:var(--ext-bg);stroke:var(--ext)} .tool{fill:var(--tool-bg);stroke:var(--tool)}
+.band{fill:none;stroke:var(--rule);stroke-width:1.2}
+.shadow{stroke-dasharray:7 4} .planned{stroke-dasharray:2 4;opacity:.72}
+.e{fill:none;stroke:var(--muted);stroke-width:1.5}
+.t{fill:var(--ink);font-family:var(--body);font-size:14px;font-weight:600}
+.s{fill:var(--muted);font-family:var(--mono);font-size:11px}
+.l{fill:var(--muted);font-family:var(--mono);font-size:11px}
+.bt{fill:var(--muted);font-family:var(--display);font-size:15px;letter-spacing:.06em;text-transform:uppercase}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:12px}
+.rule{border-top:3px solid var(--ink);padding-top:8px;min-width:0}
+.rule b{font-family:var(--display);font-size:1.25rem;font-weight:600;display:block;line-height:1.15}
+.rule span{font-size:15px;color:var(--muted)}
+.nums{display:flex;flex-wrap:wrap;gap:10px 28px;font-family:var(--mono);font-size:13px;color:var(--muted)}
+.nums strong{color:var(--ink);font-size:15px}
+.notes{border-top:1px solid var(--rule)}
+details.t2{border-bottom:1px solid var(--rule)}
+details.t2>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:1.2rem 1fr auto;gap:10px;align-items:center;padding:14px 4px}
+details.t2>summary::-webkit-details-marker{display:none}
+.dot{width:12px;height:12px;border-radius:2px;border:2px solid}
+.dot.opus{background:var(--opus-bg);border-color:var(--opus)} .dot.cheap{background:var(--cheap-bg);border-color:var(--cheap)}
+.dot.ext{background:var(--ext-bg);border-color:var(--ext)} .dot.tool{background:var(--tool-bg);border-color:var(--tool)}
+.zn{font-family:var(--display);font-weight:600;font-size:1.35rem;line-height:1.15;text-wrap:balance}
+.chev{font-family:var(--mono);color:var(--opus);transition:transform .15s}
+details[open]>summary .chev{transform:rotate(90deg)}
+summary:focus-visible{outline:2px solid var(--opus);outline-offset:2px}
+.body{padding:0 4px 20px 2.4rem;display:grid;gap:12px;min-width:0}
+.body p{margin:0;max-width:64ch}
+.fact{margin:0 0 0 18px;padding:10px 12px;border-left:2px solid var(--rule);background:var(--panel);font-family:var(--mono);font-size:12.5px;line-height:1.55;color:var(--muted);white-space:pre-wrap;overflow-x:auto;min-width:0}
+footer{font-family:var(--mono);font-size:12px;color:var(--muted);border-top:1px solid var(--rule);padding-top:14px}
+@media (max-width:520px){.body{padding-left:4px}}
+@media (prefers-reduced-motion:reduce){.chev{transition:none}}
+@page{size:A4;margin:10mm}
+@media print{body{padding-block:0;font-size:11px}.fact{font-size:10px}.body{gap:6px;padding-bottom:10px}details.t2>summary{padding:8px 4px}.mapframe{overflow:visible}.mapframe svg{min-width:0}details.t2>summary .chev{display:none}}
+</style>
+<style>body{margin:0}</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">How I build with AI · 2026-09-30</div>
+  <h1>TurtleWolfe's AI <em>Kitchen</em></h1>
+  <p class="lede">One expensive model decides and tastes. Cheaper models do the cooking, each at its own station. Tests check every plate before anyone tastes it, and I approve anything that leaves the building.</p>
+</header>
+
+<figure>
+<div class="mapframe">
+<svg viewBox="0 0 1200 745" role="img" aria-label="A task goes from me to the head chef (Claude Code on Opus), which hands it to the director line: an Opus planner writes specs, Haiku or Sonnet cooks work in separate worktrees, tests in Docker decide pass or fail, a Jev check is logged on the side, and a blind Opus reviewer tastes before merge and push. Only results return to the head chef. Muse exchanges notes with the head chef through Gmail. The OpenClaw tray shows notifications and runs short commands I approve. The tmux crew and the MoltBot co-host are planned.">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+  </defs>
+
+  <!-- The line: director workflow -->
+  <rect class="band" x="470" y="28" width="712" height="234" rx="6"/>
+  <text class="bt" x="486" y="52">The line · director workflow · live in 4 repos</text>
+  <text class="l" x="608" y="72" text-anchor="middle">specs</text>
+  <text class="l" x="742" y="72" text-anchor="middle">commit</text>
+  <text class="l" x="876" y="72" text-anchor="middle">tests pass</text>
+  <text class="l" x="1010" y="72" text-anchor="middle">pass</text>
+
+  <rect class="bx opus" x="486" y="78" width="110" height="74" rx="4"/>
+  <text class="t" x="541" y="104" text-anchor="middle">Plan</text>
+  <text class="s" x="541" y="124" text-anchor="middle">Opus</text>
+  <text class="s" x="541" y="140" text-anchor="middle">writes specs</text>
+
+  <rect class="bx cheap" x="620" y="78" width="110" height="74" rx="4"/>
+  <text class="t" x="675" y="104" text-anchor="middle">Cooks</text>
+  <text class="s" x="675" y="124" text-anchor="middle">Haiku / Sonnet</text>
+  <text class="s" x="675" y="140" text-anchor="middle">own worktree</text>
+
+  <rect class="bx tool" x="754" y="78" width="110" height="74" rx="4"/>
+  <text class="t" x="809" y="104" text-anchor="middle">Tests</text>
+  <text class="s" x="809" y="124" text-anchor="middle">in Docker</text>
+  <text class="s" x="809" y="140" text-anchor="middle">code decides</text>
+
+  <rect class="bx opus" x="888" y="78" width="110" height="74" rx="4"/>
+  <text class="t" x="943" y="104" text-anchor="middle">Blind taste</text>
+  <text class="s" x="943" y="124" text-anchor="middle">Opus</text>
+  <text class="s" x="943" y="140" text-anchor="middle">pass / revise</text>
+
+  <rect class="bx tool" x="1022" y="78" width="110" height="74" rx="4"/>
+  <text class="t" x="1077" y="104" text-anchor="middle">GitHub</text>
+  <text class="s" x="1077" y="124" text-anchor="middle">merge + push</text>
+  <text class="s" x="1077" y="140" text-anchor="middle">by head chef</text>
+
+  <path class="e" d="M596,115 H618" marker-end="url(#ah)"/>
+  <path class="e" d="M730,115 H752" marker-end="url(#ah)"/>
+  <path class="e" d="M864,115 H886" marker-end="url(#ah)"/>
+  <path class="e" d="M998,115 H1020" marker-end="url(#ah)"/>
+
+  <!-- Jev hangs off the line: it scores, it never gates -->
+  <path class="e shadow" d="M820,152 V178" marker-end="url(#ah)"/>
+  <text class="l" x="826" y="170">diff</text>
+  <rect class="bx ext shadow" x="800" y="180" width="110" height="46" rx="4"/>
+  <text class="t" x="855" y="199" text-anchor="middle" style="font-size:13px">Jev check</text>
+  <text class="s" x="855" y="216" text-anchor="middle">logged only</text>
+
+  <!-- loops back to the cooks -->
+  <path class="e" d="M772,152 V194 H676 V154" marker-end="url(#ah)"/>
+  <text class="l" x="724" y="186" text-anchor="middle">fail: retry</text>
+  <path class="e" d="M960,152 V244 H654 V154" marker-end="url(#ah)"/>
+  <text class="l" x="807" y="258" text-anchor="middle">revise (max 2)</text>
+
+  <!-- results back to the head chef, and the goal going out -->
+  <path class="e" d="M1077,152 V282 H420 V308" marker-end="url(#ah)"/>
+  <text class="l" x="750" y="276" text-anchor="middle">results only · the cooks' working history is thrown away</text>
+  <path class="e" d="M400,310 V115 H484" marker-end="url(#ah)"/>
+  <text class="l" x="392" y="215" text-anchor="end">goal + repo</text>
+
+  <!-- You and the head chef -->
+  <rect class="bx tool" x="20" y="320" width="150" height="90" rx="4" style="stroke-width:2.4"/>
+  <text class="t" x="95" y="350" text-anchor="middle">You</text>
+  <text class="s" x="95" y="370" text-anchor="middle">decide · approve</text>
+  <text class="s" x="95" y="386" text-anchor="middle">anything outward</text>
+
+  <rect class="bx opus" x="230" y="310" width="200" height="110" rx="4"/>
+  <text class="t" x="330" y="338" text-anchor="middle">Head chef</text>
+  <text class="s" x="330" y="358" text-anchor="middle">Claude Code · Opus</text>
+  <text class="s" x="330" y="378" text-anchor="middle">holds the plan,</text>
+  <text class="s" x="330" y="394" text-anchor="middle">not the work</text>
+
+  <path class="e" d="M170,345 H228" marker-end="url(#ah)"/>
+  <text class="l" x="200" y="339" text-anchor="middle">task</text>
+  <path class="e" d="M230,385 H172" marker-end="url(#ah)"/>
+  <text class="l" x="200" y="401" text-anchor="middle">OK?</text>
+
+  <!-- Front of house: Muse through Gmail -->
+  <rect class="bx tool" x="560" y="325" width="150" height="80" rx="4"/>
+  <text class="t" x="635" y="355" text-anchor="middle">Gmail</text>
+  <text class="s" x="635" y="375" text-anchor="middle">notes, not orders</text>
+
+  <rect class="bx ext" x="840" y="325" width="180" height="80" rx="4"/>
+  <text class="t" x="930" y="353" text-anchor="middle">Muse</text>
+  <text class="s" x="930" y="373" text-anchor="middle">Meta's cloud agent</text>
+  <text class="s" x="930" y="389" text-anchor="middle">my calendar + mail</text>
+
+  <path class="e" d="M430,350 H558" marker-end="url(#ah)"/>
+  <text class="l" x="495" y="342" text-anchor="middle">draft</text>
+  <path class="e" d="M560,382 H432" marker-end="url(#ah)"/>
+  <text class="l" x="495" y="398" text-anchor="middle">if sent by me</text>
+  <path class="e" d="M840,350 H712" marker-end="url(#ah)"/>
+  <text class="l" x="775" y="342" text-anchor="middle">sends (I OK it)</text>
+  <path class="e" d="M710,382 H838" marker-end="url(#ah)"/>
+  <text class="l" x="775" y="398" text-anchor="middle">reads at 7:45 am</text>
+
+  <!-- Researchers -->
+  <rect class="bx cheap" x="230" y="470" width="200" height="70" rx="4"/>
+  <text class="t" x="330" y="498" text-anchor="middle">Researchers</text>
+  <text class="s" x="330" y="518" text-anchor="middle">Sonnet · look things up</text>
+  <path class="e" d="M300,420 V468" marker-end="url(#ah)"/>
+  <text class="l" x="292" y="448" text-anchor="end">question</text>
+  <path class="e" d="M360,470 V422" marker-end="url(#ah)"/>
+  <text class="l" x="368" y="448">summary</text>
+
+  <!-- Windows side: OpenClaw -->
+  <rect class="bx tool" x="560" y="470" width="150" height="80" rx="4"/>
+  <text class="t" x="635" y="498" text-anchor="middle">OpenClaw tray</text>
+  <text class="s" x="635" y="518" text-anchor="middle">Windows toasts +</text>
+  <text class="s" x="635" y="534" text-anchor="middle">short commands</text>
+  <path class="e" d="M430,405 H500 V510 H558" marker-end="url(#ah)"/>
+  <text class="l" x="506" y="452">notify / run</text>
+
+  <rect class="bx ext planned" x="840" y="470" width="180" height="80" rx="4"/>
+  <text class="t" x="930" y="498" text-anchor="middle">OpenClaw agent</text>
+  <text class="s" x="930" y="518" text-anchor="middle">no model yet</text>
+  <text class="s" x="930" y="534" text-anchor="middle">(blocked)</text>
+  <path class="e planned" d="M710,510 H838" marker-end="url(#ah)"/>
+  <text class="l" x="775" y="502" text-anchor="middle">would think</text>
+
+  <rect class="bx ext planned" x="1046" y="470" width="136" height="80" rx="4"/>
+  <text class="t" x="1114" y="498" text-anchor="middle">Jev decider</text>
+  <text class="s" x="1114" y="518" text-anchor="middle">idle until the</text>
+  <text class="s" x="1114" y="534" text-anchor="middle">agent has a model</text>
+  <path class="e planned" d="M1020,510 H1044" marker-end="url(#ah)"/>
+
+  <path class="e" d="M95,410 V576 H635 V552" marker-end="url(#ah)"/>
+  <text class="l" x="110" y="594">approve each command, every time</text>
+
+  <!-- Planned + supporting -->
+  <rect class="bx tool" x="20" y="630" width="200" height="80" rx="4"/>
+  <text class="t" x="120" y="658" text-anchor="middle">Memory shelf</text>
+  <text class="s" x="120" y="678" text-anchor="middle">read at every start</text>
+  <text class="s" x="120" y="694" text-anchor="middle">lessons written back</text>
+
+  <rect class="bx opus planned" x="250" y="630" width="300" height="80" rx="4"/>
+  <text class="t" x="400" y="658" text-anchor="middle">Crew · tmux assembly line</text>
+  <text class="s" x="400" y="678" text-anchor="middle">26 roles + an Operator</text>
+  <text class="s" x="400" y="694" text-anchor="middle">planned: a model per role</text>
+
+  <rect class="bx ext planned" x="580" y="630" width="220" height="80" rx="4"/>
+  <text class="t" x="690" y="658" text-anchor="middle">MoltBot</text>
+  <text class="s" x="690" y="678" text-anchor="middle">Twitch co-host on the LAN</text>
+  <text class="s" x="690" y="694" text-anchor="middle">planned</text>
+
+  <!-- Legend -->
+  <rect class="band" x="830" y="626" width="352" height="106" rx="4"/>
+  <path class="e" d="M846,650 H874"/><text class="s" x="880" y="654">live</text>
+  <path class="e shadow" d="M846,674 H874"/><text class="s" x="880" y="678">shadow</text>
+  <path class="e planned" d="M846,698 H874"/><text class="s" x="880" y="702">planned / blocked</text>
+  <rect class="bx opus" x="1010" y="642" width="12" height="12"/><text class="s" x="1028" y="653">Opus · judgment</text>
+  <rect class="bx cheap" x="1010" y="664" width="12" height="12"/><text class="s" x="1028" y="675">Haiku/Sonnet · hands</text>
+  <rect class="bx ext" x="1010" y="686" width="12" height="12"/><text class="s" x="1028" y="697">another company's AI</text>
+  <rect class="bx tool" x="1010" y="708" width="12" height="12"/><text class="s" x="1028" y="719">tool or person</text>
+</svg>
+</div>
+<figcaption>How a task moves. The head chef never cooks: it hands a goal to the line, and only results come back, which keeps its memory small and cheap. Tests decide pass or fail in code before the Opus reviewer spends anything, and the Jev check is recorded next to that verdict but decides nothing yet. A note from Muse is trusted only if Gmail shows it was sent from my own account. Solid means live, dashed means shadow, dotted means planned or blocked.</figcaption>
+</figure>
+<section class="narrow" style="display:grid;gap:14px">
+  <h2>The rules the kitchen runs on</h2>
+  <div class="rules">
+    <div class="rule"><b>The expensive model decides and tastes</b><span>Opus writes the plan and reviews the result. Cheaper models do the edits.</span></div>
+    <div class="rule"><b>Tests before taste</b><span>Code checks every plate first. Nobody's word counts as proof, including the cook's.</span></div>
+    <div class="rule"><b>Thin head chef, disposable cooks</b><span>Each cook's memory is thrown away when its job ends, so the conversation that runs everything stays small.</span></div>
+    <div class="rule"><b>One step at a time, with a link</b><span>Anything I have to do by hand comes as one step, with the link or the exact command.</span></div>
+  </div>
+  <div class="nums"><span><strong>~41%</strong> cheaper than all-Opus, first real run</span><span><strong>4 of 5</strong> tasks right first time</span><span><strong>~$0.0001</strong> per Jev check</span><span><strong>4</strong> repos live</span></div>
+</section>
+
+<section class="narrow notes" aria-label="Notes on each part">
+<details class="t2"><summary><span class="dot tool"></span><span class="zn">You: decide and approve</span><span class="chev">›</span></summary><div class="body">
+<p>I pick the work and approve anything that leaves the building. Nothing emails, posts or runs on my Windows machine without my OK.</p>
+<pre class="fact">Claude can write Gmail drafts but can't send them (send is blocked in its settings).
+OpenClaw asks me before every Windows command; Muse asks before every email it sends.</pre>
+</div></details>
+
+<details class="t2"><summary><span class="dot opus"></span><span class="zn">Head chef: the conversation that runs everything</span><span class="chev">›</span></summary><div class="body">
+<p>One Claude Code session on the expensive model keeps the plan and the results, never the working details. A long session is the single biggest cost, so every task starts fresh.</p>
+<pre class="fact">Claude Code, Opus. Each turn re-reads the whole conversation: one long day cost ~$49,
+most of it context. Habit: a new session per task, /clear between jobs, never let the root grow fat.</pre>
+</div></details>
+
+<details class="t2"><summary><span class="dot cheap"></span><span class="zn">The line: plan, cook, test, taste, ship</span><span class="chev">›</span></summary><div class="body">
+<p>For a batch of small, well-defined changes, the head chef hands the whole batch to the line. Each cook works in its own copy of the repo, so nobody bumps elbows.</p>
+<pre class="fact">director workflow: Plan (Opus, read-only) → one git worktree per task → Haiku or Sonnet worker
+→ repo's own tests in Docker (a Haiku helper runs them; the pass/fail is parsed by code)
+→ fail: retry, then a stronger model → blind Opus review, at most 2 revise rounds → merge + push.
+First real run: 5 tasks, 4 right first time, ~41% cheaper than doing it all on Opus.</pre>
+<p>We tested the taster too: a wrong measurement that still passed every test got slipped in on purpose. The reviewer caught it.</p>
+</div></details>
+
+<details class="t2"><summary><span class="dot ext"></span><span class="zn">Jev: the penny-per-hundred yes/no check</span><span class="chev">›</span></summary><div class="body">
+<p>A model that only answers yes or no, very fast and very cheap. It's good at narrow questions and useless at broad ones, so it only watches for now.</p>
+<pre class="fact">TypeSafe's Jev, ~$0.0001 per check. Asked "is 5/8 plywood written as `actual: 19.0 / 32`?":
+0.99 on the right code, 0.03 on a planted bug. Asked "does this meet every criterion?": 0.72 vs 0.70.
+Shadow mode: its answer is logged beside the Opus verdict. If they keep agreeing, it can skip reviews.</pre>
+</div></details>
+
+<details class="t2"><summary><span class="dot cheap"></span><span class="zn">Researchers: look it up, report back</span><span class="chev">›</span></summary><div class="body">
+<p>When the head chef needs to know something, it sends a researcher and gets back a short summary, not the pile of files they read.</p>
+<pre class="fact">Search and exploration helpers run on Sonnet (the built-in explorer is overridden to Sonnet,
+with a check that warns when the built-in changes upstream).</pre>
+</div></details>
+
+<details class="t2"><summary><span class="dot ext"></span><span class="zn">Front of house: Muse, through my inbox</span><span class="chev">›</span></summary><div class="body">
+<p>My personal assistant runs my calendar and mail. It and Claude leave each other notes in my Gmail, and I can read every one.</p>
+<pre class="fact">Claude → Muse: drafts titled [CC&gt;MUSE], read in Muse's 7:45 am briefing.
+Muse → Claude: emails to myself titled [MUSE&gt;CC], trusted only if Gmail marks them Sent from my account.
+Notes are information, never orders; no client details go in them.</pre>
+</div></details>
+
+<details class="t2"><summary><span class="dot tool"></span><span class="zn">Windows side: OpenClaw</span><span class="chev">›</span></summary><div class="body">
+<p>A tray app on my PC that can pop a notification or run a short command, like reading what hardware I have. It's boxed in and asks me every time.</p>
+<pre class="fact">Four allowed actions (notify, run, info, approvals) out of 52 the tray offers. Commands run sandboxed,
+no network, 30 s limit. Its own agent has no AI model connected yet, so its Jev decider sits idle.
+Its master key is off-limits to Claude.</pre>
+</div></details>
+
+<details class="t2"><summary><span class="dot opus"></span><span class="zn">Crew and co-host: what's next</span><span class="chev">›</span></summary><div class="body">
+<p>The older way I work is a crew of terminal windows, one per role. Next, each role gets the cheapest model that can do it, and the crew is sized to the morning's queue.</p>
+<pre class="fact">tmux assembly line: 26 roles + an Operator. Today every window is a full Opus session.
+Planned: a model per role; clear a window as its memory fills; later a Jev check that reads
+each window (done / stuck / waiting) so the Operator only wakes for real decisions.
+MoltBot, an older agent that co-hosts on Twitch, joins over the local network.</pre>
+</div></details>
+
+<details class="t2"><summary><span class="dot tool"></span><span class="zn">Memory shelf: what carries between sessions</span><span class="chev">›</span></summary><div class="body">
+<p>Every new session reads a short index of lessons and rules first, so fresh sessions start smart instead of starting over.</p>
+<pre class="fact">A memory index read at every start, a to-do list, lessons written back when something goes wrong,
+and a backup of the setup to a public repo that never holds keys or client files.</pre>
+</div></details>
+</section>
+
+<footer class="narrow">As of 2026-09-30. Models: Opus (judgment), Sonnet and Haiku (hands) from Anthropic; Jev from TypeSafe; Muse from Meta; OpenClaw is open source.</footer>
+</div>
+
+<script>
+document.querySelectorAll('details.t2').forEach(function(d){
+  d.addEventListener('toggle',function(){
+    if(!d.open) return;
+    document.querySelectorAll('details.t2[open]').forEach(function(o){ if(o!==d) o.open=false; });
+  });
+});
+</script>
+
+</body>
+</html>
