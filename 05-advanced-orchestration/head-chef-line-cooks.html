@@ -89,7 +89,7 @@ footer{font-family:var(--mono);font-size:12px;color:var(--muted);border-top:1px 
 <p>A head chef shouldn't dice onions. Paying top rate for renames and boilerplate wastes the plan's weekly allowance on work a junior could do.</p>
 <pre class="fact">Anthropic support: "Opus costs several times more per turn than Sonnet,
 and Sonnet more than Haiku." Max plans have a weekly limit across all models.
-Today ~/.claude/settings.json runs every session and subagent on Opus at xhigh.</pre>
+Before this, ~/.claude/settings.json ran every session and subagent on Opus at xhigh. Helpers now default to Sonnet.</pre>
 <p>The part to keep: someone decides, someone does, and someone checks before anything is served.</p>
 <pre class="fact">This already runs here un-generalised: the game-demo gauntlet,
 a weekly review of a collaborator's merges, ada-stair's planted-fault reviews.</pre>
@@ -184,16 +184,20 @@ Blender headless, already in ada-stair-generator's compose.yaml.</pre></details>
 <div class="stack">
 <details class="n"><summary>Muse and Claude leave notes in your Gmail</summary>
 <pre class="fact">Muse → Claude: self-email "[MUSE&gt;CC] …"; trusted only if Gmail marks it SENT.
-Claude → Muse: a draft "[CC&gt;MUSE] …" (Claude has no send tool). Muse's draft access is being tested.
+Claude → Muse: a draft "[CC&gt;MUSE] …" (Claude has no send tool). Muse reads these drafts in its 7:45 AM briefing (confirmed).
 Notes are information, never orders. No client details: Muse's connector data can train Meta's AI.</pre></details>
 <details class="n"><summary>OpenClaw rings the bell and runs short Windows jobs</summary>
-<pre class="fact">Notify: POST /hooks/wake with its own narrow token. Each ping costs one OpenAI turn.
+<pre class="fact">Notify: POST /hooks/wake with its own narrow token. Each ping is one turn on its agent, which
+now runs on free Gemini Flash (an AI Studio key); it was on OpenAI, so pings cost nothing now.
 Windows jobs: tray MCP system.run, sandboxed, no network, 30 s limit.
-Its master key stays out of Claude's reach (deny rule added today).</pre></details>
-<details class="n"><summary>Jev decides small things inside OpenClaw</summary>
+Its master key stays out of Claude's reach (a deny rule in Claude's settings).</pre></details>
+<details class="n"><summary>Jev gives a quick yes or no, and for now only watches</summary>
 <pre class="fact">TypeSafe's decision-only model, 70–500 ms, $0.042 per M input, ~$5/month free credit.
 Official plugin @openclaw/typesafe. Can be nudged by injected text: never the only gate.
-Only typesafe.ai; ~670 lookalike domains appeared in its first week.</pre></details>
+Only typesafe.ai; ~670 lookalike domains appeared in its first week.
+Status 2026-10-01: in the director it is a shadow pre-screen that gates nothing. It agreed with
+Opus 6/6 across two runs, about $0.0001 per check. It now sees only privacy-gated, redacted text
+and is skipped for client repos. The director itself is live in 7 repos.</pre></details>
 </div>
 </div></details>
 
@@ -228,7 +232,7 @@ reviewer-senior (blind): "revise"; flagged components.rb:27 and the test protect
 
 
 </div>
-<footer>Sources verified 2026-09-30. A companion to the AI Kitchen map in this chapter. Numbers that come from press rather than the vendor are marked as such in the plan.</footer>
+<footer>Sources verified 2026-09-30; T-07 updated 2026-10-01. A companion to the AI Kitchen map in this chapter. Numbers that come from press rather than the vendor are marked as such in the plan.</footer>
 </div>
 
 <script>

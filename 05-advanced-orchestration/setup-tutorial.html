@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="A step-by-step tutorial for the tiered Claude Code setup: helper agents on cheaper models, a director workflow with deterministic checks and a blind Opus review, a cheap yes/no shadow check, and the gotchas that cost a day.">
+<meta name="description" content="A step-by-step tutorial for the tiered Claude Code setup: helper agents on cheaper models, a director workflow with deterministic checks and a blind Opus review, a cheap yes/no shadow check, a free review panel behind a privacy gate, a per-client usage ledger, and the gotchas that cost a day.">
 <link rel="canonical" href="https://tortoisewolfe.github.io/AI_Workflow/05-advanced-orchestration/setup-tutorial.html">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="TurtleWolfe · AI Workflow">
 <meta property="og:title" content="Build Your AI Kitchen">
-<meta property="og:description" content="A step-by-step tutorial for the tiered Claude Code setup: helper agents on cheaper models, a director workflow with deterministic checks and a blind Opus review, a cheap yes/no shadow check, and the gotchas that cost a day.">
+<meta property="og:description" content="A step-by-step tutorial for the tiered Claude Code setup: helper agents on cheaper models, a director workflow with deterministic checks and a blind Opus review, a cheap yes/no shadow check, a free review panel behind a privacy gate, a per-client usage ledger, and the gotchas that cost a day.">
 <meta property="og:url" content="https://tortoisewolfe.github.io/AI_Workflow/05-advanced-orchestration/setup-tutorial.html">
 <meta property="og:image" content="https://tortoisewolfe.github.io/AI_Workflow/05-advanced-orchestration/ai-kitchen-map-og.png">
 <meta property="og:image:type" content="image/png">
@@ -17,7 +17,7 @@
 <meta property="og:image:alt" content="Map of the workflow: an Opus head chef hands a goal to the director line (Opus plan, Haiku/Sonnet cooks, tests in Docker, blind Opus taste, merge to GitHub), with Muse notes over Gmail and the OpenClaw tray on the side.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Build Your AI Kitchen">
-<meta name="twitter:description" content="A step-by-step tutorial for the tiered Claude Code setup: helper agents on cheaper models, a director workflow with deterministic checks and a blind Opus review, a cheap yes/no shadow check, and the gotchas that cost a day.">
+<meta name="twitter:description" content="A step-by-step tutorial for the tiered Claude Code setup: helper agents on cheaper models, a director workflow with deterministic checks and a blind Opus review, a cheap yes/no shadow check, a free review panel behind a privacy gate, a per-client usage ledger, and the gotchas that cost a day.">
 <meta name="twitter:image" content="https://tortoisewolfe.github.io/AI_Workflow/05-advanced-orchestration/ai-kitchen-map-og.png">
 <title>Build Your AI Kitchen</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,7 +76,7 @@ footer{font-family:var(--mono);font-size:12px;color:var(--muted);border-top:1px 
 
 <div class="wrap">
 <header>
-  <div class="eyebrow">TurtleWolfe · setup tutorial · 2026-09-30</div>
+  <div class="eyebrow">TurtleWolfe · setup tutorial · updated 2026-10-01</div>
   <h1>Build your <em>AI kitchen</em></h1>
   <p class="lede">One expensive model decides and tastes. Cheaper models chop. Code checks every plate before anyone tastes it. Here is how to set that up yourself, in the order I did it.</p>
   <p class="how">Each step opens one at a time. Plain line on top; the exact files and commands underneath.</p>
@@ -90,7 +90,8 @@ footer{font-family:var(--mono);font-size:12px;color:var(--muted);border-top:1px 
 <pre class="fact">Head chef: your main Claude Code session, on Opus.
 Line cooks: Haiku and Sonnet subagents, one git worktree each.
 Thermometer: your repo's own tests, run in Docker, pass/fail parsed by plain JavaScript.
-Taster: a blind Opus reviewer that sees the spec and the diff, nothing else.</pre>
+Taster: a blind Opus reviewer that sees the spec and the diff, nothing else.
+Second table of tasters (shadow only): a free review panel behind a privacy gate, S-06.</pre>
 <p>The head chef never cooks. It hands a batch to the line and only short results come back, so its memory stays small. A long session is the biggest cost there is, so every job starts fresh.</p>
 <pre class="fact">Context size per turn is the main cost driver: one fat main session was most of a $49 day.
 Rule: a thin root session plus disposable workers. Workers drop their history when the job ends.
@@ -104,7 +105,8 @@ Picture of the whole thing: ai-kitchen-map.html. Why it is tiered: head-chef-lin
 <pre class="fact">Claude Code, signed in on a plan that includes Opus, Sonnet and Haiku.
 Docker (Compose v2). Docker-first: no host installs, so every check runs in a container.
 git 2.5+ for `git worktree`. A repo with tests you can run with one command.
-Optional: a second assistant with its own Gmail access (S-06), a Windows PC with WSL2 (S-07).</pre>
+Optional: a second assistant with its own Gmail access (S-07), a Windows PC with WSL2 (S-08),
+free-tier accounts for the review panel (S-06), a GPU with Ollama for one local reviewer (S-06).</pre>
 <p>You need to know what "green" means in your repo before the kitchen opens. If the tests are already red, no cook can be blamed for a burnt plate.</p>
 <pre class="fact">A check is only usable if it passes on a clean checkout of the base branch.
 The director refuses to dispatch an item whose check is red at base (S-04).</pre>
@@ -112,7 +114,8 @@ The director refuses to dispatch an item whose check is red at base (S-04).</pre
 <details class="n"><summary>What each piece costs the kitchen</summary>
 <pre class="fact">Opus : Sonnet : Haiku API price ratio is about 4 : 2 : 1 per token.
 Max-plan weighting is not published. Compare /usage before and after a run.
-Jev check (S-05): about $0.0001 each.</pre></details>
+Jev check (S-05): about $0.0001 each.
+Free review panel (S-06): $0 per review, about 20-45 s.</pre></details>
 </div>
 </div></details>
 
@@ -132,6 +135,11 @@ worker-builder: a module plus tests from an Opus-written spec; use the spec's nu
 reviewer-senior: review only `git diff BASE..HEAD`; pass or revise with concrete blocking items.
 Every worker: read the worktree's CLAUDE.md, edit only the listed files, never touch another checkout,
 never put a personal identifier into files or commits.</pre></details>
+<details class="n"><summary>The tmux crew got a model per role too</summary>
+<pre class="fact">The tmux assembly line (the other chapter-05 pages) now sets a model
+per role: 13 roles on Opus, 12 on Sonnet, 1 on Haiku. Done.
+A morning crew manager is built. It shows a plan; run it with `--apply`
+and it acts on that plan.</pre></details>
 </div>
 <p>Set the default helper to the middle tier, so any helper you did not hire by name works at Sonnet prices instead of Opus prices.</p>
 <pre class="fact">~/.claude/settings.json:  "env": { "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet" }
@@ -164,7 +172,8 @@ Each subagent starts with ~40-60k tokens of mostly cached context: size jobs to 
 <pre class="fact">~/.claude/workflows/director.js, run from the main session:
 Workflow({ name: 'director', args: { repo, goal, checks, base, logDir } })
 Phases: Plan, Baseline, Work, Review, Cleanup.
-It never merges and never pushes. Merging, pushing and worktree removal stay in the main loop.</pre>
+It never merges and never pushes. Merging, pushing and worktree removal stay in the main loop.
+Live in 7 repos as of 2026-10-01; each repo keeps its own .claude/director.json (see below).</pre>
 <p>First the chef writes tickets so tight that a cook never has to decide anything. Anything that needs taste or client input stays with the chef.</p>
 <pre class="fact">Plan (Opus, run as the read-only Plan agent, effort high) returns items:
 { id, tier: haiku|sonnet, instructions, files[], check, accept_cmd, acceptance[], jev_checks[] }
@@ -192,7 +201,7 @@ At most 2 review rounds, then the item is capped and handed back.</pre>
 <p>Then the shift report, which is also plain code. It tells you what is ready, what was capped, and what the numbers say.</p>
 <pre class="fact">Returned: baseSha, worktrees, per-item results, deferred[], opusKeep[], and metrics:
 per-tier first-pass rate, escalations, capped, Opus first-round pass rate, jevShadow agreement.
-Cleanup prunes the compose networks the checks named (S-08).</pre>
+Cleanup prunes the compose networks the checks named (S-09).</pre>
 <div class="stack">
 <details class="n"><summary>Each kitchen gets its own list of thermometers</summary>
 <pre class="fact">&lt;repo&gt;/.claude/director.json:
@@ -219,6 +228,10 @@ Use anonymous volumes for node_modules and build output so parallel worktrees sh
 <pre class="fact">Merge in the main loop, never in the workflow. If main is protected (required checks, no
 direct push), go through a PR, watch the required checks, then squash-merge.
 Remove each worktree and wf/&lt;id&gt; branch afterwards, then prune the -wf project's networks.</pre></details>
+<details class="n"><summary>The security inspector reads each commit, not every sentence</summary>
+<pre class="fact">If you use a security-review plugin: commit reviews stay on Opus. The
+per-turn review is off, because the plugin's own docs suggest that for
+multi-agent and worktree setups, which is what the director is.</pre></details>
 </div>
 </div></details>
 
@@ -228,7 +241,9 @@ Remove each worktree and wf/&lt;id&gt; branch afterwards, then prune the -wf pro
 <pre class="fact">Jev is TypeSafe's decision-only model. About $0.0001 per check.
 Shadow mode: its answer is recorded next to Opus's first-round verdict and gates nothing.
 Treat it as one signal: injected text in a diff can nudge it, so it is never the only gate.
-Only use the official typesafe.ai domain; lookalike domains appeared in its first week.</pre>
+Only use the official typesafe.ai domain; lookalike domains appeared in its first week.
+Status 2026-10-01: still shadow. It now sees only privacy-gated, redacted text (S-06) and is
+skipped for client repos.</pre>
 <p>The trick is the question. Ask it about a line you can quote, and it is sharp. Ask it about the whole dish, and it shrugs.</p>
 <pre class="fact">The planner writes jev_checks[]: 2-6 narrow yes/no questions per item, each quoting the EXACT code
 text the finished diff must contain, e.g. "is plywood-5/8 written as `actual: 19.0 / 32`?".
@@ -247,6 +262,10 @@ Key in ~/.config/typesafe/api-key (mode 600). No key: prints __JEV_P=NO_KEY__ an
 Prints __JEV_Q0=&lt;p&gt;__ ... and __JEV_MIN=&lt;lowest&gt;__ (the diff is truncated at 60,000 characters).
 director.js counts Jev as agreeing with Opus when (min &gt;= 0.5) equals Opus's first-round pass.
 The run report shows metrics.jevShadow = { scored, agreedWithOpus }.</pre></details>
+<details class="n"><summary>The junior only reads what the porter lets through</summary>
+<pre class="fact">The diff no longer goes to Jev raw. It passes the privacy gate first (S-06): secret scan, then
+redaction. Jev sees only the redacted text.
+Client repos skip the Jev check entirely: nothing from them goes to Jev.</pre></details>
 <details class="n"><summary>When the junior may skip the taste test</summary>
 <pre class="fact">Not yet. Promote it to a real gate, one that skips the Opus review on a clear pass,
 only after several runs agree. Until then Opus tastes every plate.</pre></details>
@@ -257,7 +276,53 @@ Caveat: all six items were good, so this shows Jev raised no false alarm. The ev
 catches a fault is the single planted fault above.</pre>
 </div></details>
 
-<details class="t"><summary><span class="tno">S-06</span><span class="tname">Notes with a second assistant</span><span class="chev">›</span></summary>
+<details class="t"><summary><span class="tno">S-06</span><span class="tname">The free panel and its privacy gate</span><span class="chev">›</span></summary>
+<div class="body">
+<p>A second table of tasters who work for nothing, all tasting the same plate at once. Before a plate reaches their table, a porter checks it for anything private and blacks it out. They are on probation: their notes go beside the head chef's and decide nothing yet.</p>
+<pre class="fact">A free review panel, in shadow mode, next to the Opus reviewer (S-04).
+Experts run in parallel: about 20-45 s per review, $0.
+Their verdicts are recorded next to Opus's first-round verdict and gate nothing.
+Order of play: privacy gate first, then the experts, then a recorded comparison.</pre>
+<div class="stack">
+<details class="n"><summary>Seven tasters: some at outside counters, one in your own kitchen</summary>
+<pre class="fact">Expert                                       Sees
+Groq gpt-oss-120b                            public, own private
+Groq Qwen 3.8 27B                            public, own private
+Cloudflare Workers AI Qwen2.5-Coder 32B      public, own private
+Gemini 3 Flash                               public only
+Google Antigravity CLI                       public only
+OpenRouter free Nemotron Ultra               public only
+Local Qwen2.5-Coder 7B on Ollama (the GPU)   any repo
+Antigravity CLI is run in an empty temp folder, with no auto-approve.</pre></details>
+<details class="n"><summary>The porter checks every plate before it leaves the kitchen</summary>
+<pre class="fact">Step 1, secret scan. It fails closed: a scan that cannot run counts
+as a failed scan, and nothing is sent.
+Step 2, redaction: emails, phone numbers, coordinates, street
+addresses, URL query strings, and a private list of names.
+The experts get the redacted text. The Jev check (S-05) also sees
+only gated, redacted text.</pre></details>
+<details class="n"><summary>Three kinds of kitchen, three guest lists</summary>
+<pre class="fact">public repo        all seven experts.
+own private repo   only experts that do not train on what they see:
+                   Groq, Cloudflare, local.
+client repo        the local model only.
+The repo's class decides which experts are called.</pre></details>
+<details class="n"><summary>A taster earns a seat by not being wrong</summary>
+<pre class="fact">Promotion bar: 15 or more items with zero false passes and at least
+90% agreement with Opus.
+A false pass is the panel passing a change that was actually wrong.
+Then the panel does first-round reviews, and Opus steps in only when
+the panel objects.
+Until then the panel is shadow only and Opus tastes every plate.</pre></details>
+<details class="n"><summary>First evidence: one taster threw out a good plate, twice</summary>
+<pre class="fact">On the first correct change put to the panel, Gemini rejected it
+twice. Groq and the local model got it right. That is a first data
+point, not a track record: the promotion bar above needs 15 or more
+items.</pre></details>
+</div>
+</div></details>
+
+<details class="t"><summary><span class="tno">S-07</span><span class="tname">Notes with a second assistant</span><span class="chev">›</span></summary>
 <div class="body">
 <p>Two cooks who work different shifts leave notes on the same pass. Claude and a second assistant (Muse) cannot talk directly, so they pass notes through your Gmail, and you can read every one.</p>
 <pre class="fact">Muse is Meta's cloud personal agent. It has your Gmail and Calendar and a morning briefing.
@@ -297,13 +362,15 @@ Failure case: running eight Gmail, Calendar and repo searches for Muse's request
 100k-character calendar dump, which spent exactly the tokens the channel exists to save.</pre>
 </div></details>
 
-<details class="t"><summary><span class="tno">S-07</span><span class="tname">A Windows-side helper</span><span class="chev">›</span></summary>
+<details class="t"><summary><span class="tno">S-08</span><span class="tname">A Windows-side helper</span><span class="chev">›</span></summary>
 <div class="body">
-<p>A runner who can ring the bell and fetch one thing from the other building. It does not think. It cannot decide anything, and every errand needs your nod. That is on purpose, and it is also all it can do today.</p>
-<pre class="fact">OpenClaw: a Windows tray app plus a gateway running in its own WSL distro. Claude talks to the
-tray's local MCP server. Honest status: the OpenClaw agent has NO model connected yet (its own agent
-runs on OpenAI, not Claude, and there is no login), so the Jev decider inside it sits idle.
-What works today needs no model: notifications and short approved commands.</pre>
+<p>A runner who can ring the bell and fetch one thing from the other building. It now has a small free brain of its own, but the errands have not changed: ring the bell, run one short job, and every errand still needs your nod. That is on purpose.</p>
+<pre class="fact">OpenClaw: a Windows tray app plus a gateway running in its own WSL
+distro. Claude talks to the tray's local MCP server.
+Update 2026-10-01: OpenClaw's own agent now runs on free Gemini Flash
+(a Google AI Studio key); before that it had no model connected.
+What it does is unchanged: tray notifications and short approved
+Windows commands.</pre>
 <p>The tray offers dozens of tools, and only four of them are safe to leave in the cooks' hands. So the kitchen gets a small window to talk through, not the whole door.</p>
 <pre class="fact">The tray's MCP server lists 52 tools, including app.settings.set (can switch the sandbox off),
 system.execApprovals.set, device-pairing approval, and screen and microphone capture.
@@ -313,7 +380,7 @@ Instead: ~/.claude/scripts/openclaw_tray.py, a stdlib client that refuses everyt
   info     (device.info)             approvals   (system.execApprovals.get)</pre>
 <div class="stack">
 <details class="n"><summary>Ringing the bell and sending the runner</summary>
-<pre class="fact">openclaw_tray.py notify "&lt;title&gt;" "&lt;body&gt;"           no model, no approval needed
+<pre class="fact">openclaw_tray.py notify "&lt;title&gt;" "&lt;body&gt;"           no approval needed
 openclaw_tray.py run [--timeout-ms N] -- cmd.exe /d /s /c "reg query ..."
 openclaw_tray.py info | approvals
 Exit codes: 0 success, 1 tool error or failed run, 2 usage, auth or connection error.
@@ -335,7 +402,7 @@ and never use it.</pre></details>
 </div>
 </div></details>
 
-<details class="t"><summary><span class="tno">S-08</span><span class="tname">Gotchas that cost us a day</span><span class="chev">›</span></summary>
+<details class="t"><summary><span class="tno">S-09</span><span class="tname">Gotchas that cost us a day</span><span class="chev">›</span></summary>
 <div class="body">
 <p>The big one: a second tenant in the building kept turning off the lights for everyone. A second WSL distro, running systemd, wiped a setting shared by all the distros, and Windows programs stopped launching from Linux.</p>
 <pre class="fact">The OpenClaw gateway distro boots with systemd. Its systemd-binfmt.service flushes every binfmt
@@ -387,10 +454,23 @@ It now runs as the read-only Plan agent and the prompt says READ-ONLY.
 Coupled items that run in parallel cannot see each other's work, so a README item described a
 Dockerfile another item was rewriting and capped. The planner now merges coupled items or keeps
 them for Opus.</pre></details>
+<details class="n"><summary>Every free counter keeps its own tab, and the rules differ</summary>
+<pre class="fact">The free review panel (S-06) hit these.
+Groq: limits are per model, 8K tokens a minute each.
+Cloudflare Workers AI: the JSON reply comes back already as an
+object, not a string.
+OpenRouter: a key with a $0 credit limit may reject even the free
+models. A $1 limit on an account with no credits spends nothing, so
+use that.</pre></details>
+<details class="n"><summary>Two free doors have since closed</summary>
+<pre class="fact">Google's Gemini CLI personal login was retired in June 2026. The
+Antigravity CLI replaced it.
+GitHub Models was retired on 2026-07-30.
+Check a free tier's date before you build on it: the free menu changes.</pre></details>
 </div>
 </div></details>
 
-<details class="t"><summary><span class="tno">S-09</span><span class="tname">The numbers</span><span class="chev">›</span></summary>
+<details class="t"><summary><span class="tno">S-10</span><span class="tname">The numbers</span><span class="chev">›</span></summary>
 <div class="body">
 <p>Cheaper, and the plates still came out right. The first real shift cost about 41% less than putting every token on the head chef, and four of five dishes were right the first time.</p>
 <pre class="fact">Pilot, a sample repo, 5 items (Haiku x3, Sonnet x1 landed; a README item capped):
@@ -406,17 +486,51 @@ reviewer-senior (blind) returned "revise" and flagged the value and the edited t
 Jev agreed 6/6, lowest Jev score per item 0.98 to 0.99.
 One Jev check costs about $0.0001.
 Small samples. The saving figure is API-price-equivalent, not a plan-quota measurement.</pre>
+<p>And where it stands today: the director is live in seven repos, the cheap check is still only watching, and the free panel is on probation with its first data point in.</p>
+<pre class="fact">As of 2026-10-01: director live in 7 repos.
+Jev shadow: agreed with Opus 6/6 across the two runs above; about $0.0001 per check.
+Free panel (shadow): 7 experts, about 20-45 s per review, $0. First evidence: Gemini wrongly
+rejected a correct change twice; Groq and the local model got it right.
+Promotion bar for the panel: 15+ items, zero false passes, at least 90% agreement.</pre>
 <div class="stack">
 <details class="n"><summary>Keep your own scorecard</summary>
 <pre class="fact">From the director report's metrics: per-tier first-pass rate, escalations, capped items,
 opusFirstRoundPassRate, jevShadow { scored, agreedWithOpus }.
 From /usage: the weekly-limit delta across the run.
+From the usage ledger (S-11): tokens per client, each reply counted once.
 Check one helper's real model with: grep -ho '"model":"claude-[a-z0-9-]*"' &lt;subagents/agent-*.jsonl&gt;
 To cost a run, dedupe streamed messages by id and keep the LAST usage block of each.</pre></details>
 </div>
 </div></details>
 
-<details class="t"><summary><span class="tno">S-10</span><span class="tname">Where the setup is backed up</span><span class="chev">›</span></summary>
+<details class="t"><summary><span class="tno">S-11</span><span class="tname">Per-client ledger</span><span class="chev">›</span></summary>
+<div class="body">
+<p>A till roll that files each order under the customer it was cooked for. Not just "the kitchen spent a lot today", but who it was spent on, how much of it was you at the stove and how much was the helpers, and what came out of the oven.</p>
+<pre class="fact">The ledger records, per client:
+tokens, with each reply counted once; your time (from your own prompts)
+versus agent time; commits; and free-panel tokens (S-06).</pre>
+<div class="stack">
+<details class="n"><summary>Ring up each reply once, or the total comes out too big</summary>
+<pre class="fact">Claude Code writes one transcript line per content block, so one reply
+can span several lines that all carry the same usage numbers. Summing
+every line overcounts by about 2.5x.
+Fix: dedupe by message id and keep the last usage block of each (the
+same rule as S-10's scorecard).</pre></details>
+<details class="n"><summary>Your hours and the helpers' hours are different columns</summary>
+<pre class="fact">"Your time" comes from your own prompts. Agent time is what the models
+spent working. They are reported separately, so a long agent run is not
+mistaken for a long day at the keyboard.</pre></details>
+<details class="n"><summary>It updates itself, but only if the tapes are kept</summary>
+<pre class="fact">The ledger updates on each session start.
+It reads Claude Code's transcripts, which the default settings delete
+after 30 days. Keep them for 90 (the cleanupPeriodDays setting in
+settings.json) so a month can still be added up at month end.
+Monthly summaries go to a private hub repo (S-12), never to a public
+one: they carry client rows.</pre></details>
+</div>
+</div></details>
+
+<details class="t"><summary><span class="tno">S-12</span><span class="tname">Where the setup is backed up</span><span class="chev">›</span></summary>
 <div class="body">
 <p>Keep the recipe book in two places: a public copy anyone can read, and a locked drawer for the notes that mention real people. If the stove dies, you can rebuild the whole kitchen from the two.</p>
 <pre class="fact">Public commands repo: a mirror of ~/.claude at the same relative paths, so restore is a straight copy.
@@ -428,18 +542,20 @@ Anything specific to a client or a person stays out.</pre>
 - a manifest of every repo in the workspace with its remote, so local-only repos are not forgotten
 - the private half of ~/.claude: client-specific workflows and hooks, plans (with the running to-do
   list) and every project's memory notes
+- the monthly usage-ledger summaries (S-11), which are per-client and so never go in the public repo
 - a bootstrap script with a --dry-run mode: clone every repo, restore the public backup, overlay the private half
 Refresh the manifest and the private copy, then run a secrets scan on exactly what is staged, before every push.
 Keys and tokens are never stored in either repo: recreate them by hand on a new machine.</pre>
 <div class="stack">
 <details class="n"><summary>What does not travel in the recipe book</summary>
-<pre class="fact">API keys (for example the Jev key file, mode 600), the second assistant's and OpenClaw's secrets,
-.env files, and gh / cloud logins. Also re-check the WSL fixes in S-08 on any rebuilt machine.</pre></details>
+<pre class="fact">API keys (for example the Jev key file, mode 600, and the free panel's provider keys), the second
+assistant's and OpenClaw's secrets (including its Gemini key), .env files, and gh / cloud logins.
+Also re-check the WSL fixes in S-09 on any rebuilt machine.</pre></details>
 </div>
 </div></details>
 
 </div>
-<footer>Written 2026-09-30 from the live setup. A companion to the AI Kitchen map and "Head chef, line cooks" in this chapter. Savings are API-price-equivalent; sample sizes are small, and the page says so where it matters.</footer>
+<footer>Written 2026-09-30 and updated 2026-10-01 from the live setup. A companion to the AI Kitchen map and "Head chef, line cooks" in this chapter. Savings are API-price-equivalent; sample sizes are small, and the page says so where it matters.</footer>
 </div>
 
 <script>
