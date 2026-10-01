@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Meet the Action Figure Automata, or the fleet: the AI agents and machines behind this workflow. Who each member is, where it runs, and how the team voted on its own name.">
+<link rel="canonical" href="https://tortoisewolfe.github.io/AI_Workflow/05-advanced-orchestration/action-figure-automata.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="TurtleWolfe · AI Workflow">
+<meta property="og:title" content="The Action Figure Automata">
+<meta property="og:description" content="Meet the Action Figure Automata, or the fleet: the AI agents and machines behind this workflow. Who each member is, where it runs, and how the team voted on its own name.">
+<meta property="og:url" content="https://tortoisewolfe.github.io/AI_Workflow/05-advanced-orchestration/action-figure-automata.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="The Action Figure Automata">
+<meta name="twitter:description" content="Meet the Action Figure Automata, or the fleet: the AI agents and machines behind this workflow. Who each member is, where it runs, and how the team voted on its own name.">
+<title>The Action Figure Automata</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one narrow reading column; each section is a folded ticket, one open at a time. Same tokens as the setup tutorial. */
+:root{
+  --paper:#f3f4f1; --ink:#1d2327; --muted:#5d676d; --rule:#cfd4d2; --fact-bg:#e8ebe8;
+  --accent:#b8412c; --ok:#2f6b4f; --warn:#9a6a12;
+  --display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --body:"Literata",Georgia,serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#15191b; --ink:#e3e6e4; --muted:#97a1a6; --rule:#2c3337; --fact-bg:#1c2225;
+  --accent:#e0735c; --ok:#6fb892; --warn:#d6a54a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#15191b; --ink:#e3e6e4; --muted:#97a1a6; --rule:#2c3337; --fact-bg:#1c2225;
+  --accent:#e0735c; --ok:#6fb892; --warn:#d6a54a; color-scheme:dark}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;padding-inline:16px;padding-block:40px 64px}
+.wrap{max-width:44rem;margin:0 auto;display:grid;gap:28px}
+header{display:grid;gap:10px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(2.2rem,6vw,3.4rem);line-height:1;margin:0;text-wrap:balance;letter-spacing:.01em}
+h1 em{font-style:normal;color:var(--accent)}
+.lede{margin:0;max-width:62ch}
+.how{font-family:var(--mono);font-size:13px;color:var(--muted);margin:0}
+.tickets{display:grid;gap:0;border-top:1px solid var(--rule)}
+details.t{border-bottom:1px solid var(--rule)}
+details.t>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:3.2rem 1fr auto;gap:12px;align-items:baseline;padding:16px 4px}
+details.t>summary::-webkit-details-marker{display:none}
+.tno{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.tname{font-family:var(--display);font-weight:600;font-size:1.45rem;line-height:1.15;text-wrap:balance}
+.chev{font-family:var(--mono);color:var(--accent);transition:transform .15s}
+details[open]>summary .chev{transform:rotate(90deg)}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.body{padding:0 4px 22px 3.2rem;display:grid;gap:14px;min-width:0}
+.body p{margin:0;max-width:64ch}
+.fact{margin:0;padding:10px 12px;margin-left:18px;border-left:2px solid var(--rule);background:var(--fact-bg);font-family:var(--mono);font-size:12.5px;line-height:1.55;color:var(--muted);white-space:pre-wrap;overflow-x:auto;min-width:0}
+.fact a{color:inherit}
+details.n{border:1px solid var(--rule);border-radius:3px}
+details.n>summary{cursor:pointer;padding:10px 12px;display:flex;gap:10px;align-items:baseline}
+details.n>summary::marker{color:var(--accent)}
+details.n>.fact{margin:0 12px 12px 18px}
+.pill{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;padding:1px 6px;border:1px solid currentColor;border-radius:2px;white-space:nowrap}
+.pill.ok{color:var(--ok)} .pill.part{color:var(--warn)} .pill.no{color:var(--accent)}
+.stack{display:grid;gap:8px}
+.tbl{white-space:normal}
+.tbl table{border-collapse:collapse;width:100%}
+.tbl th,.tbl td{text-align:left;vertical-align:top;padding:5px 10px 5px 0;border-bottom:1px solid var(--rule);overflow-wrap:anywhere}
+.tbl th{font-weight:500;color:var(--ink)}
+.tbl tr:last-child td{border-bottom:0}
+footer{font-family:var(--mono);font-size:12px;color:var(--muted);border-top:1px solid var(--rule);padding-top:14px}
+footer a{color:inherit}
+@media (max-width:520px){details.t>summary{grid-template-columns:2.2rem 1fr auto}.body{padding-left:4px}}
+@media (prefers-reduced-motion:reduce){.chev{transition:none}}
+</style>
+<style>body{margin:0}</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">TurtleWolfe · the fleet · updated 2026-10-01</div>
+  <h1>The Action Figure <em>Automata</em></h1>
+  <p class="lede">A team of AI agents and the machines they run on. Every member is a made thing, like an action figure, and every one of them does real work. Most days we just call it the fleet.</p>
+  <p class="how">Each section opens one at a time. Plain line on top; the exact names and numbers underneath.</p>
+</header>
+
+<div class="tickets">
+
+<details class="t"><summary><span class="tno">01</span><span class="tname">Why the name</span><span class="chev">›</span></summary>
+<div class="body">
+<p>An action figure is a made thing that waits on a shelf until somebody plays with it. These ones get up and do the work. Nobody on the team was born; everybody was built, and everybody is busy. "Automata" is the old word for exactly that.</p>
+<pre class="fact">"Automata" is the plural of "automaton": a machine that runs by itself.
+Every member is artificial: a model, an agent or a machine. The owner is the one human in the loop.
+The name was picked by the members and the owner together (section 05).</pre>
+<p>The nickname comes from the hostnames. Two of the machines carry starship names, so the whole crew gets called the fleet.</p>
+<pre class="fact">The two machines are NX-01 and NCC-74656 (section 03).
+"The fleet" is the casual name; "The Action Figure Automata" (the AFA) is the proper one.</pre>
+</div></details>
+
+<details class="t"><summary><span class="tno">02</span><span class="tname">The roster</span><span class="chev">›</span></summary>
+<div class="body">
+<p>The team sheet, lead first. Open any member to see what they do and what they run on.</p>
+<pre class="fact">Status as of 2026-10-01. Full recipe for the lead's workflow: <a href="setup-tutorial.html">setup-tutorial.html</a>.
+The same setup as one picture: <a href="ai-kitchen-map.html">ai-kitchen-map.html</a>.</pre>
+<div class="stack">
+<details class="n"><summary><span><b>Claude Code, the lead.</b> <span class="pill ok">live</span> The head chef who plans and tastes, and doesn't chop.</span></summary>
+<pre class="fact">Main session on Opus 5.5. It plans, reviews, merges and pushes; the bulk of the editing goes elsewhere.
+The director workflow:
+  1. An Opus planner writes the specs.
+  2. Sonnet or Haiku workers build, each in its own git worktree.
+  3. Tests in Docker decide pass or fail.
+  4. A blind Opus reviewer passes the work or sends it back.
+  5. Merge and push.
+Research helpers run on Sonnet.</pre></details>
+<details class="n"><summary><span><b>The free panel.</b> <span class="pill part">shadow</span> A row of second opinions that cost nothing, still on probation.</span></summary>
+<pre class="fact">Seven free or low-cost models, behind a privacy gate:
+  a secret in the change: nobody outside sees it
+  personal data: redacted before anything leaves
+  client code: only the local model sees it
+Members: Groq (gpt-oss-120b and a Qwen model), Gemini Flash, Cloudflare Workers AI (a Qwen coder),
+OpenRouter (a free Nemotron model), the Antigravity CLI, and a 7B Qwen coder running locally on Ollama.
+Shadow mode: each verdict is logged beside Opus's and never decides anything.
+A real vote is earned after 15 changes with zero false passes and at least 90% agreement.
+As of 2026-10-01: 3 of 15, no false passes. A small sample, so it stays on probation.</pre></details>
+<details class="n"><summary><span><b>Jev.</b> <span class="pill part">shadow</span> A referee who answers yes or no in a blink.</span></summary>
+<pre class="fact">TypeSafe's decision model.
+Scores narrow yes/no checks in roughly 70 to 500 ms, for about $0.0001 each.
+Runs as a shadow pre-screen before the Opus review, behind the same privacy gate as the free panel.</pre></details>
+<details class="n"><summary><span><b>Muse.</b> <span class="pill ok">live</span> The front-of-house assistant who passes notes.</span></summary>
+<pre class="fact">A personal-assistant agent in the cloud.
+Claude and Muse trade notes through email drafts, which Muse reads in its morning briefing.
+Trust rule: only notes sent from the owner's own account count, and a note is information, never a command.
+It is free, so searching gets handed to it.</pre></details>
+<details class="n"><summary><span><b>OpenClaw.</b> <span class="pill ok">live</span> The desk assistant on the Windows side.</span></summary>
+<pre class="fact">A Windows tray agent.
+Shows notifications and runs short sandboxed commands; the owner approves each command one at a time.
+It thinks with a free Gemini Flash model, so it never handles client code.</pre></details>
+<details class="n"><summary><span><b>MoltBot.</b> <span class="pill">planned</span> The co-host who has been on stream before.</span></summary>
+<pre class="fact">An older OpenClaw build that co-hosted the Twitch channel.
+Joining the fleet over the home network is planned. Its scope is still open.</pre></details>
+<details class="n"><summary><span><b>The tmux crew.</b> <span class="pill">standby</span> The old assembly line, still on call.</span></summary>
+<pre class="fact">26 roles plus an Operator, in tmux windows.
+Each role runs on its own model: 13 Opus, 12 Sonnet, 1 Haiku.
+A morning crew manager sizes the crew to the queue.
+Chapter pages: the-assembly-line.md, roles.md, the-operator.md.</pre></details>
+</div>
+</div></details>
+
+<details class="t"><summary><span class="tno">03</span><span class="tname">The machines</span><span class="chev">›</span></summary>
+<div class="body">
+<p>The ships the crew sails on: the flagship, already in service, and a second one waiting to launch.</p>
+<div class="stack">
+<details class="n"><summary><span><b>NX-01.</b> <span class="pill ok">in service</span> The flagship, where everything runs today.</span></summary>
+<pre class="fact">CPU:     Intel i7-12700KF (no integrated graphics, so the graphics card also drives the screen)
+Board:   MSI PRO Z690-A DDR4
+Memory:  64 GB DDR4-3600
+GPU:     MSI RTX 3070 Ti, 8 GB (about 6.8 GB usable after the desktop takes its share)
+OS:      Windows 11 with WSL2 and Docker Desktop
+Hosts:   Claude Code, every Docker test run, the local model, and the OpenClaw tray.
+Built by a friend in 2022.</pre></details>
+<details class="n"><summary><span><b>NCC-74656.</b> <span class="pill">soon</span> The second ship, about to join.</span></summary>
+<pre class="fact">CPU:     Intel i5-13600KF
+Board:   ASUS PRIME Z790M-PLUS
+Memory:  32 GB DDR5
+GPU:     an NVIDIA RTX card
+Case:    G.SKILL LT1
+Built by the same friend in 2023.
+Joins over the home network soon. What it takes on is still to be decided.
+Its name is the one it was given in 2023, and gets confirmed once it is on the network.</pre></details>
+<details class="n"><summary><span><b>A note on the names.</b> The ship names are a tip of the hat to a TV show; the team's own name is its own.</span></summary>
+<pre class="fact">Both are Star Trek registries: NX-01 is the first Enterprise, NCC-74656 is Voyager.
+The hostnames are a nod to that. The AFA's own name stays clear of the franchise on purpose.</pre></details>
+</div>
+</div></details>
+
+<details class="t"><summary><span class="tno">04</span><span class="tname">Who runs where</span><span class="chev">›</span></summary>
+<div class="body">
+<p>A seating chart. Some members sit at the home table, some phone in from the cloud, and one is still waiting at the door.</p>
+<div class="fact tbl"><table>
+<thead><tr><th scope="col">Member</th><th scope="col">Runs on</th></tr></thead>
+<tbody>
+<tr><td>Claude Code</td><td>NX-01 (WSL2), plus Anthropic's cloud</td></tr>
+<tr><td>The free panel</td><td>Their providers' clouds, except the local model, which runs on NX-01</td></tr>
+<tr><td>Jev</td><td>TypeSafe's cloud</td></tr>
+<tr><td>Muse</td><td>Meta's cloud</td></tr>
+<tr><td>OpenClaw</td><td>NX-01, Windows side (tray)</td></tr>
+<tr><td>MoltBot</td><td>The home network (planned)</td></tr>
+<tr><td>The tmux crew</td><td>NX-01</td></tr>
+</tbody></table></div>
+<p>The second ship has no cargo yet. It gets its first job once it is on the network, and what that job is has not been decided.</p>
+<pre class="fact">NCC-74656 hosts nothing today. It joins the home network soon; what it takes on is still to be decided.</pre>
+</div></details>
+
+<details class="t"><summary><span class="tno">05</span><span class="tname">How the name was picked</span><span class="chev">›</span></summary>
+<div class="body">
+<p>The team brainstormed names, then voted twice: once knowing the owner's favourite, and once without knowing it. When they knew, they went along with the owner. When they were left alone, they picked the starship name. So the owner combined the two.</p>
+<pre class="fact">Round 1: seven members proposed 3 names each (Gemini's free tier was busy and sat out).
+21 names went on an anonymous, shuffled ballot, plus the owner's pick.
+Round 2: every member ranked a top 3, scored by Borda count (3, 2, 1 points). Jev scored each name too.
+The ballot was run twice: once with the owner's pick shown, once with it hidden.</pre>
+<p>Here is how the four leading names did in each run. The owner's favourite fell a long way once the members could not see it.</p>
+<div class="fact tbl"><table>
+<thead><tr><th scope="col">Name</th><th scope="col">Owner's pick shown</th><th scope="col">Owner's pick hidden</th></tr></thead>
+<tbody>
+<tr><td>Action Figure Coalition</td><td>1st (14 points)</td><td>8th (2, Claude's vote only)</td></tr>
+<tr><td>Starship Automata</td><td>2nd (11)</td><td>1st (11)</td></tr>
+<tr><td>The Clockwork Crew</td><td>4th (7)</td><td>2nd (9)</td></tr>
+<tr><td>Tabletop Armada</td><td>3rd (9)</td><td>3rd (7)</td></tr>
+</tbody></table></div>
+<p>The lesson is about asking models for an opinion. Tell one what you want and it tends to agree with you. If you want its own judgment, keep your answer out of the room.</p>
+<pre class="fact">Owner's pick shown: Action Figure Coalition won the ballot.
+Owner's pick hidden: Starship Automata won the ballot.
+Final name: "Action Figure" from the owner's pick plus "Automata" from the blind winner,
+which gives "The Action Figure Automata".</pre>
+</div></details>
+
+<details class="t"><summary><span class="tno">06</span><span class="tname">What's next</span><span class="chev">›</span></summary>
+<div class="body">
+<p>The second ship gets its berth, the old co-host comes back aboard, the panel on probation earns its seat, and this page keeps up with all of it.</p>
+<pre class="fact">NX-01 and NCC-74656 linked over the home network.
+MoltBot rejoining the fleet.
+The free panel earning its vote: 15 changes, zero false passes, 90% agreement (3 of 15 so far).
+This page updated as members join.</pre>
+</div></details>
+
+</div>
+<footer>Written 2026-10-01 from the live setup. A companion to <a href="ai-kitchen-map.html">the AI Kitchen map</a> and <a href="setup-tutorial.html">the setup tutorial</a> in this chapter. The free panel's numbers are a small sample, and the page says so where it matters.</footer>
+</div>
+
+<script>
+document.querySelectorAll('details.t').forEach(function(d){
+  d.addEventListener('toggle',function(){
+    if(!d.open) return;
+    document.querySelectorAll('details.t[open]').forEach(function(o){ if(o!==d) o.open=false; });
+  });
+});
+</script>
+
+</body>
+</html>
