@@ -62,6 +62,7 @@ For these, the assembly line is genuinely faster because it's running 27 Claudes
 ## What's in this chapter
 
 - [**ai-kitchen-map.html**](ai-kitchen-map.html) ([PDF](ai-kitchen-map.pdf) · just the graph: [PNG](ai-kitchen-graph.png), [SVG](ai-kitchen-graph.svg)) — the current version of this chapter as one picture: an Opus "head chef", cheap Haiku/Sonnet workers in git worktrees behind tests and a blind Opus review, plus the side agents (2026-09-30)
+- [**setup-tutorial.html**](setup-tutorial.html) — build it yourself: tiered helper agents, the director workflow behind deterministic checks and a blind Opus review, the Jev shadow check, notes with a second assistant over Gmail drafts, and the gotchas that cost a day (2026-09-30)
 - [**the-assembly-line.md**](the-assembly-line.md) — the 7-stage pipeline diagram and how work flows through it
 - [**roles.md**](roles.md) — every one of the 27 roles documented: what they do, what they read, what they write
 - [**the-operator.md**](the-operator.md) — the meta-orchestrator that runs OUTSIDE tmux and dispatches to workers INSIDE — including the `tmux send-keys ... Enter` lesson that took TurtleWolfe a week to learn
