@@ -48,6 +48,7 @@ Plus [`principles/`](principles/) — the *why* behind every rule, one file per 
 - [**The AI Kitchen map**](05-advanced-orchestration/ai-kitchen-map.html) ([PDF](05-advanced-orchestration/ai-kitchen-map.pdf)): the whole current setup on one page. An Opus "head chef" hands work to cheap Haiku/Sonnet cooks in separate git worktrees, tests decide pass or fail, and a blind Opus review tastes before anything ships.
 - [**Head chef, line cooks**](05-advanced-orchestration/head-chef-line-cooks.html): why it's built this way. What the "let cheap agents do the grunt work" advice gets right, why local models don't fit an 8 GB card, and how the first real run went.
 - [**Build your AI kitchen**](05-advanced-orchestration/setup-tutorial.html): the setup tutorial. How to wire up the tiered helpers, the director workflow, the cheap Jev yes/no check, notes with a second assistant, and the gotchas that cost us a day.
+- [**The Action Figure Automata**](05-advanced-orchestration/action-figure-automata.html): the team behind it all, nicknamed "the fleet". Who each AI member is, which machine it runs on, and how they voted on their own name.
 
 ## The companion starter repo
 
