@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="840" viewBox="0 0 1200 840" role="img" aria-label="A task goes from me to the head chef (Claude Code on Opus), which hands it to the director line: an Opus planner writes specs, Haiku or Sonnet cooks work in separate worktrees, tests in Docker decide pass or fail, a Jev check is logged on the side, and a blind Opus reviewer tastes before merge and push. Only results return to the head chef. Muse exchanges notes with the head chef through Gmail. The OpenClaw tray shows notifications and runs short commands I approve. The tmux crew and the MoltBot co-host are planned.">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="840" viewBox="0 0 1200 840" role="img" aria-label="A task goes from me to the head chef (Claude Code on Opus), which hands it to the director line: an Opus planner writes specs, Haiku or Sonnet cooks work in separate worktrees, tests in Docker decide pass or fail, a Jev check and a free panel of seven free models, behind a privacy gate, are logged on the side, and a blind Opus reviewer tastes before merge and push. Only results return to the head chef. Muse exchanges notes with the head chef through Gmail. The OpenClaw tray shows notifications and runs short commands I approve, and its agent thinks with a free Gemini Flash model. The tmux crew runs 13 Opus, 12 Sonnet and 1 Haiku roles with a morning crew manager. A per-client ledger sits on the memory shelf. The MoltBot co-host is planned.">
 <style><![CDATA[
 @import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&family=Literata:opsz,wght@7..72,600&family=JetBrains+Mono:wght@400&display=swap");
 svg{
@@ -22,15 +22,15 @@ color:var(--edge)}
 .shadow{stroke-dasharray:8 5} .planned{stroke-dasharray:3 5;opacity:.9}
 .e{fill:none;stroke:var(--edge);stroke-width:1.8}
 .t{fill:var(--ink);font-family:var(--body);font-size:17px;font-weight:600}
-.s{fill:var(--ink2);font-family:var(--mono);font-size:13px}
-.l{fill:var(--ink2);font-family:var(--mono);font-size:13px}
+.s{fill:var(--ink2);font-family:var(--mono);font-size:13px;font-variant-ligatures:none}
+.l{fill:var(--ink2);font-family:var(--mono);font-size:13px;font-variant-ligatures:none}
 .bt{fill:var(--ink2);font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
 
 ]]></style>
 <rect x="0" y="0" width="1200" height="840" fill="#fcfcfb"/>
 <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
-<rect class="band" x="462" y="26" width="732" height="266" rx="8"/>
-<text class="bt" x="478" y="54">The line · director workflow · live in 4 repos</text>
+<rect class="band" x="462" y="26" width="732" height="268" rx="8"/>
+<text class="bt" x="478" y="54">The line · director workflow · live in 7 repos</text>
 <rect class="bx opus" x="478" y="84" width="124" height="80" rx="5"/>
 <line class="hb band-o" x1="479" y1="88.5" x2="601" y2="88.5"/>
 <text class="t" x="540" y="118" text-anchor="middle">Plan</text>
@@ -66,14 +66,23 @@ color:var(--edge)}
 <text class="l" x="1051.0" y="76" text-anchor="middle">pass</text>
 <path class="e shadow" d="M840,164 V194" marker-end="url(#ah)"/>
 <text class="l" x="848" y="184">diff</text>
-<rect class="bx ext shadow" x="806" y="196" width="124" height="52" rx="5"/>
-<text class="t" x="868" y="220" text-anchor="middle" style="font-size:15px">Jev check</text>
-<text class="s" x="868" y="238" text-anchor="middle">logged only</text>
+<rect class="bx ext shadow" x="800" y="196" width="114" height="52" rx="5"/>
+<text class="t" x="857" y="220" text-anchor="middle" style="font-size:15px">Jev check</text>
+<text class="s" x="857" y="238" text-anchor="middle">logged only</text>
+<path class="e shadow" d="M1000,164 V177" marker-end="url(#ah)"/>
+<rect class="bx tool shadow" x="950" y="178" width="210" height="54" rx="5"/>
+<text class="t" x="1055" y="195" text-anchor="middle" style="font-size:15px">Privacy gate</text>
+<text class="s" x="1055" y="211" text-anchor="middle">secrets block · redact</text>
+<text class="s" x="1055" y="226" text-anchor="middle">client → local only</text>
+<path class="e shadow" d="M1055,232 V246" marker-end="url(#ah)"/>
+<rect class="bx ext shadow" x="950" y="248" width="210" height="40" rx="5"/>
+<text class="t" x="1055" y="265" text-anchor="middle" style="font-size:15px">Free panel · $0</text>
+<text class="s" x="1055" y="281" text-anchor="middle">7 free models · parallel</text>
 <path class="e" d="M790,164 V210 H700 V166" marker-end="url(#ah)"/>
 <text class="l" x="745" y="202" text-anchor="middle">fail: retry</text>
-<path class="e" d="M990,164 V258 H676 V166" marker-end="url(#ah)"/>
+<path class="e" d="M934,164 V258 H676 V166" marker-end="url(#ah)"/>
 <text class="l" x="833" y="280" text-anchor="middle">revise (max 2)</text>
-<path class="e" d="M1124,164 V312 H420 V338" marker-end="url(#ah)"/>
+<path class="e" d="M1178,164 V312 H420 V338" marker-end="url(#ah)"/>
 <text class="l" x="772" y="306" text-anchor="middle">results only · the cooks&#x27; working history is thrown away</text>
 <path class="e" d="M400,340 V124 H476" marker-end="url(#ah)"/>
 <text class="l" x="392" y="240" text-anchor="end">goal + repo</text>
@@ -124,39 +133,49 @@ color:var(--edge)}
 <text class="s" x="640" y="584" text-anchor="middle">short commands</text>
 <path class="e" d="M430,446 H500 V555 H558" marker-end="url(#ah)"/>
 <text class="l" x="506" y="500">notify / run</text>
-<rect class="bx ext planned" x="860" y="510" width="180" height="90" rx="5"/>
+<rect class="bx ext" x="860" y="510" width="180" height="90" rx="5"/>
+<line class="hb band-e" x1="861" y1="514.5" x2="1039" y2="514.5"/>
 <text class="t" x="950" y="544" text-anchor="middle">OpenClaw agent</text>
-<text class="s" x="950" y="566" text-anchor="middle">no model yet</text>
-<text class="s" x="950" y="584" text-anchor="middle">(blocked)</text>
-<path class="e planned" d="M720,555 H858" marker-end="url(#ah)"/>
-<text class="l" x="790" y="547" text-anchor="middle">would think</text>
+<text class="s" x="950" y="566" text-anchor="middle">free Gemini Flash</text>
+<text class="s" x="950" y="584" text-anchor="middle">model connected</text>
+<path class="e" d="M720,555 H858" marker-end="url(#ah)"/>
+<text class="l" x="790" y="547" text-anchor="middle">thinks</text>
 <rect class="bx ext planned" x="1060" y="510" width="134" height="90" rx="5"/>
 <text class="t" x="1127" y="544" text-anchor="middle">Jev decider</text>
 <text class="s" x="1127" y="566" text-anchor="middle">idle for now</text>
 <text class="s" x="1127" y="584" text-anchor="middle">(needs a model)</text>
 <path class="e planned" d="M1040,555 H1058" marker-end="url(#ah)"/>
 <path class="e" d="M96,448 V626 H640 V602" marker-end="url(#ah)"/>
-<text class="l" x="112" y="648">approve each command, every time</text>
-<rect class="bx tool" x="16" y="672" width="220" height="80" rx="5"/>
-<line class="hb band-t" x1="17" y1="676.5" x2="235" y2="676.5"/>
-<text class="t" x="126" y="706" text-anchor="middle">Memory shelf</text>
-<text class="s" x="126" y="728" text-anchor="middle">read at every start</text>
-<text class="s" x="126" y="746" text-anchor="middle">lessons written back</text>
-<rect class="bx opus planned" x="260" y="672" width="330" height="80" rx="5"/>
-<text class="t" x="425" y="706" text-anchor="middle">Crew · tmux assembly line</text>
-<text class="s" x="425" y="728" text-anchor="middle">26 roles + an Operator</text>
-<text class="s" x="425" y="746" text-anchor="middle">planned: a model per role</text>
-<rect class="bx ext planned" x="614" y="672" width="250" height="80" rx="5"/>
-<text class="t" x="739" y="706" text-anchor="middle">MoltBot</text>
-<text class="s" x="739" y="728" text-anchor="middle">Twitch co-host on the LAN</text>
-<text class="s" x="739" y="746" text-anchor="middle">planned</text>
-<rect class="band" x="890" y="672" width="304" height="80" rx="6"/>
-<path class="e" d="M906,690 H944"/>
-<text class="s" x="954" y="694">live</text>
-<path class="e shadow" d="M906,712 H944"/>
-<text class="s" x="954" y="716">shadow: logged only</text>
-<path class="e planned" d="M906,734 H944"/>
-<text class="s" x="954" y="738">planned or blocked</text>
+<text class="l" x="112" y="618">approve each command, every time</text>
+<rect class="bx tool" x="16" y="662" width="176" height="96" rx="5"/>
+<line class="hb band-t" x1="17" y1="666.5" x2="191" y2="666.5"/>
+<text class="t" x="104" y="692" text-anchor="middle">Memory shelf</text>
+<text class="s" x="104" y="712" text-anchor="middle">read at every start</text>
+<text class="s" x="104" y="730" text-anchor="middle">lessons written back</text>
+<rect class="bx tool" x="208" y="662" width="176" height="96" rx="5"/>
+<line class="hb band-t" x1="209" y1="666.5" x2="383" y2="666.5"/>
+<text class="t" x="296" y="692" text-anchor="middle">Per-client ledger</text>
+<text class="s" x="296" y="712" text-anchor="middle">tokens per client</text>
+<text class="s" x="296" y="730" text-anchor="middle">my time vs agent</text>
+<text class="s" x="296" y="748" text-anchor="middle">updates each start</text>
+<rect class="bx opus" x="400" y="662" width="350" height="96" rx="5"/>
+<line class="hb band-o" x1="401" y1="666.5" x2="749" y2="666.5"/>
+<text class="t" x="575" y="692" text-anchor="middle">Crew · tmux assembly line</text>
+<text class="s" x="575" y="712" text-anchor="middle">26 roles + an Operator</text>
+<text class="s" x="575" y="730" text-anchor="middle">13 Opus · 12 Sonnet · 1 Haiku</text>
+<text class="s" x="575" y="748" text-anchor="middle">morning crew manager: plan first, --apply</text>
+<rect class="bx ext planned" x="766" y="662" width="180" height="96" rx="5"/>
+<text class="t" x="856" y="692" text-anchor="middle">MoltBot</text>
+<text class="s" x="856" y="712" text-anchor="middle">Twitch co-host</text>
+<text class="s" x="856" y="730" text-anchor="middle">on the LAN</text>
+<text class="s" x="856" y="748" text-anchor="middle">planned</text>
+<rect class="band" x="962" y="662" width="232" height="96" rx="6"/>
+<path class="e" d="M978,684 H1012"/>
+<text class="s" x="1022" y="688">live</text>
+<path class="e shadow" d="M978,710 H1012"/>
+<text class="s" x="1022" y="714">shadow: logged only</text>
+<path class="e planned" d="M978,736 H1012"/>
+<text class="s" x="1022" y="740">planned or blocked</text>
 <rect class="band" x="16" y="772" width="1178" height="54" rx="6"/>
 <rect class="sw-opus" x="36" y="789" width="20" height="20" rx="4"/>
 <text class="s" x="66" y="804">Opus · judgment, expensive</text>
