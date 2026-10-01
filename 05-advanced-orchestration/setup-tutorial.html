@@ -287,8 +287,8 @@ Label the new draft's messageId with the shared label.</pre></details>
 <details class="n"><summary>Notes arrive on the other cook's shift, not instantly</summary>
 <pre class="fact">Muse reads [CC&gt;MUSE] drafts in its 7:45 AM briefing and summarises them; outside that it notices
 one only if you point it there, so expect about a day of latency.
-Muse asks your approval before each [MUSE&gt;CC] send, so that direction has turnaround too.
-As of 2026-09-30 the Claude-to-Muse direction was confirmed working; the first Muse-to-Claude note was still waiting on that approval.</pre></details>
+Muse asks your approval before each [MUSE&gt;CC] send, so that direction moves at your pace.
+Muse can search your mail and calendar itself, and it costs nothing: hand it pointers, and let it do the digging.</pre></details>
 </div>
 <p>Let the free cook do the searching. Muse costs you nothing per search and Claude's tokens are the thing you ration. When Muse asks for a clue, answer from what Claude already knows locally and point it where to look.</p>
 <pre class="fact">Claude's edge is local: repos, git history, files. Muse's is Gmail and Calendar.
@@ -362,7 +362,7 @@ the next full WSL restart; side effect: distros never idle out on their own).</p
 <details class="n"><summary>Unwashed trays piled up until the sink was full</summary>
 <pre class="fact">Symptom: "all predefined address pools have been fully subnetted" and every new compose run blocked.
 Cause: checks ran `docker compose` without -p, so each worktree left a &lt;dir&gt;_default network behind
-(32 networks).
+(30 of them; the prune left 6).
 One-time cleanup: docker network prune -f --filter label=com.docker.compose.project
 (removes only unused compose-made networks; 30 became 6 here).
 Structural fix: director.js refuses a check without -p and prunes the named projects' networks in Cleanup.</pre></details>
