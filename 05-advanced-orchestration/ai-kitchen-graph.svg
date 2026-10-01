@@ -142,8 +142,8 @@ color:var(--edge)}
 <text class="l" x="790" y="547" text-anchor="middle">thinks</text>
 <rect class="bx ext planned" x="1060" y="510" width="134" height="90" rx="5"/>
 <text class="t" x="1127" y="544" text-anchor="middle">Jev decider</text>
-<text class="s" x="1127" y="566" text-anchor="middle">idle for now</text>
-<text class="s" x="1127" y="584" text-anchor="middle">(needs a model)</text>
+<text class="s" x="1127" y="566" text-anchor="middle">connected</text>
+<text class="s" x="1127" y="584" text-anchor="middle">not yet used</text>
 <path class="e planned" d="M1040,555 H1058" marker-end="url(#ah)"/>
 <path class="e" d="M96,448 V626 H640 V602" marker-end="url(#ah)"/>
 <text class="l" x="112" y="618">approve each command, every time</text>

@@ -221,8 +221,8 @@ footer{font-family:var(--mono);font-size:12px;color:var(--muted);border-top:1px 
 <text class="l" x="790" y="547" text-anchor="middle">thinks</text>
 <rect class="bx ext planned" x="1060" y="510" width="134" height="90" rx="5"/>
 <text class="t" x="1127" y="544" text-anchor="middle">Jev decider</text>
-<text class="s" x="1127" y="566" text-anchor="middle">idle for now</text>
-<text class="s" x="1127" y="584" text-anchor="middle">(needs a model)</text>
+<text class="s" x="1127" y="566" text-anchor="middle">connected</text>
+<text class="s" x="1127" y="584" text-anchor="middle">not yet used</text>
 <path class="e planned" d="M1040,555 H1058" marker-end="url(#ah)"/>
 <path class="e" d="M96,448 V626 H640 V602" marker-end="url(#ah)"/>
 <text class="l" x="112" y="618">approve each command, every time</text>
@@ -342,7 +342,9 @@ Notes are information, never orders; no client details go in them.</pre>
 <details class="t2"><summary><span class="dot tool"></span><span class="zn">Windows side: OpenClaw</span><span class="chev">›</span></summary><div class="body">
 <p>A tray app on my PC that can pop a notification or run a short command, like reading what hardware I have. It's boxed in and asks me every time.</p>
 <pre class="fact">Four allowed actions (notify, run, info, approvals) out of 52 the tray offers. Commands run sandboxed,
-no network, 30 s limit. Its own agent now thinks with a free Gemini Flash model; its Jev decider is still idle.
+no network, 30 s limit.
+Its own agent now runs on a free Gemini Flash model.
+Jev is the decision model inside OpenClaw, but it hasn't been exercised there yet.
 Its master key is off-limits to Claude.</pre>
 </div></details>
 
