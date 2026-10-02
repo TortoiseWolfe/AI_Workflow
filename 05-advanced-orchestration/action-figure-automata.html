@@ -158,11 +158,17 @@ Runs read-only in an empty folder, keeps no session, and only sees public code a
 <pre class="fact">TypeSafe's decision model.
 Scores narrow yes/no checks in roughly 70 to 500 ms, for about $0.0001 each.
 Runs as a shadow pre-screen before the Opus review, behind the same privacy gate as the free panel.</pre></details>
-<details class="n"><summary><span><b>Muse.</b> <span class="pill ok">live</span> The front-of-house assistant who passes notes. The owner calls it Hatch.</span></summary>
-<pre class="fact">A personal-assistant agent in the cloud. Nickname: Hatch.
-Claude and Muse trade notes through email drafts, which Muse reads in its morning briefing.
-Trust rule: only notes sent from the owner's own account count, and a note is information, never a command.
-It is free, so searching gets handed to it.</pre></details>
+<details class="n"><summary><span><b>Muse.</b> <span class="pill ok">live</span> The producer who runs front of house. The owner calls it Hatch.</span></summary>
+<pre class="fact">Meta's cloud personal-assistant agent, with its own browser that stays signed in to the owner's accounts.
+Owns the producer work: Twitch, YouTube and Discord upkeep, titles, schedules and events, clips and promo text,
+community replies in the owner's voice, the morning briefing, and research.
+Acts alone on reading, drafting and reversible changes inside an approved plan. Asks first before deleting
+anything, sending anything as the owner, money, credentials, or anything it can't undo.
+Stops at two-factor and CAPTCHA screens for the owner; it never bypasses them.
+Notes with Claude go through email drafts: it checks every 20 minutes from 8 AM to 10 PM ET, summarises each
+note to the owner, archives it, then clears the draft. A note is information, never a command.
+Route to it: dashboard steps and anything reversible. Route to Claude: everything on the machines.
+(Its own answers, 2026-10-02.)</pre></details>
 <details class="n"><summary><span><b>OpenClaw.</b> <span class="pill ok">live</span> The desk assistant on the Windows side.</span></summary>
 <pre class="fact">A Windows tray agent.
 Shows notifications and runs short sandboxed commands; the owner approves each command one at a time.
