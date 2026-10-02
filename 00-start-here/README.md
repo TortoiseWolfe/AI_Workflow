@@ -82,4 +82,4 @@ Resist the urge to configure hooks, MCP servers, custom agents, or output styles
 
 ---
 
-**Next:** [Chapter 01 — Bootstrap a Repo](../01-bootstrap-a-repo/)
+**Next:** [Chapter 01 — Bootstrap a Repo](../01-bootstrap-a-repo/) · **All parts:** [the series in order](../series.html#course)

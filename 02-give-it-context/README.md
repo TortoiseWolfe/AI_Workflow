@@ -46,4 +46,4 @@ Every one of those corrections is a line you could have written in `CLAUDE.md` o
 
 ---
 
-**Next:** [Chapter 03 — Slash Commands](../03-slash-commands/)
+**Previous:** [Chapter 01 — Bootstrap a Repo](../01-bootstrap-a-repo/) · **Next:** [Chapter 03 — Slash Commands](../03-slash-commands/) · **All parts:** [the series in order](../series.html#course)

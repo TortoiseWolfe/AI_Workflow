@@ -2,6 +2,8 @@
 
 **A teaching curriculum for interns at The Software Dojo.** Learn to work with Claude Code the way TurtleWolfe works with Claude Code — Docker-first, spec-first, and terminal-orchestrated.
 
+**The whole series, in order:** [the course and the build log on one page](series.html).
+
 This repo does not teach you Claude Code itself. It teaches you a **workflow** for building real software with an AI pair programmer, using conventions that have survived 20+ production repos.
 
 ## Who this is for
