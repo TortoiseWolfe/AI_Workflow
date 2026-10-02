@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Every part of TurtleWolfe's AI Workflow series in order: the six-chapter course on working with Claude Code, then the build log of what happened when it was used for real.">
+<link rel="canonical" href="https://tortoisewolfe.github.io/AI_Workflow/series.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TurtleWolfe · AI Workflow">
+<meta property="og:title" content="The AI Workflow Series">
+<meta property="og:description" content="Every part of the AI Workflow series in order: a six-chapter course on working with Claude Code, then the build log of what happened when it was used for real.">
+<meta property="og:url" content="https://tortoisewolfe.github.io/AI_Workflow/series.html">
+<meta property="og:image" content="https://tortoisewolfe.github.io/AI_Workflow/05-advanced-orchestration/ai-kitchen-map-og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Map of the workflow: an Opus head chef hands a goal to the director line (Opus plan, Haiku/Sonnet cooks, tests in Docker, blind Opus taste, merge to GitHub), with Muse notes over Gmail and the OpenClaw tray on the side.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The AI Workflow Series">
+<meta name="twitter:description" content="Every part of the AI Workflow series in order: a six-chapter course on working with Claude Code, then the build log of what happened when it was used for real.">
+<meta name="twitter:image" content="https://tortoisewolfe.github.io/AI_Workflow/05-advanced-orchestration/ai-kitchen-map-og.png">
+<title>The AI Workflow Series</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Same shop-ticket layout as the chapter 05 pages: folded sections, one open at a time,
+   and a menu of folded entries inside the two long sections. */
+:root{
+  --paper:#f3f4f1; --ink:#1d2327; --muted:#5d676d; --rule:#cfd4d2; --fact-bg:#e8ebe8;
+  --accent:#b8412c; --ok:#2f6b4f; --warn:#9a6a12;
+  --display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --body:"Literata",Georgia,serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#15191b; --ink:#e3e6e4; --muted:#97a1a6; --rule:#2c3337; --fact-bg:#1c2225;
+  --accent:#e0735c; --ok:#6fb892; --warn:#d6a54a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#15191b; --ink:#e3e6e4; --muted:#97a1a6; --rule:#2c3337; --fact-bg:#1c2225;
+  --accent:#e0735c; --ok:#6fb892; --warn:#d6a54a; color-scheme:dark}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;padding-inline:16px;padding-block:40px 64px}
+.wrap{max-width:44rem;margin:0 auto;display:grid;gap:28px}
+.wrap a{color:var(--accent);text-underline-offset:3px}
+header{display:grid;gap:10px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(2.2rem,6vw,3.4rem);line-height:1;margin:0;text-wrap:balance;letter-spacing:.01em}
+h1 em{font-style:normal;color:var(--accent)}
+.lede{margin:0;max-width:62ch}
+.how{font-family:var(--mono);font-size:13px;color:var(--muted);margin:0}
+.tickets{display:grid;gap:0;border-top:1px solid var(--rule)}
+details.t{border-bottom:1px solid var(--rule)}
+details.t>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:3.2rem 1fr auto;gap:12px;align-items:baseline;padding:16px 4px}
+details.t>summary::-webkit-details-marker{display:none}
+.tno{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.tname{font-family:var(--display);font-weight:600;font-size:1.45rem;line-height:1.15;text-wrap:balance}
+.chev{font-family:var(--mono);color:var(--accent);transition:transform .15s}
+details[open]>summary .chev{transform:rotate(90deg)}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.body{padding:0 4px 22px 3.2rem;display:grid;gap:14px;min-width:0}
+.body p{margin:0;max-width:64ch}
+.fact{margin:0;padding:10px 12px;margin-left:18px;border-left:2px solid var(--rule);background:var(--fact-bg);font-family:var(--mono);font-size:12.5px;line-height:1.55;color:var(--muted);white-space:pre-wrap;overflow-x:auto;min-width:0}
+.fact a{color:inherit}
+details.n{border:1px solid var(--rule);border-radius:3px}
+details.n>summary{cursor:pointer;padding:10px 12px;display:flex;gap:10px;align-items:baseline}
+details.n>summary::marker{color:var(--accent)}
+details.n>p{margin:0 12px 10px 18px;max-width:60ch}
+details.n>.fact{margin:0 12px 12px 18px}
+.part{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+.pill{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;padding:1px 6px;border:1px solid currentColor;border-radius:2px;white-space:nowrap;color:var(--warn)}
+.stack{display:grid;gap:8px}
+footer{font-family:var(--mono);font-size:12px;color:var(--muted);border-top:1px solid var(--rule);padding-top:14px}
+@media (max-width:520px){details.t>summary{grid-template-columns:2.2rem 1fr auto}.body{padding-left:4px}}
+@media (prefers-reduced-motion:reduce){.chev{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">TurtleWolfe · AI Workflow · the whole series · updated 2026-10-02</div>
+  <h1>The AI Workflow <em>series</em></h1>
+  <p class="lede">A cookbook with a kitchen diary bound in the back. The course teaches the basic recipes, one chapter at a time. The build log is what happened when I cooked them for real, burns included. Every part is listed here, in order.</p>
+  <p class="how">Each section opens one at a time. Plain line on top; links and dates underneath.</p>
+</header>
+
+<div class="tickets">
+
+<details class="t" id="start"><summary><span class="tno">S-01</span><span class="tname">Where to start</span><span class="chev">›</span></summary>
+<div class="body">
+<p>New to Claude Code? Read the course front to back. Every chapter is usable after its first two pages, and chapters 01 to 04 each end with one fifteen-minute exercise.</p>
+<p>Already working with it? Go to the build log and read whichever title catches you. Each part stands on its own.</p>
+<pre class="fact">The course: this site, chapters 00 to 05, written for interns at The Software Dojo.
+The build log: blog posts on scripthammer.com plus deep-dive pages in chapter 05, oldest first.
+Every chapter, page and post links back here and to its neighbours.</pre>
+</div></details>
+
+<details class="t" id="course"><summary><span class="tno">S-02</span><span class="tname">Learn it: the course</span><span class="chev">›</span></summary>
+<div class="body">
+<p>Six chapters, each answering a question you'll have in your first week. Open one to see what it teaches.</p>
+<div class="stack">
+<details class="n"><summary><span class="part">00</span> Start Here: is my setup even working?</summary>
+<p>Install Claude Code, check it runs, and have a first useful conversation. <a href="00-start-here/">Read chapter 00 →</a></p>
+<pre class="fact">15 min · 00-start-here/</pre></details>
+<details class="n"><summary><span class="part">01</span> Bootstrap a Repo: how do I start a new project?</summary>
+<p>Start a Docker-first repo, either from the starter or from scratch. <a href="01-bootstrap-a-repo/">Read chapter 01 →</a></p>
+<pre class="fact">15 min · 01-bootstrap-a-repo/ · exercise: clone the starter and ship a change</pre></details>
+<details class="n"><summary><span class="part">02</span> Give It Context: why does Claude keep missing obvious things?</summary>
+<p>Write a CLAUDE.md, add knowledge bases, and prime each session so Claude knows your project. <a href="02-give-it-context/">Read chapter 02 →</a></p>
+<pre class="fact">30 min · 02-give-it-context/</pre></details>
+<details class="n"><summary><span class="part">03</span> Slash Commands: how do I stop typing the same prompt twenty times?</summary>
+<p>Install a starter kit of slash commands and learn which one to reach for when. <a href="03-slash-commands/">Read chapter 03 →</a></p>
+<pre class="fact">30 min · 03-slash-commands/ · starter kit in 03-slash-commands/starter-kit/</pre></details>
+<details class="n"><summary><span class="part">04</span> The SpecKit Loop: how do I ship a whole feature without getting lost?</summary>
+<p>Take one feature from a written spec to shipped code, one step at a time. <a href="04-the-speckit-loop/">Read chapter 04 →</a></p>
+<pre class="fact">60 min · 04-the-speckit-loop/ · /speckit.specify → .clarify → .plan → .tasks → .implement</pre></details>
+<details class="n"><summary><span class="part">05</span> Advanced Orchestration: can I run many terminals at once? <span class="pill">optional</span></summary>
+<p>The tmux assembly line: terminal roles, an operator, a task queue and votes on changes. The build log's deep-dive pages live in this chapter too. <a href="05-advanced-orchestration/">Read chapter 05 →</a></p>
+<pre class="fact">2+ hours · Level 3 · nothing in chapters 00 to 04 depends on it</pre></details>
+<details class="n"><summary><span class="part">why</span> Principles: the reason behind every rule</summary>
+<p>One rule per file, each with the incident that earned it. <a href="https://github.com/TortoiseWolfe/AI_Workflow/tree/main/principles">Read the principles →</a></p>
+<pre class="fact">docker-first · spec-before-code · context-hygiene · secrets-never-committed · five-file-components</pre></details>
+</div>
+</div></details>
+
+<details class="t" id="build-log"><summary><span class="tno">S-03</span><span class="tname">The build log: what happened for real</span><span class="chev">›</span></summary>
+<div class="body">
+<p>Seven parts so far, oldest first. Each is a real job, mistakes left in. Open a part to see what it teaches and where to read it.</p>
+<div class="stack">
+<details class="n"><summary><span class="part">Part 1</span> Handing an agent the keys: what I let AI touch, and what it cost</summary>
+<p>An agent with real credentials can file your paperwork and migrate your database. It can also quietly store a setting that does nothing. Five rules for handing over access. <a href="https://scripthammer.com/blog/cursor-github-identity/">Read the post →</a></p>
+<pre class="fact">2026-07-05 · blog post · scripthammer.com/blog/cursor-github-identity/</pre></details>
+<details class="n"><summary><span class="part">Part 2</span> Your client's email is not a spec: turning mail into tickets</summary>
+<p>A client's email hides the real request inside chatty prose and screenshots. A mail-reading tool that drafts GitHub issues pins it down before any code gets written. <a href="https://scripthammer.com/blog/client-email-not-a-spec/">Read the post →</a></p>
+<pre class="fact">2026-07-07 · blog post · an MCP server that reads mail and drafts tickets</pre></details>
+<details class="n"><summary><span class="part">Part 3</span> Send it back without taking it over: rejecting an agent's pull request</summary>
+<p>When a collaborator's AI agent sends a flawed pull request, block it with a review and a paste-ready fix. Never commit onto their branch. <a href="https://scripthammer.com/blog/reject-without-taking-over/">Read the post →</a></p>
+<pre class="fact">2026-07-07 · blog post · gh pr review --request-changes + a tracking issue</pre></details>
+<details class="n"><summary><span class="part">Part 4</span> I graphed 15 years of my own Facebook</summary>
+<p>Context doesn't have to be a codebase. Turn a data export into a knowledge graph you can query, and find the work you forgot to answer. <a href="https://scripthammer.com/blog/facebook-export-knowledge-graph/">Read the post →</a></p>
+<pre class="fact">2026-08-05 · blog post · graphify over a Facebook export, 31,030 records back to 2011</pre></details>
+<details class="n"><summary><span class="part">Part 5</span> Head chef, line cooks: pay the expensive model only to decide</summary>
+<p>One expensive model plans and reviews. Cheaper ones make the edits, each in its own copy of the repo, and tests check every change. The first run cost about 41% less. <a href="https://scripthammer.com/blog/head-chef-line-cooks/">Read the post →</a></p>
+<pre class="fact">2026-09-30, updated 2026-10-01 · three ways in:
+blog post: scripthammer.com/blog/head-chef-line-cooks/
+deep dive: <a href="05-advanced-orchestration/head-chef-line-cooks.html">05-advanced-orchestration/head-chef-line-cooks.html</a>
+the map:   <a href="05-advanced-orchestration/ai-kitchen-map.html">ai-kitchen-map.html</a> (<a href="05-advanced-orchestration/ai-kitchen-map.pdf">PDF</a>)</pre></details>
+<details class="n"><summary><span class="part">Part 6</span> Build your AI kitchen: the setup tutorial</summary>
+<p>Set the whole thing up yourself, in the order I did it, including the gotchas that cost a day. <a href="05-advanced-orchestration/setup-tutorial.html">Read the tutorial →</a></p>
+<pre class="fact">2026-09-30, updated 2026-10-01 · tiered helpers, the director workflow, a cheap yes/no check,
+a free review panel behind a privacy gate, a per-client usage ledger</pre></details>
+<details class="n"><summary><span class="part">Part 7</span> The Action Figure Automata: the team behind it all</summary>
+<p>Which AI does what, which machine it runs on, and how they voted on their own name. <a href="05-advanced-orchestration/action-figure-automata.html">Meet the team →</a></p>
+<pre class="fact">2026-10-01 · latest part · nickname: "the fleet"</pre></details>
+</div>
+</div></details>
+
+<details class="t" id="follow"><summary><span class="tno">S-04</span><span class="tname">Follow along</span><span class="chev">›</span></summary>
+<div class="body">
+<p>New parts land here first. If you found the series through a post, a share or a stream, this page is the map.</p>
+<pre class="fact">This page: tortoisewolfe.github.io/AI_Workflow/series.html
+The blog:  <a href="https://scripthammer.com/blog/">scripthammer.com/blog/</a>
+The course source, issues welcome: <a href="https://github.com/TortoiseWolfe/AI_Workflow">github.com/TortoiseWolfe/AI_Workflow</a></pre>
+</div></details>
+
+</div>
+<footer>Started 2026-10-02 to pull the series into one place. The course is in reading order; the build log is oldest first. Every part links back here.</footer>
+</div>
+
+<script>
+// One ticket open at a time; a link like series.html#build-log opens that ticket.
+var tickets = document.querySelectorAll('details.t');
+tickets.forEach(function(d){
+  d.addEventListener('toggle', function(){
+    if(!d.open) return;
+    tickets.forEach(function(o){ if(o!==d) o.open=false; });
+  });
+});
+function openFromHash(){
+  var el = location.hash && document.getElementById(location.hash.slice(1));
+  if(el && el.matches('details.t')){ el.open = true; el.scrollIntoView(); }
+}
+openFromHash();
+window.addEventListener('hashchange', openFromHash);
+</script>
+
+</body>
+</html>

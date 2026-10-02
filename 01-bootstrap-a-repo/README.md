@@ -48,4 +48,4 @@ Use these when cloning `hello-world-ai` doesn't fit your stack.
 
 ---
 
-**Next:** [Chapter 02 — Give It Context](../02-give-it-context/)
+**Previous:** [Chapter 00 — Start Here](../00-start-here/) · **Next:** [Chapter 02 — Give It Context](../02-give-it-context/) · **All parts:** [the series in order](../series.html#course)

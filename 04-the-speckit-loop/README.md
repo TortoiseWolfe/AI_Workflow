@@ -96,4 +96,4 @@ The full loop has overhead. Use it where the overhead pays for itself.
 
 ---
 
-**Next:** [Chapter 05 — Advanced Orchestration](../05-advanced-orchestration/) (Level 3 / Optional)
+**Previous:** [Chapter 03 — Slash Commands](../03-slash-commands/) · **Next:** [Chapter 05 — Advanced Orchestration](../05-advanced-orchestration/) (Level 3 / Optional) · **All parts:** [the series in order](../series.html#course)

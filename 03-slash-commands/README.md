@@ -127,4 +127,4 @@ Files can be as short as 12 lines ([`starter-kit/.claude/commands/prep.md`](star
 
 ---
 
-**Next:** [Chapter 04 — The SpecKit Loop](../04-the-speckit-loop/)
+**Previous:** [Chapter 02 — Give It Context](../02-give-it-context/) · **Next:** [Chapter 04 — The SpecKit Loop](../04-the-speckit-loop/) · **All parts:** [the series in order](../series.html#course)

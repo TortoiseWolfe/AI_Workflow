@@ -103,4 +103,4 @@ For these, the assembly line is genuinely faster because it's running 27 Claudes
 
 ---
 
-**Back to:** [Chapter 04 — The SpecKit Loop](../04-the-speckit-loop/) | **Up:** [Curriculum overview](../README.md)
+**Back to:** [Chapter 04 — The SpecKit Loop](../04-the-speckit-loop/) | **Up:** [Curriculum overview](../README.md) | **Next:** [the build log](../series.html#build-log) · **All parts:** [the series in order](../series.html#course)
