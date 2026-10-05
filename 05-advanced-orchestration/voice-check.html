@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Paste what you're about to post and see whether it reads like a person or like AI, with every giveaway phrase pointed out. Runs in your browser; the text never leaves the page.">
+<link rel="canonical" href="https://tortoisewolfe.github.io/AI_Workflow/05-advanced-orchestration/voice-check.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="TurtleWolfe · AI Workflow">
+<meta property="og:title" content="Voice Check">
+<meta property="og:description" content="Paste what you're about to post and see whether it reads like a person or like AI. Runs in your browser.">
+<meta property="og:url" content="https://tortoisewolfe.github.io/AI_Workflow/05-advanced-orchestration/voice-check.html">
+<meta name="twitter:card" content="summary">
+<title>Voice Check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Same tokens as the fleet page: one narrow reading column; the tool on top, the folded tickets below. */
+:root{
+  --paper:#f3f4f1; --ink:#1d2327; --muted:#5d676d; --rule:#cfd4d2; --fact-bg:#e8ebe8; --field:#fbfbf9;
+  --accent:#b8412c; --ok:#2f6b4f; --warn:#9a6a12;
+  --display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --body:"Literata",Georgia,serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#15191b; --ink:#e3e6e4; --muted:#97a1a6; --rule:#2c3337; --fact-bg:#1c2225; --field:#1a1f22;
+  --accent:#e0735c; --ok:#6fb892; --warn:#d6a54a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#15191b; --ink:#e3e6e4; --muted:#97a1a6; --rule:#2c3337; --fact-bg:#1c2225; --field:#1a1f22;
+  --accent:#e0735c; --ok:#6fb892; --warn:#d6a54a; color-scheme:dark}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;padding-inline:16px;padding-block:40px 64px}
+.wrap{max-width:44rem;margin:0 auto;display:grid;gap:28px}
+header{display:grid;gap:10px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(2.2rem,6vw,3.4rem);line-height:1;margin:0;text-wrap:balance;letter-spacing:.01em}
+h1 em{font-style:normal;color:var(--accent)}
+.lede{margin:0;max-width:62ch}
+.fact{margin:0;padding:10px 12px;margin-left:18px;border-left:2px solid var(--rule);background:var(--fact-bg);font-family:var(--mono);font-size:12.5px;line-height:1.55;color:var(--muted);white-space:pre-wrap;overflow-x:auto;min-width:0}
+.fact a{color:inherit}
+/* the tool */
+.tool{display:grid;gap:12px}
+label.big{font-family:var(--display);font-weight:600;font-size:1.3rem}
+textarea{width:100%;box-sizing:border-box;min-height:12rem;resize:vertical;padding:12px;border:1px solid var(--rule);border-radius:3px;background:var(--field);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+textarea:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.opts{display:grid;gap:6px;font-size:15px}
+.opts label{display:flex;gap:10px;align-items:baseline;cursor:pointer}
+.opts small{color:var(--muted);font-family:var(--mono);font-size:12px}
+.result{display:grid;gap:10px;border:1px solid var(--rule);border-radius:3px;padding:14px}
+.verdict{font-family:var(--display);font-weight:700;font-size:2rem;line-height:1;letter-spacing:.02em}
+.verdict.pass{color:var(--ok)} .verdict.flag{color:var(--warn)} .verdict.fail{color:var(--accent)} .verdict.empty{color:var(--muted)}
+.why{margin:0}
+ul.hits{margin:0;padding-left:1.1rem;display:grid;gap:4px}
+ul.hits li{font-size:15px}
+ul.hits .cat{font-family:var(--mono);font-size:12px;color:var(--muted)}
+ul.hits q{font-family:var(--mono);font-size:13.5px;background:var(--fact-bg);padding:0 4px;border-radius:2px;quotes:none}
+ul.hits li.house q{color:var(--accent)}
+/* the tickets */
+.tickets{display:grid;gap:0;border-top:1px solid var(--rule)}
+details.t{border-bottom:1px solid var(--rule)}
+details.t>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:3.2rem 1fr auto;gap:12px;align-items:baseline;padding:16px 4px}
+details.t>summary::-webkit-details-marker{display:none}
+.tno{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.tname{font-family:var(--display);font-weight:600;font-size:1.45rem;line-height:1.15;text-wrap:balance}
+.chev{font-family:var(--mono);color:var(--accent);transition:transform .15s}
+details[open]>summary .chev{transform:rotate(90deg)}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.body{padding:0 4px 22px 3.2rem;display:grid;gap:14px;min-width:0}
+.body p{margin:0;max-width:64ch}
+ol.steps{margin:0;padding-left:1.2rem;display:grid;gap:12px}
+ol.steps li>p{margin:0}
+ol.steps .fact{margin-top:6px}
+.stack{display:grid;gap:8px}
+details.n{border:1px solid var(--rule);border-radius:3px}
+details.n>summary{cursor:pointer;padding:10px 12px}
+details.n>summary::marker{color:var(--accent)}
+details.n>.fact{margin:0 12px 12px 18px}
+footer{font-family:var(--mono);font-size:12px;color:var(--muted);border-top:1px solid var(--rule);padding-top:14px}
+footer a{color:inherit}
+@media (max-width:520px){details.t>summary{grid-template-columns:2.2rem 1fr auto}.body{padding-left:4px}}
+@media (prefers-reduced-motion:reduce){.chev{transition:none}}
+</style>
+<style>/* AI Workflow series navigation */.series-top{margin:0;font-family:var(--mono,ui-monospace,monospace);font-size:12px;letter-spacing:.04em;color:var(--muted,#5d676d)}nav.series{display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;font-family:var(--mono,ui-monospace,monospace);font-size:13px;line-height:1.5;border-top:1px solid var(--rule,#cfd4d2);padding-top:14px}.series-top a,nav.series a{color:var(--accent,#b8412c);text-underline-offset:3px}nav.series .here{color:var(--muted,#5d676d)}</style>
+</head>
+<body>
+
+<div class="wrap">
+<p class="series-top"><a href="../series.html">AI Workflow series</a> · chapter 05 · tools</p>
+<header>
+  <div class="eyebrow">TurtleWolfe · tools · updated 2026-10-05</div>
+  <h1>Voice <em>check</em></h1>
+  <p class="lede">Paste what you're about to post. It says whether it reads like a person or like AI, and points at every phrase that gives it away.</p>
+  <p class="fact">Runs in your browser: the text never leaves this page.
+The same rules as Claude Code's pre-send check (email_voice_check.py), ported line for line
+and tested to give identical results on 56 cases.</p>
+</header>
+
+<section class="tool" aria-label="Check a piece of writing">
+  <label class="big" for="text">What you're about to post</label>
+  <textarea id="text" spellcheck="true" placeholder="Paste the message, email or draft here."></textarea>
+  <div class="opts">
+    <label><input type="checkbox" id="strict" checked> <span>Strict <small>any single giveaway fails it: leave on for anything about to go out</small></span></label>
+    <label><input type="checkbox" id="asOwner" checked> <span>Sent as Jonathan <small>untick when you sign as yourself; ticked, naming him in the body fails</small></span></label>
+    <label><input type="checkbox" id="plain"> <span>For a non-technical reader <small>350 words at most, and every technical term explained in its sentence</small></span></label>
+    <label><input type="checkbox" id="reply" disabled> <span>It's a reply <small>(with the one above) quote each point you answer, on its own line starting with &gt;</small></span></label>
+  </div>
+  <div class="result" aria-live="polite">
+    <div class="verdict empty" id="verdict">Nothing to check yet</div>
+    <p class="why" id="why"></p>
+    <ul class="hits" id="hits"></ul>
+    <p class="fact" id="counts" hidden></p>
+  </div>
+</section>
+
+<div class="tickets">
+
+<details class="t" open><summary><span class="tno">01</span><span class="tname">The procedure</span><span class="chev">›</span></summary>
+<div class="body">
+<p>Every time, before anything goes out, run the same five steps. It takes a minute and it's the whole job.</p>
+<ol class="steps">
+<li><p>Paste the whole thing: a chat message, an email, an answer you're passing on, a draft.</p>
+<p class="fact">Check what you post in your own name and what you post as Jonathan.
+A relayed answer counts: if you pasted it in from Claude, it's still going out under your name.</p></li>
+<li><p>Set who it's from. Leave strict on.</p>
+<p class="fact">Signing as yourself: untick "Sent as Jonathan".
+Going out as Jonathan: leave it ticked. "Jon will send it" above his own name is a dead giveaway.
+For someone who isn't technical: tick "For a non-technical reader" (and "It's a reply" for a reply).</p></li>
+<li><p>Fix every line in the list. Say the plain version, or cut it.</p>
+<p class="fact">A phrase in the list: say what you mean in everyday words, or delete it.
+"expanded forms": write don't, it's, I'm, the way people talk.
+A dash splitting a sentence: make it two sentences, or use a comma.
+A tidy three-part ending ("we planned, built, and shipped"): end on one plain fact instead.
+"X, the Y," explanations stacked mid-sentence: give the explanation its own sentence, or drop it.</p></li>
+<li><p>Check it again. Post only when it says PASS.</p>
+<p class="fact">The dash count shows even below the limit of 3. If the reader has already complained
+about dashes, rewrite every one it counts.</p></li>
+<li><p>Then read it once as the person it's from. A pass only means it doesn't read as AI.</p>
+<p class="fact">The check can't tell whether it's true, whether it's what Jonathan would say,
+or whether it answers what was asked. Those are still your read.</p></li>
+</ol>
+</div>
+</details>
+
+<details class="t"><summary><span class="tno">02</span><span class="tname">What it catches</span><span class="chev">›</span></summary>
+<div class="body">
+<p>Two kinds of giveaway: words AI reaches for, and the shape it leaves even after the words are swapped.</p>
+<div class="stack">
+<details class="n"><summary>Stiff transitions, the words nobody says out loud.</summary>
+<p class="fact">furthermore · moreover · nevertheless · consequently · accordingly · thus, · hence, · as such,
+in conclusion · to summarize · that being said · needless to say · utilizing
+I would recommend · it is worth noting · it should be noted · one should consider</p></details>
+<details class="n"><summary>Email clichés.</summary>
+<p class="fact">I hope this email finds you well · I wanted to reach out / touch base / circle back
+at your earliest convenience · please don't hesitate · rest assured · delve · tapestry
+a testament to · in today's fast-paced world · navigate the landscape · in the realm of
+when it comes to · not just X but Y · it's not about X, it's Y · unlock your potential
+elevate your · seamless</p></details>
+<details class="n"><summary>Hedging and empty praise.</summary>
+<p class="fact">hedging: somewhat · relatively · appears to · seems to suggest · could potentially · it appears that
+praise:  comprehensive · robust · impressive · commendable · noteworthy · exemplary · well-structured</p></details>
+<details class="n"><summary>Avoiding contractions.</summary>
+<p class="fact">"do not", "it is", "I am"... with none of don't, it's, I'm: 3 or more expanded and no contractions,
+or 5 or more with only one, is a signal.</p></details>
+<details class="n"><summary>The shape: what's left after the words are swapped.</summary>
+<p class="fact">A dash splitting a sentence, 3 or more times (the loudest single tell).
+A last sentence that's a chain of parallel verbs, or "then ..., then ...".
+Two or more "X, the Y," glosses packed mid-sentence.
+Contractions sprinkled at even intervals, the way scrubbed AI text has them.
+Three drafts (split by a line of ---) with the same shape.
+Any one of these lifts a PASS to a FLAG.</p></details>
+<details class="n"><summary>How the verdict is reached.</summary>
+<p class="fact">PASS        0-2 signals and none of the shape ones
+FLAG        3-4 signals, or any shape signal
+MAJOR FLAG  5 or more, or 3 shape signals
+FAIL        strict and any signal at all, or any house rule broken
+House rules (always a fail): the sender named in the body; and, for a non-technical reader,
+over 350 words, an unexplained term (PR, repo, merge, deploy, API, DNS...), a reply with no &gt; quotes.</p></details>
+</div>
+</div>
+</details>
+
+<details class="t"><summary><span class="tno">03</span><span class="tname">Where it came from</span><span class="chev">›</span></summary>
+<div class="body">
+<p>A client said an update read "a bit AI-ish". This check is what came out of that, and every rule in it was earned the same way.</p>
+<p class="fact">2026-07-24  first version: the words, then the shape
+2026-08-21  house rules added: it had passed a 407-word, jargon-heavy draft that broke the reader's
+            written rules three ways ("a rule that isn't measured isn't a rule")
+2026-08-22  a FLAG stopped counting as a pass; a signature can't swallow the whole message
+2026-09-17  the sender named in his own email ("Jon has the password", above his signature)
+2026-10-05  ported to this page so an agent with only a browser can run it; "thus,", "hence,"
+            and "as such," now caught (they were missed when a space followed the comma)</p>
+</div>
+</details>
+
+</div>
+
+<nav class="series" aria-label="AI Workflow series">
+  <a href="action-figure-automata.html">← The Action Figure Automata</a>
+  <a href="../series.html">The whole series</a>
+</nav>
+<footer>TurtleWolfe · <a href="https://github.com/TortoiseWolfe/AI_Workflow/blob/main/05-advanced-orchestration/voice-check.js">voice-check.js</a> is the whole check, in one file.</footer>
+</div>
+
+<script src="voice-check.js"></script>
+<script>
+(function () {
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  const PLAIN = {
+    formal_phrase: "stiff transition", email_tell: "email cliché", hedging: "hedging", generic_praise: "empty praise",
+    no_contractions: "no contractions", few_contractions: "few contractions", structural: "shape",
+    third_person: "names the sender", length: "too long", jargon: "unexplained terms", no_quoting: "no quotes"
+  };
+  const WHY = {
+    "PASS": "Reads like a person. Now read it once as the sender before it goes.",
+    "FLAG": "A few giveaways. Fix each one below and check again.",
+    "MAJOR FLAG": "Reads like AI. Rewrite the lines below in plain words and check again.",
+    "FAIL": "Not ready to send. Fix every line below, then check again."
+  };
+  function render() {
+    const text = $("text").value;
+    $("reply").disabled = !$("plain").checked;
+    if (!$("plain").checked) $("reply").checked = false;
+    const hits = $("hits");
+    hits.textContent = "";
+    if (!text.trim()) {
+      $("verdict").textContent = "Nothing to check yet";
+      $("verdict").className = "verdict empty";
+      $("why").textContent = "";
+      $("counts").hidden = true;
+      return;
+    }
+    const r = VoiceCheck.check(text, { strict: $("strict").checked, asOwner: $("asOwner").checked, plain: $("plain").checked, reply: $("reply").checked });
+    $("verdict").textContent = r.verdict;
+    $("verdict").className = "verdict " + (r.verdict === "PASS" ? "pass" : r.verdict === "FAIL" ? "fail" : "flag");
+    $("why").textContent = WHY[r.verdict];
+    for (const [cat, msg] of r.house.concat(r.matches)) {
+      const li = document.createElement("li");
+      if (r.house.some((h) => h[0] === cat)) li.className = "house";
+      const c = document.createElement("span");
+      c.className = "cat";
+      c.textContent = (PLAIN[cat] || cat) + " ";
+      const q = document.createElement("q");
+      q.textContent = msg;
+      li.append(c, q);
+      hits.append(li);
+    }
+    $("counts").hidden = false;
+    $("counts").textContent = `${r.signal_count} signals (${r.structural_count} shape) · dashes splitting a sentence: ${r.dash_count} · ${r.contraction_ratio} · ${r.body_words} words in the body`;
+  }
+  ["text", "strict", "asOwner", "plain", "reply"].forEach((id) => $(id).addEventListener("input", render));
+  // one ticket open at a time
+  document.querySelectorAll("details.t").forEach((d) => d.addEventListener("toggle", () => {
+    if (d.open) document.querySelectorAll("details.t").forEach((o) => { if (o !== d) o.open = false; });
+  }));
+  render();
+})();
+</script>
+</body>
+</html>
