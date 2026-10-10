@@ -1,0 +1,7 @@
+# Reviewed 2026-10-10: truncated teaching examples ending in "...", not usable keys. The eyJh tokens
+# are the standard public JWT header. Line-pinned: re-review if these lines move.
+03-slash-commands/starter-kit/.claude/commands/secrets-scan.md:generic-api-key:207
+principles/secrets-never-committed.md:stripe-access-token:87
+principles/secrets-never-committed.md:generic-api-key:14
+principles/secrets-never-committed.md:generic-api-key:15
+principles/secrets-never-committed.md:generic-api-key:70
