@@ -119,7 +119,7 @@ As the channel owner, I want the same data to feed a Twitch offline panel, a sma
 **Publishing and privacy**
 
 - **FR-010**: Output is one static JSON file plus the page's HTML, CSS and SVG, served by GitHub Pages from this repo. No server code, no client-side calls to any provider.
-- **FR-011**: Allowlist schema, enforced by the publisher (unknown fields fail the build): `generated_at`, per provider `id`, `display_name`, `window`, `used`, `limit` (or null), `unit`, `percent` (or null), `state`, `resets_at`, `source` (one of: provider, local-count). Nothing else.
+- **FR-011**: Allowlist schema, enforced by the publisher (unknown fields fail the build): `generated_at`, per provider `as_of` (when that provider's figure was last read, so one provider can go stale alone), `id`, `display_name`, `window`, `used`, `limit` (or null), `unit`, `percent` (or null), `state`, `resets_at`, `source` (one of: provider, local-count). Nothing else.
 - **FR-012**: Never published: keys, tokens, auth headers, prompts, replies, repo names, file paths, branch names, client names, per-task or per-repo breakdowns, account identifiers, email addresses, the machine name.
 - **FR-013**: The publisher runs the review panel's privacy gate (`panel_gate.py`) on the diff of the file it is about to commit, with class `public`, and reuses its rules rather than copying them: secret scan first and fails closed (no scan result means no publish), redaction counts above the maximum stop the run, a `never_send` list blocks any path outside the dashboard files. Any finding aborts before commit.
 - **FR-014**: The pre-push hook and gitleaks run on the publishing branch like any other push. A hook failure stops the run and is reported, never bypassed.
@@ -129,7 +129,7 @@ As the channel owner, I want the same data to feed a Twitch offline panel, a sma
 **Refresh**
 
 - **FR-017**: A local collector runs every 6 to 12 hours (default 8) on the machine that holds the ledger. It builds the file, runs the gate, commits and pushes to the publishing branch.
-- **FR-018**: A gauge older than 2x the interval shows stale; the page shows a banner when every gauge is stale.
+- **FR-018**: A gauge whose `as_of` is older than 2x the interval shows stale; the page shows a banner when every gauge is stale.
 - **FR-019**: The page shows the generation time and its age, computed in the browser from `generated_at`.
 - **FR-020**: Free-tier limits drift (Gemini was cut 50-80% in December 2025). Limits live in one config file with a "confirmed on" date per provider; a limit not confirmed in 60 days shows a small "limit unverified" mark.
 
