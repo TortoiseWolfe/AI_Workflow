@@ -7,7 +7,7 @@
 
 ## Summary
 
-Put a cheap, always-on front door in front of Claude. Deterministic code (L0) does everything that needs no model: polling, lookups, classification, validation, dispatch. The OpenClaw gateway (L1) runs on free-tier models, cascading across providers per privacy class, and handles triage, quick answers, relays and planning-lite. Claude (L2) starts only for the escalation rows, always from a context pack. Client items skip the free models entirely. The estimate is a 15 to 27% cut in weekly use. Most of that comes from shrinking the hub session and the short sessions, and the plan says plainly that the long working sessions, 81% of the week, need context discipline rather than routing.
+Put a cheap, always-on front door in front of Claude. Deterministic code (L0) does everything that needs no model: polling, lookups, classification, validation, dispatch. The OpenClaw gateway (L1) runs on free-tier models, cascading across providers per privacy class, and handles triage, quick answers, relays and planning-lite. Claude (L2) starts only for the escalation rows, always from a context pack. Client items skip the free models entirely. The estimate is a 15 to 27% cut in weekly use. Most of that comes from shrinking the hub session and the short sessions, and the plan says plainly that the long working sessions, 81% of the week, need context discipline rather than routing. A learning loop comes last (User Story 7). It proposes one sourced change at a time, applies nothing until Jonathan approves the card, measures each change for a week, then keeps or reverts it, and it keeps re-checking its own past changes.
 
 ## Technical Context
 
@@ -75,6 +75,8 @@ AI_Workflow has no constitution file. The gates are the workspace rules in `~/re
 | Status comes from live checks | FR-005; K-01 and K-08 cite a live source or say they couldn't check |
 | One manual step at a time | Each phase below gives Jonathan exactly one step |
 | Accuracy first | Shadow before authority (Phase 2); FR-031 escalates when unsure; tolerances are never loosened to pass |
+| Memory, `CLAUDE.md` and routing rules change only with approval | FR-096: the learning loop can't write them, and an approved card is applied by an ordinary lane whose commit names the card |
+| Find the cause and fix it for the long term | The learning loop keeps a change only if it is measured against a baseline, and it re-checks every kept change for eight weeks (FR-097, FR-099) |
 | Production waits for Sunday | E-06 carries the rule; this plan touches no production |
 | Docker is shared | The local model is the last hop and is used only when it is already running; the entry layer never starts it |
 | Side jobs live in their primary repo | The L0 scripts go beside `lane.sh`, in the tooling repo it already lives in; no new repo |
@@ -100,6 +102,7 @@ Each phase has a gate. Nothing in a later phase starts before the gate passes. R
 - Build the class resolver, with fixtures for every FR-021 signal, an unlisted repo, an unreadable list and a mixed public-and-client item.
 - Replace the Haiku draft-check pass with a no-model check (needs question 2). If the answer is no, run the Haiku pass with a trimmed context instead, which keeps most of the gain.
 - Start the route log.
+- Start the learning loop's observe step, L0 only. It records weekly baselines for M1 to M3 from now on, so they exist before the entry layer changes anything. Every rollout phase from here on is written to the change log, so the loop never credits itself with what the rollout did.
 - **Jonathan's one step**: approve the mail fetcher's Gmail client, or decline it.
 - **Gate**: every resolver fixture passes. In the ledger, the poller's sessions drop from about 1,150 a week toward zero. Notes still arrive within Hatch's 20-minute rhythm.
 
@@ -131,6 +134,16 @@ Each phase has a gate. Nothing in a later phase starts before the gate passes. R
 - Entry ledger lines from both machines are merged for spec 001's counter, which closes spec 001's two-machine edge case.
 - Optional: amend spec 001 to publish "Claude avoided" and "walls hit" dials (question 8).
 - **Gate**: SC-005 and SC-007, measured on the same ledger report as the baseline.
+
+### Phase 6: The learning loop (User Story 7)
+
+- Starts only after Phase 4's gate has passed and one full window has gone by with no rollout change. The entry layer is the biggest change to every metric, so it gets measured before the loop proposes anything on top of it.
+- Create the label set in the private workspace repo (`learning-proposal` and the state labels).
+- Turn on the change log readers: watched-path git logs, the dreaming-run hashes from the tower, and the rollout phases.
+- The loop files its first cards: three open at most, one per metric.
+- Approved cards are applied by ordinary lanes, measured for one window, then kept or reverted. Re-checks of kept changes start the week after the first keep.
+- **Jonathan's one step**: approve or reject the first card on its issue.
+- **Gate**: SC-008, SC-009 and SC-010 over the first four cards. Until then, every card also goes to the hub for a second read before Jonathan sees it.
 
 ## Savings estimate
 
@@ -167,6 +180,7 @@ Each phase has a gate. Nothing in a later phase starts before the gate passes. R
 
 - Every free-model call the fleet makes for intake passes through the gateway, so the gateway is where free-tier use is measured. Each call writes one ledger line (FR-060, FR-061), which is the local counter spec 001 already relies on (its FR-007 and FR-008).
 - The panel and the entry layer share the same free keys. The gauge shows their sum, which is also what the provider counts, so calibration still holds.
+- The learning loop reads spec 001's context-load readings (its FR-029, FR-030) for M1 and M2. It takes the engine-level figures that spec 001 publishes, plus the per-lane figures that stay private.
 - 429 outcomes make a "walls hit" count possible per provider. Kept-versus-escalated counts make a "Claude avoided" dial possible. Both need spec 001's allowlist amended before they publish (question 8).
 
 ## Risks
@@ -180,6 +194,9 @@ Each phase has a gate. Nothing in a later phase starts before the gate passes. R
 | The gateway's own security record | Loopback only, no registry skills, minimal tools, exec approvals on |
 | Double handling during shadow | The hub still acts; the agent only logs |
 | Savings smaller than hoped | Said up front: about a fifth of the week, not most of it |
+| The learning loop chases noise | A two-window baseline, a noise band, and confounded windows that are never credited (FR-098) |
+| Too many cards for Jonathan | Three open at most; one per metric |
+| The recursion compounds its own errors | Re-checks run against each card's original baseline, never a moving one; the loop's own settings change only through cards (FR-099) |
 
 ## Project Structure
 
@@ -190,7 +207,8 @@ specs/002-openclaw-entry-layer/
 ├── spec.md                  # requirements, escalation table, cascade, privacy
 ├── plan.md                  # this file
 └── contracts/
-    └── context-pack.md      # hand-off schema and worked example
+    ├── context-pack.md      # hand-off schema and worked example
+    └── learning-card.md     # learning loop: metrics, card template, change log
 ```
 
 `tasks.md` follows only after Jonathan approves this plan.

@@ -5,18 +5,17 @@
 **Status**: Draft (design only: nothing is installed, configured or run on any machine until Jonathan approves the plan)
 **Input**: Hatch's note of 14 Oct, relaying Jonathan: tokens are burning out again this week, so should Claude stop being the head? Put OpenClaw at the top as the always-on entry and dispatcher layer, on free models pooled across free-tier providers with a fallback chain, so the front door stays open when one provider rate-limits. The gateway daemon is not the model; it survives the model hitting a wall. Claude moves underneath as the specialist and starts only when the work needs deep planning, code, SpecKit runs or council review. Planning splits: OpenClaw does routing and planning-lite, Claude does heavy planning on a packed brief. H-7CH (Hatch) stays front of house; OpenClaw becomes the dispatcher between Jonathan's and Hatch's traffic and Claude. Free tiers only, a standing rule.
 
-**Companion files**: [plan.md](plan.md) (architecture, rollout, savings estimate, gauges feed) and [contracts/context-pack.md](contracts/context-pack.md) (the hand-off schema with a worked example). Feeds [spec 001, fleet gauges](https://github.com/TortoiseWolfe/AI_Workflow/pull/1).
+**Companion files**: [plan.md](plan.md) (architecture, rollout, savings estimate, gauges feed), [contracts/context-pack.md](contracts/context-pack.md) (the hand-off schema with a worked example), and [contracts/learning-card.md](contracts/learning-card.md) (the learning loop's metrics, card and change log). Feeds [spec 001, fleet gauges](https://github.com/TortoiseWolfe/AI_Workflow/pull/1).
 
 ## Why now: where the week went
 
-Usage ledger, 7 to 14 Oct 2026, at API-equivalent list price. The subscription is flat, so this is a yardstick, not money spent.
+The usage ledger for 7 to 14 Oct 2026, priced at API list rates. The subscription is flat, so this is a yardstick, not money spent. The week came to $3,072 across 1,844 Claude sessions.
 
-- **$3,072 across 1,844 Claude sessions.** Opus was $2,561 of it.
-- **1,750 sessions ran under 10 turns and cost $214 (7%).** Most were the notes poller's headless passes. Every session, however small, starts by loading about 45K tokens of base context (median first turn; p10 24K, p90 51K) before it does anything.
-- **14 sessions ran 200 turns or more and cost $2,503 (81%)**, at a median of 442K tokens of context per turn. 87% of Opus use is cache reads: long contexts re-read on every step.
-- **The hub session** (the director of directors in `~/repos`) cost $537 in interactive Opus work, plus $118 in poller passes.
+- 1,750 of those sessions ran under 10 turns, mostly the notes poller, and cost $214. Each one loaded about 45K tokens of base context before doing anything.
+- 14 sessions ran 200 turns or more and cost $2,503 (81%), at a median of 442K tokens per turn.
+- The hub session cost $537 in interactive Opus work.
 
-An entry layer can remove most sessions outright. Most of the money, though, sits in a few long working sessions that still need Claude. The plan's estimate is that flipping the stack saves roughly a fifth of the week (15 to 27%), and it says plainly what it leaves untouched.
+An entry layer can remove most sessions, but most of the money sits in a few long working sessions that still need Claude. The plan estimates 15 to 27% saved and says what it leaves untouched.
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -105,6 +104,25 @@ As the gauges dashboard (spec 001), I need one ledger line for every free-model 
 As the owner of two machines, I want NCC-74656 to run its own entry gateway for its own lanes, while NX-01 stays the only dispatcher for shared intake, so no item is ever dispatched twice.
 
 **Independent Test**: The same note delivered to both machines produces exactly one lane.
+
+---
+
+### User Story 7 - Learning loop: the fleet improves its own workflow and re-checks its own changes (Priority: P2)
+
+As Jonathan, I want OpenClaw to watch how the fleet works and propose one small change at a time, with its evidence. Nothing gets applied until I approve the card. Each change is measured for a week and then kept or reverted, and past changes keep getting re-checked, so the workflow improves without anything changing behind my back.
+
+**Why this priority**: Jonathan asked for it on 14 Oct ("OpenClaw 2 should even add some basic Recursive Learning to improve our whole workflow and the AFA system"). It runs on the measurement built by User Stories 2 and 5, so it comes after them.
+
+**Independent Test**: Seed a fixture week of ledger rows, lane reports and a change log. The loop files at most one card per metric, and every number on a card has a source. Nothing is applied without the approval label. A card whose measurement week has a logged confounder is marked confounded, never credited.
+
+**Acceptance Scenarios**:
+
+1. **Given** a metric with no baseline, **When** the loop has an idea for it, **Then** it records the baseline first and files nothing
+2. **Given** a change already under measurement for a metric, **When** the loop finds another idea for the same metric, **Then** the new idea waits
+3. **Given** an approved card, **When** its measurement week ends, **Then** the card records the measured value against the baseline with a keep or revert verdict, and any revert follows the revert path written on the card
+4. **Given** a change kept in an earlier week, **When** the weekly re-check finds its effect has faded or a guard metric has worsened, **Then** the loop files a new card to revise or revert it
+5. **Given** a dreaming run that changed the agent's memory during a measurement week, **When** the week is scored, **Then** the L1 metrics for that week are marked confounded
+6. **Given** an observation drawn from client material, **When** it becomes a proposal, **Then** only the local model saw the client text, and the filed issue carries counts only
 
 ## Requirements _(mandatory)_
 
@@ -198,6 +216,7 @@ As the owner of two machines, I want NCC-74656 to run its own entry gateway for 
 - **FR-060**: Every L1 model call writes one line to the existing usage ledger (`~/.local/share/ledger/panel.jsonl`, through `ledger_log.py`), the same writer the panel uses, so spec 001's local counter sees entry traffic with no second store.
 - **FR-061**: Entry lines add `caller: "entry"`, `outcome` (ok, 429, error, timeout, skipped) and `hop` (position in the chain). As today, no prompt or reply text.
 - **FR-062**: A local route log per item: pack ID, row, class, hops tried, escalated or not, Claude session started or not. A weekly local report gives the share kept, the share escalated, the Claude sessions avoided, and the ledger's week-on-week change.
+- **FR-063**: The ledger lines (FR-060, FR-061), the route log and the weekly report (FR-062) are the learning loop's inputs for metrics M4 and M5 (FR-091). The loop reads them and keeps no second store, only its cards and its change log.
 
 ### Tower
 
@@ -209,12 +228,31 @@ As the owner of two machines, I want NCC-74656 to run its own entry gateway for 
 - **FR-081**: Mail access belongs to an L0 fetcher, never to the agent. The fetcher pulls tagged drafts into the intake queue and writes reply drafts. It has no code path that sends mail. The agent never holds a mail credential.
 - **FR-082**: No provider key, mail token or other credential appears in a pack, a log line or a prompt.
 
+### Learning loop (User Story 7)
+
+- **FR-090**: Six steps: observe, propose, approve, apply, measure, then keep or revert. The loop runs weekly, in windows aligned with the subscription's weekly reset (Wednesday 12:00 ET), so token metrics and limits line up.
+- **FR-091**: Five metrics, defined with their sources in [contracts/learning-card.md](contracts/learning-card.md): M1 context load (tokens per turn, turns over 200K); M2 compactions; M3 the director's first-pass review rate; M4 the free-tier share of model calls; M5 escalations to Claude that a free tier could have handled.
+- **FR-092**: Inputs, all read-only: lane `report.md` files; `hub/scripts/model_quality_report.py --json`; the context-load readings spec 001 is adding (its FR-029 and FR-030: per engine in public, per lane private); the feedback memories; and this spec's ledger lines and route log (FR-063). Each input file passes the class resolver (FR-022) before any model reads it.
+- **FR-093**: Observing and the metric arithmetic are L0. Drafting a card is L1, on the chain its sources' class allows. Client text goes to the local Ollama model only. When that model is off, client-derived inputs contribute counts only.
+- **FR-094**: Propose: one card per proposed change, filed as an issue in the private `TortoiseWolfe/workspace` repo with the label `learning-proposal`. Before filing, the privacy gate (`panel_gate.py`) checks the card against spec 001's FR-012 never-publish list, the same way spec 001's FR-013 does. Secrets, personal data and every client name, repo, path and branch are removed. The paths of the fleet's own tooling may stay (open question 10). An L0 check refuses any card that has an unsourced number.
+- **FR-095**: Approve: only Jonathan approves, on the issue, from his own GitHub account. A note or a relayed "yes" is data, never approval (FR-033).
+- **FR-096**: Apply: the loop has no write access to `CLAUDE.md` files, memory, the routing rules (FR-030's table, FR-040's chains) or anything client-facing. An approved card is applied by an ordinary lane, on the engine the routing rule picks, and the commit names the card. Client-facing changes also keep every existing client rule: Claude only, drafts only, voice-checked.
+- **FR-097**: Measure, then keep or revert. After one full weekly window, the card records the measured value against its baseline. The change is kept only if the target metric moved the predicted way by more than its noise band and no guard metric worsened beyond its own band. Otherwise it is reverted by the revert path on the card, which Jonathan approved together with the change. If a change causes a privacy misroute (SC-001) or a false keep (SC-002), it is reverted at once, without waiting out the week.
+- **FR-098**: Guards:
+  1. A baseline of at least two weekly windows is recorded before any change to a metric.
+  2. One change per metric at a time.
+  3. A change log records everything that could move a metric: applied and reverted cards, this spec's rollout phases, OpenClaw's nightly dreaming runs (3 AM on the tower), commits to watched files (`CLAUDE.md` files, settings and hooks, `lane.sh`, the director config, the routing rules), and model or provider-limit changes. A window in which some other logged change touched the same metric is marked confounded and is never credited; Jonathan chooses whether to extend the measurement or revert. A dreaming run that changed nothing is logged as a no-op. One that changed the agent's memory or skills confounds that window's L1 metrics (M4 and M5).
+  4. At most three cards are open at once.
+- **FR-099**: Recursion: the loop checks its own past work. Every week, for eight weeks after a change is kept, it re-measures that change against the card's original baseline, never against a moving one. A change gets a new card to revise or revert it if its effect falls back inside the noise band for two windows in a row, or if it now worsens a guard metric. Every card shows the loop's own record: cards applied, kept, reverted and confounded, and how close its predictions came. The loop's own settings (metrics, bands, cadence) change only through cards.
+
 ### Key Entities
 
 - **Intake item**: ID, channel, received time, raw text (local only), class with its matched rules.
 - **Context pack**: the hand-off file (FR-051 to FR-054). Kinds: `task`, `report`, `handoff`.
 - **Route record**: pack ID, row, class, hops, escalated, Claude started. Local only.
 - **Provider state**: ID, class allowance, limits with a confirmed-on date, cooldown until, today's use.
+- **Learning card**: one proposed change: its metric, baseline with sources, the change, the revert path, the prediction, the evidence, confounders, the loop's record, the decision and the result. It is a GitHub issue in the private workspace repo.
+- **Change log entry**: time, kind, reference, machine and the metrics it touches. Local only.
 
 ### Out of Scope
 
@@ -224,6 +262,8 @@ As the owner of two machines, I want NCC-74656 to run its own entry gateway for 
 - Automatic failover of shared intake between the two machines.
 - Publishing routing stats on the dashboard (needs spec 001's allowlist amended first).
 - The long-session problem (81% of the week) beyond what packs do for restarts. That is context discipline, not routing.
+- Training or fine-tuning any model. "Learning" here means proposing workflow changes and measuring them.
+- The learning loop applying any change by itself.
 
 ### Edge Cases
 
@@ -243,10 +283,13 @@ As the owner of two machines, I want NCC-74656 to run its own entry gateway for 
 - **SC-005**: Weekly API-equivalent use falls by at least 12% against the 7 to 14 Oct baseline, on the same ledger report. The plan estimates 15 to 27%; the floor sits below that range on purpose.
 - **SC-006**: In 9 of 10 sampled lanes started from a pack, the lane asks nothing the pack should have answered.
 - **SC-007**: The gateway's model call count equals the entry lines in the ledger, every day.
+- **SC-008**: Every learning card has a source for every number and a baseline of at least two windows. Git history of the protected paths (FR-096) shows no change made by the loop without an approved card.
+- **SC-009**: No card is credited for a window in which the change log shows a confounder for its metric, and every kept change is re-checked every week for its eight weeks.
+- **SC-010**: No filed card contains client text. Checked through the gate log, plus a hand check of every card in the first month.
 
 ## Open questions
 
-Kept in the lane's questions file for the hub to relay; summarized here.
+Kept in the lane's questions file for the hub to relay; summarized here. Questions 10 to 13 came with the learning loop.
 
 1. Which model is on the gateway right now? The build log says free Gemini Flash; a later note says it moved to Claude Haiku on the capped Console key around 9 Oct. This spec moves it to the free chains.
 2. Mail: is it OK to create a Gmail client for a no-model fetcher (FR-081)? The alternative keeps a headless Claude poll with a trimmed context, which saves less.
@@ -257,3 +300,7 @@ Kept in the lane's questions file for the hub to relay; summarized here.
 7. The hub session: on call only (FR-057), or a short daily planning session at /prep?
 8. Publish a "Claude sessions avoided" dial on the gauges page? It needs spec 001's allowlist amended.
 9. For Hatch: one reply draft per item, or a batched digest?
+10. Learning cards and "the FR-012 privacy gate": this spec has no FR-012, so I read it as spec 001's FR-012 list, applied through `panel_gate.py`. Taken literally, that list strips every file path, and a card has to say which file it changes. Proposal: strip secrets, personal data and all client names, repos, paths and branches, but keep the paths of the fleet's own tooling. Agreed?
+11. Approval on a card: the `approved` label added from Jonathan's own GitHub account (checked by who made the change), or a comment?
+12. Loop defaults: a baseline of two weekly windows; the noise band is the largest week-to-week swing in the baseline (at least 10%); three open cards at most; eight weeks of re-checks. OK?
+13. Dreaming: does the 3 AM run on the tower change the NX-01 gateway's memory too, or only the tower's? The answer decides which metrics a dreaming run confounds.
