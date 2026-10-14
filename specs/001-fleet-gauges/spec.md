@@ -114,7 +114,7 @@ As the channel owner, I want the same data to feed a Twitch offline panel, a sma
 | Mistral, SambaNova, GitHub Models (FR-003, dimmed until claimed) and later candidates | per provider | Local counter once claimed | Console; for example Cohere 1,000 calls/month (official) |
 
 - **FR-007**: Only OpenRouter has a readable usage endpoint today; Groq exposes per-request headers. Every other gauge depends on a **local call counter** placed in front of the provider, the one uniform design. The counter logs a timestamp, provider and token counts only.
-- **FR-007a**: Engine dials (FR-002) have no allowance to measure against, so their dial reads context load, not percent of quota; where a tier's plan limit is not published, `percent` is null and the dial shows its pacing against its own prior weeks. Pacing numbers are counts and tokens only.
+- **FR-007a**: Engine dials (FR-002) read context load (FR-029) and pace as follows (decided 14 Oct). **Claude tiers** pace against the weekly subscription limit, which resets Wednesday 12:00 America/New_York; the dial shows the "projected % at reset" figure that `hub/scripts/model_quality_report.py` already computes (used so far plus the current daily rate times the days left), not a comparison with prior weeks. **Codex and Copilot** pace against their own prior weeks (`percent` null) until their plan limits are known, then switch to the same projection. Pacing numbers are counts, tokens and percentages only.
 - **FR-008**: The counter reuses the existing usage ledger the review panel already writes (one line per call) rather than a second store. Calls made outside the ledger (a tool talking to a provider directly) are counted by adding the ledger line, not by scraping. Both machines (NX-01 and the tower) keep a ledger; see FR-017.
 - **FR-009**: Calibration rule: a gauge is "calibrated" only after one full window where the local count is within 5% (or 2 calls, whichever is larger) of the provider's own figure. The comparison and date go in a calibration log kept locally. Failing it is a finding, not a reason to loosen the tolerance.
 
@@ -200,7 +200,7 @@ As the channel owner, I want the same data to feed a Twitch offline panel, a sma
 
 ## Decisions (Jonathan, 14 Oct 2026)
 
-All six questions are decided. The answers came as question dialogs in the hub; the quote in item 1 is his own words.
+All six questions are decided, plus the engine-dial confirmation of item 7. The answers came as question dialogs in the hub; the quote in item 1 is his own words.
 
 1. **Day-one providers: all of them.** "put all of them on the dashboard, if they aren't pulling their weight that's the point we'll have a visual que to get them active and nudge their progress, you can size them appropriately if they aren't expected to pull much weight, but if they are dead water we need to see that, maybe the lights dimmed out until they are powered on?" Touches FR-001, FR-003, FR-004, FR-011, FR-026, FR-027, User Story 1. Grok, OpenAI and Jev stay off under FR-002.
 2. **Antigravity: a dial, permanently uncalibrated.** Settled by decision 1; raw count plus a note, no guessed limit (FR-006, unchanged).
@@ -208,6 +208,7 @@ All six questions are decided. The answers came as question dialogs in the hub; 
 4. **Data commits: on `main`.** One data file, one commit per run, no push when nothing changed, CI and the tidy report ignore the path. FR-017a.
 5. **Page: top level, beside `series.html`**, linked from chapter 05 and the head-chef-line-cooks post. FR-025.
 6. **Overlay (later phase): pacing plus a generic label, via an OBS browser source** reading the public data file; never repo, task or client names. FR-028, User Story 5.
+7. **Codex and Copilot dials: confirmed.** Covered by the card-1 words "put all of them on the dashboard"; they get dials, not only readings (FR-002, FR-007a, FR-029).
 
 ## Amendment (Jonathan, 14 Oct 2026, after the six decisions)
 
@@ -219,8 +220,7 @@ Jonathan approved a plan on top of the six answers. His words: "our biggest loss
 - **Idle threshold.** Proposed 7 days with zero calls before a claimed dial dims (FR-027).
 - **Dial weights.** The small, medium or large setting for each of the nine providers (FR-026) is for the owner to set; no value is assumed here.
 - **Quiet-board heartbeat.** "No push when nothing changed" against the staleness rule needs at least one publish a day (proposed, edge cases).
-- **Engine-dial scope.** FR-002 names the Claude tiers; the Codex and Copilot dials follow from the data sources he listed but were not named in the same sentence. Confirm they get dials, not only readings.
-- **Plan limits for the engine dials.** Where a tier's plan limit is unpublished, the dial paces against its own prior weeks (FR-007a); confirm that, or supply a limit.
+- **Plan limits for Codex and Copilot.** Until known they pace against prior weeks (FR-007a); the build lane switches them to the projection when a limit is supplied.
 - **Small-count disclosure.** The minimum count before a per-engine compaction figure is published (FR-013a) is not set.
 - **`usage_ledger.py` extension.** Reading `compact_boundary` and merging the tower's transcripts is new build work; the Copilot and Codex readers do not exist yet.
 - **Overlay wording.** The exact fixed set of generic labels (FR-028).
