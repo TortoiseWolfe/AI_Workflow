@@ -2,7 +2,7 @@
 
 **Feature Branch**: `gauges-spec`
 **Created**: 2026-10-12
-**Status**: Draft (spec only: no build, no signups, no keys)
+**Status**: Draft (spec only: no build, no signups, no keys). The six open questions were decided by Jonathan on 14 Oct 2026; see Decisions at the end.
 **Input**: A dashboard of brass gauges, like 1945 car dials or an old cockpit, one gauge per LLM in the fleet, showing how much of its **free tier** the fleet actually uses. Free tiers only; nothing paid is ever wired in. Static GitHub Pages site in this repo, refreshed every 6 to 12 hours by a local collector, publishing aggregate numbers only.
 
 Research behind the data-source choices: 18 providers surveyed 2026-10-12. Most limits below are third-party figures and are marked so; each must be checked against the provider's own console before its gauge is calibrated.
@@ -20,6 +20,7 @@ As a visitor (an intern, a viewer, a client), I open one page and see a row of d
 **Acceptance Scenarios**:
 
 1. **Given** a data file with 7 providers, **When** the page loads, **Then** 7 gauges render, each with provider name, percent of free allowance used and the window it covers (day, month)
+4. **Given** a provider that is unclaimed (no account yet) or idle (no calls for the idle threshold), **When** the page loads, **Then** its dial is still drawn but dimmed, lamp off, needle at rest, labelled "not claimed" or "idle since <date>", never hidden
 2. **Given** a gauge whose data is older than 2x the refresh interval, **When** the page loads, **Then** that gauge shows a "stale" state (needle greyed, age shown), not its last value as if current
 3. **Given** a provider with no calibrated limit, **When** the page loads, **Then** its gauge shows "uncalibrated" and a raw call count, never an invented percentage
 
@@ -84,7 +85,7 @@ As the channel owner, I want the same data to feed a Twitch offline panel, a sma
 **Acceptance Scenarios**:
 
 1. **Given** the public JSON, **When** a Twitch panel image is generated, **Then** it is a static render of the same numbers, regenerated per publish
-2. **Given** the overlay, **When** it shows, **Then** it reads the public Pages file, never the collector's local store
+2. **Given** the overlay, **When** it shows, **Then** it is a browser source in the streaming software reading the public Pages file, never the collector's local store, and it shows pacing plus a generic label only (FR-028)
 3. **Given** the blog post, **When** updated, **Then** it links the dashboard URL and adds no numbers of its own
 
 ## Requirements _(mandatory)_
@@ -93,10 +94,10 @@ As the channel owner, I want the same data to feed a Twitch offline panel, a sma
 
 **Gauges and providers**
 
-- **FR-001**: One gauge per free-tier provider the fleet uses. First set (in the fleet today): Gemini (AI Studio), Groq, Cloudflare Workers AI, OpenRouter (`:free` models), Antigravity CLI, local Ollama.
+- **FR-001**: One dial per free-tier provider, whether or not the fleet uses it yet. Day one (decided 14 Oct): the six in the fleet today (Gemini (AI Studio), Groq, Cloudflare Workers AI, OpenRouter (`:free` models), Antigravity CLI, local Ollama) plus the three free tiers not yet claimed (Mistral Experiment, SambaNova Cloud, GitHub Models), which start dimmed as "not claimed". A dial that is not pulling its weight stays on the board; that is the point.
 - **FR-002**: Free tiers only. A provider with no free tier (Jev, Anthropic API, Together, DeepSeek, Grok) never gets a gauge. Adding a card-requiring provider is out of scope by rule, not by default.
-- **FR-003**: Candidate gauges, added only after the owner signs up and a limit is confirmed on the provider's console: Mistral Experiment, SambaNova Cloud, GitHub Models, Cohere trial, NVIDIA NIM. Cerebras only if signup asks for no card.
-- **FR-004**: Each gauge shows percent of the free allowance used in its current window, the window (daily, monthly, weekly), the reset time where the provider gives one, and a state: calibrated, uncalibrated, stale.
+- **FR-003**: A dial for Mistral Experiment, SambaNova Cloud and GitHub Models exists from day one but stays "not claimed" (dimmed, raw count only, no percent) until the owner signs up and a limit is confirmed on the provider's console, at which point it is switched on. Further candidates, not in the 14 Oct decision and added the same way: Cohere trial, NVIDIA NIM; Cerebras only if signup asks for no card.
+- **FR-004**: Each gauge shows percent of the free allowance used in its current window, the window (daily, monthly, weekly), the reset time where the provider gives one, and a state: calibrated, uncalibrated, stale, idle or unclaimed. Idle (claimed, but no calls for the idle threshold) and unclaimed (no account yet) both dim the dial, lamp off, so dead water is visible; stale means the data is old, not that the provider is unused.
 - **FR-005**: Local Ollama has no allowance. Its dial is a load meter (GPU busy, requests per hour) and is labelled "local, unlimited" so it is never read as a quota.
 - **FR-006**: Antigravity publishes no numbers (weekly quota of "work done"). Its gauge is permanently "uncalibrated" unless the vendor publishes a limit; it shows a raw count and a note.
 
@@ -110,16 +111,16 @@ As the channel owner, I want the same data to feed a Twitch offline panel, a sma
 | Gemini (AI Studio) | daily | Local counter | Console; roughly 1,000-1,500 requests/day on Flash (third-party, changes often) |
 | Antigravity CLI | weekly | Local counter of invocations | None published |
 | Ollama (local) | rolling hour | Local server state and GPU stats | None (load meter) |
-| Candidates (FR-003) | per provider | Local counter | Console; for example Cohere 1,000 calls/month (official) |
+| Mistral, SambaNova, GitHub Models (FR-003, dimmed until claimed) and later candidates | per provider | Local counter once claimed | Console; for example Cohere 1,000 calls/month (official) |
 
 - **FR-007**: Only OpenRouter has a readable usage endpoint today; Groq exposes per-request headers. Every other gauge depends on a **local call counter** placed in front of the provider, the one uniform design. The counter logs a timestamp, provider and token counts only.
-- **FR-008**: The counter reuses the existing usage ledger the review panel already writes (one line per call) rather than a second store. Calls made outside the ledger (a tool talking to a provider directly) are counted by adding the ledger line, not by scraping.
+- **FR-008**: The counter reuses the existing usage ledger the review panel already writes (one line per call) rather than a second store. Calls made outside the ledger (a tool talking to a provider directly) are counted by adding the ledger line, not by scraping. Both machines (NX-01 and the tower) keep a ledger; see FR-017.
 - **FR-009**: Calibration rule: a gauge is "calibrated" only after one full window where the local count is within 5% (or 2 calls, whichever is larger) of the provider's own figure. The comparison and date go in a calibration log kept locally. Failing it is a finding, not a reason to loosen the tolerance.
 
 **Publishing and privacy**
 
 - **FR-010**: Output is one static JSON file plus the page's HTML, CSS and SVG, served by GitHub Pages from this repo. No server code, no client-side calls to any provider.
-- **FR-011**: Allowlist schema, enforced by the publisher (unknown fields fail the build): `generated_at`, per provider `as_of` (when that provider's figure was last read, so one provider can go stale alone), `id`, `display_name`, `window`, `used`, `limit` (or null), `unit`, `percent` (or null), `state`, `resets_at`, `source` (one of: provider, local-count). Nothing else.
+- **FR-011**: Allowlist schema, enforced by the publisher (unknown fields fail the build): `generated_at`, `activity` (one of: idle, working; fleet-wide, see FR-028), per provider `as_of` (when that provider's figure was last read, so one provider can go stale alone), `id`, `display_name`, `window`, `weight` (one of: small, medium, large; dial size, see FR-026), `used`, `limit` (or null), `unit`, `percent` (or null), `state` (one of: calibrated, uncalibrated, stale, idle, unclaimed), `resets_at`, `source` (one of: provider, local-count). Nothing else.
 - **FR-012**: Never published: keys, tokens, auth headers, prompts, replies, repo names, file paths, branch names, client names, per-task or per-repo breakdowns, account identifiers, email addresses, the machine name.
 - **FR-013**: The publisher runs the review panel's privacy gate (`panel_gate.py`) on the diff of the file it is about to commit, with class `public`, and reuses its rules rather than copying them: secret scan first and fails closed (no scan result means no publish), redaction counts above the maximum stop the run, a `never_send` list blocks any path outside the dashboard files. Any finding aborts before commit.
 - **FR-014**: The pre-push hook and gitleaks run on the publishing branch like any other push. A hook failure stops the run and is reported, never bypassed.
@@ -128,7 +129,8 @@ As the channel owner, I want the same data to feed a Twitch offline panel, a sma
 
 **Refresh**
 
-- **FR-017**: A local collector runs every 6 to 12 hours (default 8) on the machine that holds the ledger. It builds the file, runs the gate, commits and pushes to the publishing branch.
+- **FR-017**: A local collector runs every 6 to 12 hours (default 8; Hatch's note allows 6 to 12 and the number is not a Jonathan decision). Both machines' ledgers are merged from day one (decided 14 Oct): the tower sends its ledger lines (timestamp, provider, token counts only, FR-007) to the publishing machine, which merges them, builds the file, runs the gate, commits and pushes. A gauge is not marked calibrated until the merge covers every machine that makes calls to that provider. Before building the sync, the build checks which free-tier calls the tower makes today.
+- **FR-017a**: Data commits go to `main` (decided 14 Oct; Pages is served from `main`, path `/`). One data file, one commit per run, and no push when the figures have not changed since the last published file. CI and the tidy report ignore the data file's path so the commits do not trigger builds or noise. The publish step still passes the gate (FR-013) and the pre-push hook (FR-014) like any other push.
 - **FR-018**: A gauge whose `as_of` is older than 2x the interval shows stale; the page shows a banner when every gauge is stale.
 - **FR-019**: The page shows the generation time and its age, computed in the browser from `generated_at`.
 - **FR-020**: Free-tier limits drift (Gemini was cut 50-80% in December 2025). Limits live in one config file with a "confirmed on" date per provider; a limit not confirmed in 60 days shows a small "limit unverified" mark.
@@ -139,6 +141,10 @@ As the channel owner, I want the same data to feed a Twitch offline panel, a sma
 - **FR-022**: The dial is decoration over data: each gauge also has its number as text ("62% of daily allowance, 31 of 50 requests"). Colour is never the only signal; red zones also have a pattern or label.
 - **FR-023**: WCAG AA contrast on the text layer, reduced-motion support (needle jumps instead of sweeping), keyboard-readable order, and a plain table view toggle. The page passes Pa11y.
 - **FR-024**: Follows this repo's two-layer style (plain line with an analogy, technical detail beneath) in the explainer text, with sections collapsed by default.
+- **FR-025**: The page is a top-level page beside `series.html` (decided 14 Oct), linked from chapter 05 and from the head-chef-line-cooks post. Chapters 00-04 do not depend on it.
+- **FR-026**: Dial size scales with the work the provider is expected to carry (decided 14 Oct): each provider has a `weight` (small, medium, large) in the config, set by the owner. A small dial for a provider expected to carry little is not a defect, but a large dial that sits dim is the signal the board exists to give.
+- **FR-027**: The unclaimed and idle states (FR-004) render as a dimmed dial with the lamp out and the needle at rest, never as a hidden dial and never as a 0% that looks like a measurement. The idle threshold is a config value (proposed default 7 days, to be confirmed).
+- **FR-028**: Overlay data contract (later phase): the on-air overlay shows pacing against the free allowances plus a generic activity label chosen from a fixed set ("a build lane is running" or "idle") derived from recent ledger activity. It never shows a repo, task, client or branch name; FR-012 holds. The overlay is an OBS browser source reading the public data file on the Pages site.
 
 ### Key Entities
 
@@ -155,12 +161,13 @@ As the channel owner, I want the same data to feed a Twitch offline panel, a sma
 - Any per-repo, per-client, per-task or per-person breakdown.
 - Alerts, throttling or automatic routing that reacts to the gauges (a possible later feature, not this one).
 - The build itself: this document is the spec; plan, tasks and code come after Jonathan elaborates.
-- Twitch panel, overlay and blog edit are later phases (User Story 5); only their data contract (the public JSON) is fixed here.
+- Twitch panel, overlay and blog edit are later phases (User Story 5); only their data contract (the public JSON and FR-028) is fixed here.
 
 ### Edge Cases
 
 - A provider changes its limit mid-window: percent can briefly exceed 100; show it capped at the dial's end with the true number in text.
-- Two machines both call the same provider: the counter must merge both ledgers or the gauge undercounts; until then the gauge is "uncalibrated".
+- Two machines both call the same provider: both ledgers are merged (FR-017). If a machine's ledger is missing from a run, that provider's gauge is "uncalibrated" for the run rather than undercounting.
+- No push when nothing changed (FR-017a) must not look like a dead collector: the page's age comes from `generated_at` and `as_of` (FR-018, FR-019). The collector therefore still publishes at least once a day (proposed, to be confirmed) so a quiet board does not turn stale.
 - Clock and reset differences: Cloudflare resets 00:00 UTC; others roll per account. The window label states which.
 - A provider is disabled or removed from the fleet: its gauge is retired from the config, not left at zero.
 - Collector runs while the ledger is being written: read a consistent snapshot; never publish a half-written file (write temp, then rename).
@@ -174,11 +181,21 @@ As the channel owner, I want the same data to feed a Twitch offline panel, a sma
 - **SC-005**: The page is never more than 2x the refresh interval stale without saying so.
 - **SC-006**: Page weight under 300 KB and no runtime requests to any third party.
 
-## Open questions for Jonathan
+## Decisions (Jonathan, 14 Oct 2026)
 
-1. Which providers get a gauge on day one: only the six already in the fleet, or should claiming Mistral, SambaNova and GitHub Models come first so the dial row is fuller?
-2. Antigravity has no published limit, so its dial can only show a raw count. Show it uncalibrated, or leave it off until a number exists?
-3. Where does the collector run: NX-01 only (the ledger lives there), or also the tower, with the ledgers merged?
-4. Refresh interval: 6 hours (fresher, more commits) or 12 hours (quieter history)? A separate data branch would keep the commit noise out of main.
-5. Should the page live as its own page on the Pages site next to series.html, or inside chapter 05 (advanced orchestration)?
-6. For the Twitch overlay later: a static image per publish, or a live-reading browser source?
+All six questions are decided. The answers came as question dialogs in the hub; the quote in item 1 is his own words.
+
+1. **Day-one providers: all of them.** "put all of them on the dashboard, if they aren't pulling their weight that's the point we'll have a visual que to get them active and nudge their progress, you can size them appropriately if they aren't expected to pull much weight, but if they are dead water we need to see that, maybe the lights dimmed out until they are powered on?" Touches FR-001, FR-003, FR-004, FR-011, FR-026, FR-027, User Story 1. Grok, OpenAI and Jev stay off under FR-002.
+2. **Antigravity: a dial, permanently uncalibrated.** Settled by decision 1; raw count plus a note, no guessed limit (FR-006, unchanged).
+3. **Collector: both machines now, ledgers merged from day one.** FR-008, FR-017 and the two-machine edge case.
+4. **Data commits: on `main`.** One data file, one commit per run, no push when nothing changed, CI and the tidy report ignore the path. FR-017a.
+5. **Page: top level, beside `series.html`**, linked from chapter 05 and the head-chef-line-cooks post. FR-025.
+6. **Overlay (later phase): pacing plus a generic label, via an OBS browser source** reading the public data file; never repo, task or client names. FR-028, User Story 5.
+
+## Still open (left by the decisions)
+
+- **Tower sync path.** How the tower's ledger lines reach the publishing machine (FR-017), and the first check of what free-tier calls the tower makes today. A build-lane design question; it must carry the same aggregate-only fields (FR-007).
+- **Idle threshold.** Proposed 7 days with zero calls before a claimed dial dims (FR-027).
+- **Dial weights.** The small, medium or large setting for each of the nine providers (FR-026) is for the owner to set; no value is assumed here.
+- **Quiet-board heartbeat.** "No push when nothing changed" against the staleness rule needs at least one publish a day (proposed, edge cases).
+- **Overlay wording.** The exact fixed set of generic labels (FR-028).
