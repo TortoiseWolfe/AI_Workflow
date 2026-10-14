@@ -95,7 +95,7 @@ As the channel owner, I want the same data to feed a Twitch offline panel, a sma
 **Gauges and providers**
 
 - **FR-001**: One dial per free-tier provider, whether or not the fleet uses it yet. Day one (decided 14 Oct): the six in the fleet today (Gemini (AI Studio), Groq, Cloudflare Workers AI, OpenRouter (`:free` models), Antigravity CLI, local Ollama) plus the three free tiers not yet claimed (Mistral Experiment, SambaNova Cloud, GitHub Models), which start dimmed as "not claimed". A dial that is not pulling its weight stays on the board; that is the point.
-- **FR-002**: Free tiers only. A provider with no free tier (Jev, Anthropic API, Together, DeepSeek, Grok) never gets a gauge. Adding a card-requiring provider is out of scope by rule, not by default.
+- **FR-002**: Free tiers only for API providers, with one exception (decided 14 Oct). A provider with no free tier (Jev, Anthropic API, Together, DeepSeek, Grok) never gets a gauge, and adding a card-requiring provider is out of scope by rule, not by default. The exception is **engine dials**: one dial per Claude model tier (Opus, Sonnet, Haiku, Fable), and the same for the Codex and Copilot engines the fleet already uses. They show pacing and context load only (FR-029), at engine level, in public ("Public, engine level"). They are not free-tier meters and never show spend, price or a dollar figure; spend tracking stays out of scope.
 - **FR-003**: A dial for Mistral Experiment, SambaNova Cloud and GitHub Models exists from day one but stays "not claimed" (dimmed, raw count only, no percent) until the owner signs up and a limit is confirmed on the provider's console, at which point it is switched on. Further candidates, not in the 14 Oct decision and added the same way: Cohere trial, NVIDIA NIM; Cerebras only if signup asks for no card.
 - **FR-004**: Each gauge shows percent of the free allowance used in its current window, the window (daily, monthly, weekly), the reset time where the provider gives one, and a state: calibrated, uncalibrated, stale, idle or unclaimed. Idle (claimed, but no calls for the idle threshold) and unclaimed (no account yet) both dim the dial, lamp off, so dead water is visible; stale means the data is old, not that the provider is unused.
 - **FR-005**: Local Ollama has no allowance. Its dial is a load meter (GPU busy, requests per hour) and is labelled "local, unlimited" so it is never read as a quota.
@@ -114,14 +114,16 @@ As the channel owner, I want the same data to feed a Twitch offline panel, a sma
 | Mistral, SambaNova, GitHub Models (FR-003, dimmed until claimed) and later candidates | per provider | Local counter once claimed | Console; for example Cohere 1,000 calls/month (official) |
 
 - **FR-007**: Only OpenRouter has a readable usage endpoint today; Groq exposes per-request headers. Every other gauge depends on a **local call counter** placed in front of the provider, the one uniform design. The counter logs a timestamp, provider and token counts only.
+- **FR-007a**: Engine dials (FR-002) have no allowance to measure against, so their dial reads context load, not percent of quota; where a tier's plan limit is not published, `percent` is null and the dial shows its pacing against its own prior weeks. Pacing numbers are counts and tokens only.
 - **FR-008**: The counter reuses the existing usage ledger the review panel already writes (one line per call) rather than a second store. Calls made outside the ledger (a tool talking to a provider directly) are counted by adding the ledger line, not by scraping. Both machines (NX-01 and the tower) keep a ledger; see FR-017.
 - **FR-009**: Calibration rule: a gauge is "calibrated" only after one full window where the local count is within 5% (or 2 calls, whichever is larger) of the provider's own figure. The comparison and date go in a calibration log kept locally. Failing it is a finding, not a reason to loosen the tolerance.
 
 **Publishing and privacy**
 
 - **FR-010**: Output is one static JSON file plus the page's HTML, CSS and SVG, served by GitHub Pages from this repo. No server code, no client-side calls to any provider.
-- **FR-011**: Allowlist schema, enforced by the publisher (unknown fields fail the build): `generated_at`, `activity` (one of: idle, working; fleet-wide, see FR-028), per provider `as_of` (when that provider's figure was last read, so one provider can go stale alone), `id`, `display_name`, `window`, `weight` (one of: small, medium, large; dial size, see FR-026), `used`, `limit` (or null), `unit`, `percent` (or null), `state` (one of: calibrated, uncalibrated, stale, idle, unclaimed), `resets_at`, `source` (one of: provider, local-count). Nothing else.
-- **FR-012**: Never published: keys, tokens, auth headers, prompts, replies, repo names, file paths, branch names, client names, per-task or per-repo breakdowns, account identifiers, email addresses, the machine name.
+- **FR-011**: Allowlist schema, enforced by the publisher (unknown fields fail the build): `generated_at`, `activity` (one of: idle, working; fleet-wide, see FR-028), per provider `as_of` (when that provider's figure was last read, so one provider can go stale alone), `id`, `display_name`, `window`, `weight` (one of: small, medium, large; dial size, see FR-026), `used`, `limit` (or null), `unit`, `percent` (or null), `state` (one of: calibrated, uncalibrated, stale, idle, unclaimed), `resets_at`, `source` (one of: provider, local-count). Per dial, `kind` (one of: free-tier, engine) and the context-load object `context` (FR-029): `window_turns`, `tokens_per_turn_median`, `tokens_per_turn_p90`, `turns_over_200k`, `compactions_total`, `compactions_auto`, `compactions_manual`, `reread_share`, `input_tokens_per_call_median` (single-call APIs), each a number or null, plus `context_state` (one of: calibrated, uncalibrated, not-applicable) per field group. Nothing else.
+- **FR-012**: Never published (the context-load fields of FR-029 are aggregate counts and tokens, so they are inside the allowlist, but nothing below ever is): keys, tokens, auth headers, prompts, replies, repo names, file paths, branch names, client names, per-task or per-repo breakdowns, account identifiers, email addresses, the machine name. Per-lane, per-session and per-task context detail (which lane compacted, when, how often, at what size) is private: it stays in the hub report and `lane.sh --status` and never reaches the public file or page.
+- **FR-013a**: The privacy gate (FR-013) and the allowlist test (SC-003) cover the FR-029 fields like any other: a context-load field outside the FR-011 names, or any per-session, per-lane or per-repo identifier alongside it, fails the build. Counts that could single out one session (a `compactions_total` of 1 in a window with one active lane) are published only as part of the fleet-wide per-engine aggregate, never per lane.
 - **FR-013**: The publisher runs the review panel's privacy gate (`panel_gate.py`) on the diff of the file it is about to commit, with class `public`, and reuses its rules rather than copying them: secret scan first and fails closed (no scan result means no publish), redaction counts above the maximum stop the run, a `never_send` list blocks any path outside the dashboard files. Any finding aborts before commit.
 - **FR-014**: The pre-push hook and gitleaks run on the publishing branch like any other push. A hook failure stops the run and is reported, never bypassed.
 - **FR-015**: Counts are aggregate over all repos, client and personal alike. Client repos are not distinguished; the dashboard does not reveal whether a repo exists.
@@ -146,6 +148,21 @@ As the channel owner, I want the same data to feed a Twitch offline panel, a sma
 - **FR-027**: The unclaimed and idle states (FR-004) render as a dimmed dial with the lamp out and the needle at rest, never as a hidden dial and never as a 0% that looks like a measurement. The idle threshold is a config value (proposed default 7 days, to be confirmed).
 - **FR-028**: Overlay data contract (later phase): the on-air overlay shows pacing against the free allowances plus a generic activity label chosen from a fixed set ("a build lane is running" or "idle") derived from recent ledger activity. It never shows a repo, task, client or branch name; FR-012 holds. The overlay is an OBS browser source reading the public data file on the Pages site.
 
+**Context load** _(approved 14 Oct: "our biggest loss is to session compaction, so maybe add a monitor to that for each dial to see where it's context is getting overloaded")_
+
+- **FR-029**: Every dial carries a context-load reading per window, shown in this order of priority:
+  1. **Tokens per turn**, median and p90 (`tokens_per_turn_median`, `tokens_per_turn_p90`): the size of the context each turn re-reads.
+  2. **Turns over 200K** (`turns_over_200k`): how often a turn ran with more than 200,000 tokens of context.
+  3. **Compactions**: count, split auto versus manual (`compactions_total`, `compactions_auto`, `compactions_manual`).
+  4. **Re-read share** (`reread_share`): cached input divided by total input, as a secondary number, because most of the cost is history being read again.
+  Single-call free-tier APIs (Gemini, Groq, Cloudflare, OpenRouter, and the rest) have no turns or compactions; they show `input_tokens_per_call_median` and mark the other fields `not-applicable`. Any field with no source on an engine is `uncalibrated` and shown as such, never as zero. Copilot leaves no compaction marker, so its compaction fields are `uncalibrated`.
+- **FR-030**: Context-load sources (all local, read-only, metadata only; none of the message text is read or stored):
+  - **Claude**: the session transcripts under `~/.claude/projects`, through `usage_ledger.py`: usage rows per turn, and the `compact_boundary` entries (`preTokens`, `postTokens`, `trigger` = auto or manual). `usage_ledger.py` ingests usage rows today; reading `compact_boundary` is new work and a build task.
+  - **Codex**: `~/.codex/sessions` rollout files: `token_count` events and `compacted` entries.
+  - **Copilot**: `~/.copilot/session-store.db`, table `assistant_usage_events`, opened read-only (a read-only URI connection; the collector never writes to it and never copies the file into the repo).
+  - **Both machines** (NX-01 and the tower) are read and merged as in FR-017; a machine whose sources are missing for a run makes those fields `uncalibrated` for that run.
+  - Calibration (FR-009) applies: the collector's median and p90 for one full window are checked against a hand count from a sample of sessions before a field is marked calibrated.
+
 ### Key Entities
 
 - **Provider**: id, display name, window, limit, limit source, confirmed-on date, free-tier-only flag.
@@ -155,9 +172,9 @@ As the channel owner, I want the same data to feed a Twitch offline panel, a sma
 
 ### Out of Scope
 
-- Anything paid: Jev, Anthropic API, Codex or Copilot subscriptions, OpenAI data-sharing credits, Grok. No gauge, no spend tracking.
+- Anything paid, apart from the engine dials of FR-002: Jev, the Anthropic API, OpenAI data-sharing credits, Grok. No gauge for them. No spend tracking anywhere: Claude, Codex and Copilot engine dials show pacing and context load, never cost.
 - Signing up for any provider, creating keys, or touching billing (the owner does these one step at a time).
-- Cost, latency, quality or per-model leaderboards.
+- Cost, latency, quality or per-model leaderboards. Per-lane, per-session or per-repo context detail (FR-012) is not published; the hub report and `lane.sh --status` keep it private.
 - Any per-repo, per-client, per-task or per-person breakdown.
 - Alerts, throttling or automatic routing that reacts to the gauges (a possible later feature, not this one).
 - The build itself: this document is the spec; plan, tasks and code come after Jonathan elaborates.
@@ -192,10 +209,18 @@ All six questions are decided. The answers came as question dialogs in the hub; 
 5. **Page: top level, beside `series.html`**, linked from chapter 05 and the head-chef-line-cooks post. FR-025.
 6. **Overlay (later phase): pacing plus a generic label, via an OBS browser source** reading the public data file; never repo, task or client names. FR-028, User Story 5.
 
+## Amendment (Jonathan, 14 Oct 2026, after the six decisions)
+
+Jonathan approved a plan on top of the six answers. His words: "our biggest loss is to session compaction, so maybe add a monitor to that for each dial to see where it's context is getting overloaded". His dialog choice on visibility was "Public, engine level". Touches FR-002, FR-007a, FR-011, FR-012, FR-013a, FR-029, FR-030, Out of Scope.
+
 ## Still open (left by the decisions)
 
 - **Tower sync path.** How the tower's ledger lines reach the publishing machine (FR-017), and the first check of what free-tier calls the tower makes today. A build-lane design question; it must carry the same aggregate-only fields (FR-007).
 - **Idle threshold.** Proposed 7 days with zero calls before a claimed dial dims (FR-027).
 - **Dial weights.** The small, medium or large setting for each of the nine providers (FR-026) is for the owner to set; no value is assumed here.
 - **Quiet-board heartbeat.** "No push when nothing changed" against the staleness rule needs at least one publish a day (proposed, edge cases).
+- **Engine-dial scope.** FR-002 names the Claude tiers; the Codex and Copilot dials follow from the data sources he listed but were not named in the same sentence. Confirm they get dials, not only readings.
+- **Plan limits for the engine dials.** Where a tier's plan limit is unpublished, the dial paces against its own prior weeks (FR-007a); confirm that, or supply a limit.
+- **Small-count disclosure.** The minimum count before a per-engine compaction figure is published (FR-013a) is not set.
+- **`usage_ledger.py` extension.** Reading `compact_boundary` and merging the tower's transcripts is new build work; the Copilot and Codex readers do not exist yet.
 - **Overlay wording.** The exact fixed set of generic labels (FR-028).
