@@ -12,7 +12,7 @@ Put a cheap, always-on front door in front of Claude. Deterministic code (L0) do
 ## Technical Context
 
 **Existing pieces (checked 14 Oct)**:
-- OpenClaw gateway, version 2026.9.6 per local notes. It runs in its own WSL distro and listens on `ws://127.0.0.1:18789`. A Windows tray client exposes a loopback MCP server; the narrow WSL client allows four tools (notify, run, info, approvals), and every run needs Jonathan's approval.
+- OpenClaw gateway on NX-01, version 2026.9.6 per local notes (the tower already runs the official 2026.9.9 image; Phase 0 brings NX-01 up to it, per the 15 Oct answer to question 6). It runs in its own WSL distro and listens on `ws://127.0.0.1:18789`. A Windows tray client exposes a loopback MCP server; the narrow WSL client allows four tools (notify, run, info, approvals), and every run needs Jonathan's approval.
 - `lane.sh` starts lanes in tmux. Its engines are `claude`, `codex` and `copilot`. Its client guard reads `hub/client-senders.tsv`, `hub/client-repos.txt` and `~/repos/CD`, refuses the external engines on any of them, and fails closed.
 - The privacy gate (`panel_gate.py`) has three classes: public, own and client. It treats an unlisted repo as client and redacts PII.
 - The notes poller (`muse_poll.sh`) runs every minute from Windows Task Scheduler, with back-off. A Haiku `claude -p` pass looks for tagged drafts, and when it finds one a Sonnet pass handles it. Hatch checks every 20 minutes, 08:00 to 22:00 ET.
@@ -91,11 +91,19 @@ Each phase has a gate. Nothing in a later phase starts before the gate passes. R
 
 ### Phase 0: Verify and decide (no changes to any machine)
 
-- Answer the open questions (spec, and the lane's questions file).
+- Answer the open questions (spec, and the lane's questions file). Questions 1, 3 and 6 were answered on 15 Oct 2026: free chains, tray only for version 1, and NX-01 as the front door with both gateways upgraded to OpenClaw 2.
+- **Upgrade NX-01's gateway to OpenClaw 2 (2026.9.9).** Jonathan, 15 Oct: "mostly one, but they should both be upgraded to OpenClaw2". This copies the tower's upgrade of 10 Oct, so it is a rehearsed path, not a new one:
+  1. Run Doctor on the current build first and read what it flags.
+  2. Before touching anything, save a rollback: tag the current image or distro state with a dated pre-upgrade name, and copy the gateway's state and config into a backup folder with owner-only permissions. The new build migrates its databases on first start, so the backup is the only way back.
+  3. Upgrade through the intermediate build the tower needed (2026.9.5), then to 2026.9.9 from the official image.
+  4. Apply the compose health-check fix that already lives on the fork branch `openclaw2-official-image` (the official image has no `/health` route, so the check uses upstream's own script). NX-01's install is a WSL distro rather than Docker, so the first job is to confirm which parts of that fix apply there, with a source for each.
+  5. Check loopback binding, the tray's four-tool client and the model setting afterwards, then record the result in the change log (FR-098).
+  - **WSL caution:** never run `wsl --terminate` on the gateway's distro while the tray is up. A restart loop once froze Docker and every terminal. Restart the gateway with its own restart command, and do any distro-level step with the tray closed.
+  - The upgrade is off-air work with its own go from Jonathan, and the tower is not touched.
 - Check the installed gateway version against its own docs: ordered model fallbacks, a deterministic step before the model on each channel (FR-024), loopback bind, and local-only skills. Each item gets a source link.
 - Confirm each provider's free limits on its own console. This is shared with spec 001's calibration work, so it is done once.
-- **Jonathan's one step**: answer question 1 (which model the gateway runs today).
-- **Gate**: questions answered; a feature checklist with sources; a limits file with confirmed-on dates.
+- **Jonathan's one step**: approve the NX-01 gateway upgrade (question 1, the model, is answered: free chains).
+- **Gate**: questions answered; NX-01's gateway on 2026.9.9 with a tested rollback; a feature checklist with sources; a limits file with confirmed-on dates.
 
 ### Phase 1: L0 first, the quick win with no model
 

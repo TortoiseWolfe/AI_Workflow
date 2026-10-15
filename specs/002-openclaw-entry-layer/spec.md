@@ -289,14 +289,14 @@ As Jonathan, I want OpenClaw to watch how the fleet works and propose one small 
 
 ## Open questions
 
-Kept in the lane's questions file for the hub to relay; summarized here. Questions 10 to 13 came with the learning loop.
+Kept in the lane's questions file for the hub to relay; summarized here. Questions 10 to 13 came with the learning loop. Questions 1, 3 and 6 were answered on 15 Oct 2026 (below); the rest are open.
 
-1. Which model is on the gateway right now? The build log says free Gemini Flash; a later note says it moved to Claude Haiku on the capped Console key around 9 Oct. This spec moves it to the free chains.
+1. **Answered 15 Oct 2026.** Which model is on the gateway right now? The build log says free Gemini Flash; a later note says it moved to Claude Haiku on the capped Console key around 9 Oct. Jonathan's answer, relayed by the hub: free chains, per the spec. The Haiku setting is retired from the entry layer; Phase 2 applies the chains after he approves the config diff. A lane still reads the live setting in Phase 0 before anything changes.
 2. Mail: is it OK to create a Gmail client for a no-model fetcher (FR-081)? The alternative keeps a headless Claude poll with a trimmed context, which saves less.
-3. Where does Jonathan talk to OpenClaw: the tray only, or a chat channel too? Each channel is another inbound surface to gate (FR-024).
+3. **Answered 15 Oct 2026.** Where does Jonathan talk to OpenClaw: the tray only, or a chat channel too? Each channel is another inbound surface to gate (FR-024). Jonathan's answer, relayed by the hub: tray only for version 1. A chat channel would come later as its own decision.
 4. Shadow bar: 40 items over 7 days, at least 90% agreement, zero privacy misroutes. Right bar, or reuse the panel's 15 changes?
 5. Shared free keys: should entry get priority over the review panel (the 20% reserve goes to the panel), or the reverse?
-6. The tower: its own gateway for its own lanes only in version 1, with no failover. Agreed?
+6. **Answered 15 Oct 2026.** The tower: its own gateway for its own lanes only in version 1, with no failover. Agreed? Jonathan: "mostly one, but they should both be upgraded to OpenClaw2". So NX-01 is the front door, as this spec says, and both gateways move to the official OpenClaw 2 build (2026.9.9, the one the tower has run since 10 Oct). The tower keeps its own lanes and its other jobs, with no failover of shared intake. The upgrade of NX-01's gateway is a Phase 0 step in the plan.
 7. The hub session: on call only (FR-057), or a short daily planning session at /prep?
 8. Publish a "Claude sessions avoided" dial on the gauges page? It needs spec 001's allowlist amended.
 9. For Hatch: one reply draft per item, or a batched digest?
