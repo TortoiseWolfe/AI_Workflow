@@ -231,11 +231,28 @@ Fix: planner now runs as the read-only Plan agent.</pre>
 reviewer-senior (blind): "revise"; flagged components.rb:27 and the test protecting the error.</pre>
 </div></details>
 
+<details class="t"><summary><span class="tno">T-10</span><span class="tname">16 Oct: the CEO left the reception desk</span><span class="chev">›</span></summary>
+<div class="body">
+<p>The front desk is now a free model. I don't need the CEO sitting at the receptionist desk all day. It reads what comes in, sends it to the right station and replies. It holds no keys and no tools, so there is nothing in its hands to misuse.</p>
+<pre class="fact">OpenClaw runs on a free model; Claude is never in its chain.
+Gemini's free quota ran out by mid-morning on day one, so the chain has more free fallbacks.</pre>
+<p>The cooks got a lighter apron. A side job used to read about 58K tokens of instructions before doing anything, and re-read them every turn. I cut what a job doesn't need.</p>
+<pre class="fact">Lane first turn: about 58K to 34K tokens (measured from transcripts).</pre>
+<p>Claude isn't the only cook now. Copilot built the gauges page below. Codex hit its free limit and sits out until October 31.</p>
+<pre class="fact">Engines: Claude (Opus, Sonnet, Haiku, Fable), Copilot, Codex (free limit; back 31 Oct).</pre>
+<p>The budget lesson: by Friday morning I had used 41% of my weekly limit. That's about 20% a day, against the 15% a day that would make the week last. At that pace the week runs out a few days early, so the priciest model steps down first. Fable goes back to Opus, work that doesn't need judgment goes to Sonnet or Haiku, and anything another engine can do goes there.</p>
+<pre class="fact">Weekly limit resets Wednesday 12:00 America/New_York.
+Friday morning: 41% used, roughly 20% a day against a 15% pace.
+Step-down order: Fable to Opus, then Sonnet or Haiku for mechanical work, then another engine.</pre>
+<p>I wanted to see that without opening a report, so the kitchen now has a wall of brass dials. It shows aggregate numbers only: free-tier calls, and how much context each Claude model carries on every turn. Where nothing can read a number yet, the dial says "no reader yet" instead of guessing.</p>
+<iframe src="../gauges.html" title="Usage gauges: aggregate free-tier and engine readings" loading="lazy" style="width:100%;height:640px;border:1px solid var(--rule);border-radius:3px;background:var(--paper)"></iframe>
+<pre class="fact">Live page: <a href="../gauges.html">gauges.html</a> (data refreshed by a local collector; the page shows its own age).</pre>
+</div></details>
 
 
 </div>
 <nav class="series" aria-label="AI Workflow series"><a href="https://scripthammer.com/blog/facebook-export-knowledge-graph/">← Part 4: I graphed 15 years of my own Facebook</a><a href="../series.html#build-log">All parts</a><a href="setup-tutorial.html">Part 6: Build your AI kitchen →</a></nav>
-<footer>Sources verified 2026-09-30; T-07 updated 2026-10-01. A companion to the AI Kitchen map in this chapter. Numbers that come from press rather than the vendor are marked as such in the plan.</footer>
+<footer>Sources verified 2026-09-30; T-07 updated 2026-10-01; T-10 added 2026-10-16. A companion to the AI Kitchen map in this chapter. Numbers that come from press rather than the vendor are marked as such in the plan.</footer>
 </div>
 
 <script>
