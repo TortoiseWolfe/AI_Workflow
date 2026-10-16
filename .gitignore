@@ -18,3 +18,4 @@ node_modules/
 scratch/
 tmp/
 *.local.md
+__pycache__/
