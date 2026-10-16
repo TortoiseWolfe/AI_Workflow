@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Aggregate free-tier usage and engine context readings, shown as brass gauges.">
+<title>Usage Gauges</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --paper: #e9e4d6;
+  --ink: #29261f;
+  --muted: #615b4c;
+  --panel: #f4f0e4;
+  --rule: #a9a087;
+  --brass: #92702e;
+  --brass-light: #d0b568;
+  --accent: #9b3825;
+  --green: #315e42;
+  --display: "Barlow Condensed", "Arial Narrow", "Helvetica Neue Condensed", Impact, sans-serif;
+  --body: Literata, Georgia, "Times New Roman", serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+.stale-banner { margin: 12px 0 0; padding: 12px; border: 2px solid var(--accent); color: var(--accent); font: 600 13px/1.4 var(--mono); }
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #171a19;
+    --ink: #e5dfcf;
+    --muted: #b5ad97;
+    --panel: #222522;
+    --rule: #5b5748;
+    --brass: #c9a64e;
+    --brass-light: #f0d27b;
+    --accent: #eb8d71;
+    --green: #87c69a;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 32px 16px 60px;
+  background:
+    radial-gradient(ellipse at top, color-mix(in srgb, var(--brass) 8%, transparent), transparent 60%),
+    var(--paper);
+  color: var(--ink);
+  font: 17px/1.5 var(--body);
+}
+a { color: var(--accent); text-underline-offset: 3px; }
+.wrap { width: min(100%, 1120px); margin: auto; }
+header { display: grid; gap: 10px; border-bottom: 2px solid var(--brass); padding-bottom: 20px; }
+.eyebrow, .stamp, .state, .reading, .dial-label, .mono { font-family: var(--mono); }
+.eyebrow { color: var(--muted); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+h1, h2, h3 { font-family: var(--display); }
+h1 { margin: 0; font-size: clamp(2.4rem, 8vw, 4.8rem); line-height: .95; letter-spacing: .02em; }
+.lede { max-width: 65ch; margin: 0; }
+.notice {
+  margin: 16px 0 0;
+  padding: 10px 12px;
+  border-left: 3px solid var(--accent);
+  background: var(--panel);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+.toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; margin: 18px 0; }
+.stamp { margin: 0; color: var(--muted); font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr)); gap: 14px; align-items: stretch; }
+.dial {
+  --dial-size: 210px;
+  position: relative;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--brass);
+  border-radius: 8px;
+  background:
+    radial-gradient(ellipse at 50% 18%, color-mix(in srgb, var(--brass-light) 14%, transparent), transparent 58%),
+    var(--panel);
+  box-shadow: inset 0 0 0 4px color-mix(in srgb, var(--brass) 14%, transparent), 0 3px 8px #0002;
+}
+.dial::before, .dial::after {
+  position: absolute;
+  top: 7px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--brass-light);
+  box-shadow: 0 0 0 1px var(--brass);
+  content: "";
+}
+.dial::before { left: 7px; }
+.dial::after { right: 7px; }
+.dial.weight-small { --dial-size: 184px; }
+.dial.weight-medium { --dial-size: 210px; }
+.dial.weight-large { --dial-size: 236px; }
+.dial.dim { filter: saturate(.35); opacity: .64; }
+.dial-head { display: flex; justify-content: space-between; align-items: start; gap: 8px; }
+.dial-label { margin: 0; font-size: 12px; letter-spacing: .07em; line-height: 1.3; text-transform: uppercase; }
+.kind { flex: none; color: var(--muted); font: 10px/1.3 var(--mono); text-transform: uppercase; }
+.face { width: min(100%, var(--dial-size)); margin: 2px auto 0; }
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+.bezel { fill: none; stroke: var(--brass); stroke-width: 8; }
+.face-fill { fill: color-mix(in srgb, var(--panel) 78%, var(--brass-light)); stroke: var(--rule); stroke-width: 1; }
+.track { fill: none; stroke: var(--rule); stroke-width: 8; stroke-linecap: round; }
+.progress { fill: none; stroke: var(--green); stroke-width: 8; stroke-linecap: round; }
+.progress.over { stroke: var(--accent); stroke-dasharray: 4 3; }
+.tick { stroke: var(--muted); stroke-width: 1.5; }
+.needle { stroke: var(--accent); stroke-width: 3; stroke-linecap: round; transform-box: view-box; transform-origin: 110px 119px; transition: transform .7s ease; }
+.needle.stale, .needle.rest { stroke: var(--muted); }
+.hub { fill: var(--brass-light); stroke: var(--brass); stroke-width: 2; }
+.scale { fill: var(--muted); font: 9px var(--mono); }
+.reading { min-height: 2.5em; margin: 4px 0 2px; text-align: center; font-size: 12px; font-weight: 500; }
+.state { display: flex; align-items: center; justify-content: center; gap: 7px; margin: 4px 0 8px; color: var(--muted); font-size: 10px; text-transform: uppercase; }
+.lamp { width: 8px; height: 8px; flex: none; border: 1px solid var(--muted); border-radius: 50%; background: transparent; }
+.lamp.on { border-color: var(--green); background: var(--green); box-shadow: 0 0 7px color-mix(in srgb, var(--green) 75%, transparent); }
+.facts { display: grid; gap: 4px; margin: 0; padding-top: 8px; border-top: 1px solid var(--rule); color: var(--muted); font: 11px/1.45 var(--mono); }
+.facts div { display: flex; justify-content: space-between; gap: 8px; }
+.facts dt, .facts dd { margin: 0; }
+.facts dd { text-align: right; overflow-wrap: anywhere; }
+.context { margin: 9px 0 0; color: var(--muted); font: 11px/1.45 var(--mono); }
+.context strong { color: var(--ink); font-weight: 500; }
+.codex-note { margin: 8px 0 0; color: var(--accent); font: 11px/1.45 var(--mono); }
+details { margin-top: 22px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+summary { cursor: pointer; padding: 12px 2px; font-family: var(--display); font-size: 1.25rem; }
+summary:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.table-scroll { overflow-x: auto; padding-bottom: 12px; }
+table { width: 100%; border-collapse: collapse; font: 12px/1.5 var(--mono); }
+th, td { padding: 8px; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+th { color: var(--muted); }
+.error { padding: 16px; border: 2px solid var(--accent); background: var(--panel); }
+footer { margin-top: 22px; color: var(--muted); font: 11px/1.5 var(--mono); }
+@media (max-width: 520px) {
+  body { padding: 22px 12px 40px; }
+  .grid { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .dial { padding: 12px; }
+  .dial.weight-large { --dial-size: 224px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <div class="eyebrow">Instrument panel · aggregate readings</div>
+    <h1>Usage <span style="color:var(--brass)">gauges</span></h1>
+    <p class="lede">At a glance: each provider has its own brass dial; the engines show how much context their turns carry.</p>
+    <p class="lede">Percentages appear only after a full-window cross-check. No limit is guessed, and the context readings are totals, never individual activity.</p>
+  </header>
+  <p class="notice" id="source-note">Real aggregate counts from one machine's usage ledger. Free-tier counts are calls the review panel made, not provider-console figures, so no percentage is shown yet. Codex and Copilot have no reader yet; the second machine joins later.</p>
+  <p class="stale-banner" id="stale-banner" role="status" hidden>All gauge readings are stale.</p>
+  <section class="toolbar" aria-label="Snapshot status">
+    <p class="stamp" id="updated">Loading snapshot…</p>
+    <p class="stamp" id="activity"></p>
+  </section>
+  <section id="gauges" class="grid" aria-label="Provider and engine gauges" aria-live="polite"></section>
+  <details>
+    <summary>Plain table view</summary>
+    <div class="table-scroll" id="table-view"></div>
+  </details>
+  <footer><a href="05-advanced-orchestration/">Read the advanced chapter</a></footer>
+</main>
+<script>
+"use strict";
+const DATA_URL = "data/gauges.json";
+const DAY = 24 * 60 * 60 * 1000;
+const number = value => new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(value);
+const dateText = value => value ? new Date(value).toLocaleString() : "not recorded";
+function ageText(value) {
+  if (!value) return "age unknown";
+  const age = Math.max(0, Date.now() - new Date(value).getTime());
+  if (age < 60 * 60 * 1000) return `${Math.floor(age / 60000)} min ago`;
+  if (age < DAY) return `${Math.floor(age / 3600000)} hours ago`;
+  return `${Math.floor(age / DAY)} days ago`;
+}
+
+const noReader = dial => dial.kind === "engine" && dial.as_of === null;
+
+function contextText(dial) {
+  const context = dial.context;
+  if (noReader(dial)) return "No reader yet; nothing is estimated.";
+  if (dial.kind === "free-tier") {
+    return context.input_tokens_per_call_median === null
+      ? "Input-token median: uncalibrated"
+      : `Input-token median: ${number(context.input_tokens_per_call_median)} per call · uncalibrated`;
+  }
+  const compactions = context.compactions_total === null
+    ? "too few to publish, or uncalibrated"
+    : `${number(context.compactions_total)} (${number(context.compactions_auto)} auto, ${number(context.compactions_manual)} manual) · uncalibrated`;
+  const turns = context.tokens_per_turn_median !== null && context.tokens_per_turn_p90 !== null
+    && context.window_turns !== null && context.turns_over_200k !== null
+    ? `${number(context.window_turns)} turns; ${number(context.tokens_per_turn_median)} median / ${number(context.tokens_per_turn_p90)} p90 tokens per turn; ${number(context.turns_over_200k)} over 200K · uncalibrated`
+    : "Turn context: uncalibrated";
+  const reread = context.reread_share !== null
+    ? `${number(context.reread_share * 100)}% re-read share · uncalibrated`
+    : "re-read share: uncalibrated";
+  return `${turns}. Compactions: ${compactions}. ${reread}.`;
+}
+
+function gaugeMarkup(dial) {
+  const ratio = dial.percent === null ? 0 : Math.min(dial.percent, 100) / 100;
+  const angle = -180 + ratio * 180;
+  const dim = ["idle", "unclaimed"].includes(dial.state);
+  const status = noReader(dial) ? "No reader yet"
+    : dial.state === "idle" && dial.as_of
+    ? `Idle since ${new Date(dial.as_of).toLocaleDateString()}`
+    : dial.state === "unclaimed" ? "Not claimed"
+      : dial.state === "stale" ? `Stale · last read ${ageText(dial.as_of)}`
+        : dial.state === "calibrated" ? "Calibrated"
+          : "Uncalibrated";
+  const reading = dial.state === "calibrated" && dial.percent !== null
+    ? `${number(dial.percent)}% of ${dial.window} allowance · ${number(dial.used)} of ${number(dial.limit)} ${dial.unit}`
+    : dial.state === "unclaimed" ? "No account yet · no measurement"
+      : dial.state === "idle" ? `No calls in the current ${dial.window} window`
+        : dial.state === "stale" ? `Last known ${number(dial.used ?? 0)} ${dial.unit}; not current`
+          : noReader(dial) ? "No reader yet · no reading"
+            : dial.kind === "engine" ? "Context load · weekly pacing uncalibrated"
+              : `${number(dial.used ?? 0)} ${dial.unit} this ${dial.window.replace("rolling ", "")} · no limit reader yet`;
+  const lamp = dial.state === "calibrated" ? " on" : "";
+  const percentageArc = dial.percent === null ? "" :
+    `<path class="progress${dial.percent > 100 ? " over" : ""}" d="M 47 119 A 63 63 0 0 1 173 119" pathLength="100" stroke-dasharray="${ratio * 100} 100"/>`;
+  const isCodex = dial.id === "codex";
+  const codexNote = isCodex && Date.now() < Date.parse("2026-11-01T00:00:00Z")
+    ? `<p class="codex-note">No free usage until 31 Oct 2026.</p>`
+    : isCodex ? `<p class="codex-note">The free-usage start date has passed; no allowance is wired.</p>` : "";
+  const providerNote = dial.id === "antigravity"
+    ? `<p class="context">No published limit; raw invocation count only.</p>` : "";
+  return `<article class="dial weight-${dial.weight}${dim ? " dim" : ""}">
+    <div class="dial-head"><h2 class="dial-label">${dial.display_name}</h2><span class="kind">${dial.kind === "engine" ? "engine" : dial.weight}</span></div>
+    <div class="face">
+      <svg viewBox="0 0 220 176" role="img" aria-label="${dial.display_name}: ${reading}">
+        <circle class="face-fill" cx="110" cy="87" r="79"/>
+        <circle class="bezel" cx="110" cy="87" r="83"/>
+        <path class="track" d="M 47 119 A 63 63 0 0 1 173 119"/>
+        ${percentageArc}
+        <path class="tick" d="M 47 119 l 8 -3 M 110 56 v 9 M 173 119 l -8 -3"/>
+        <text class="scale" x="41" y="134">0</text><text class="scale" x="105" y="50">50</text><text class="scale" x="171" y="134">100</text>
+        <line class="needle${dial.state === "stale" ? " stale" : dial.percent === null ? " rest" : ""}" x1="110" y1="119" x2="173" y2="119" data-angle="${angle.toFixed(1)}" style="transform:rotate(-180deg)"/>
+        <circle class="hub" cx="110" cy="119" r="6"/>
+      </svg>
+    </div>
+    <p class="reading">${reading}</p>
+    <p class="state"><span class="lamp${lamp}" aria-hidden="true"></span>${status}</p>
+    <dl class="facts">
+      <div><dt>Window</dt><dd>${dial.window}</dd></div>
+      <div><dt>Last read</dt><dd>${dateText(dial.as_of)}</dd></div>
+      <div><dt>Reset</dt><dd>${dateText(dial.resets_at)}</dd></div>
+    </dl>
+    <p class="context"><strong>Context:</strong> ${contextText(dial)}</p>
+    ${providerNote}
+    ${codexNote}
+  </article>`;
+}
+
+function renderTable(dials) {
+  const rows = dials.map(dial => `<tr><th scope="row">${dial.display_name}</th><td>${dial.kind}</td><td>${dial.state}</td><td>${dial.percent === null ? "—" : `${number(dial.percent)}%`}</td><td>${dial.used === null ? "—" : `${number(dial.used)} ${dial.unit}`}</td><td>${dial.window}</td><td>${contextText(dial)}</td></tr>`).join("");
+  document.getElementById("table-view").innerHTML = `<table><thead><tr><th>Dial</th><th>Kind</th><th>State</th><th>Percent</th><th>Reading</th><th>Window</th><th>Context</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+async function loadSnapshot() {
+  const response = await fetch(DATA_URL, { cache: "no-store" });
+  if (!response.ok) throw new Error(`Snapshot request failed (${response.status})`);
+  const snapshot = await response.json();
+  if (!snapshot || !Array.isArray(snapshot.providers)) throw new Error("Snapshot format is invalid");
+  const generated = new Date(snapshot.generated_at);
+  if (Number.isNaN(generated.getTime())) throw new Error("Snapshot timestamp is invalid");
+  document.getElementById("updated").textContent = `Updated ${generated.toLocaleString()} · ${ageText(snapshot.generated_at)}`;
+  document.getElementById("activity").textContent = `Fleet activity: ${snapshot.activity}`;
+  document.getElementById("gauges").innerHTML = snapshot.providers.map(gaugeMarkup).join("");
+  renderTable(snapshot.providers);
+  document.getElementById("stale-banner").hidden = !snapshot.providers.every(dial => dial.state === "stale");
+  requestAnimationFrame(() => {
+    document.querySelectorAll(".needle[data-angle]").forEach(needle => {
+      needle.style.transform = `rotate(${needle.dataset.angle}deg)`;
+    });
+  });
+}
+
+loadSnapshot().catch(error => {
+  const panel = document.getElementById("gauges");
+  panel.innerHTML = `<p class="error">The snapshot could not be loaded: ${String(error.message).replace(/[<>&"]/g, "")}</p>`;
+  document.getElementById("updated").textContent = "Snapshot unavailable";
+});
+</script>
+</body>
+</html>

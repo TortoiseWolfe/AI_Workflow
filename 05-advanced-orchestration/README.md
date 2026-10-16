@@ -61,6 +61,7 @@ For these, the assembly line is genuinely faster because it's running 27 Claudes
 
 ## What's in this chapter
 
+- [**Usage gauges**](../gauges.html) — the aggregate provider and engine dashboard (phase one)
 - [**ai-kitchen-map.html**](ai-kitchen-map.html) ([PDF](ai-kitchen-map.pdf) · just the graph: [PNG](ai-kitchen-graph.png), [SVG](ai-kitchen-graph.svg)) — the current version of this chapter as one picture: an Opus "head chef", cheap Haiku/Sonnet workers in git worktrees behind tests and a blind Opus review, plus the side agents (2026-09-30)
 - [**setup-tutorial.html**](setup-tutorial.html) — build it yourself: tiered helper agents, the director workflow behind deterministic checks and a blind Opus review, the Jev shadow check, notes with a second assistant over Gmail drafts, and the gotchas that cost a day (2026-09-30)
 - [**action-figure-automata.html**](action-figure-automata.html) — meet the team: the AI agents and machines behind all of this, nicknamed "the fleet", who runs where, and how the members voted on their own name (2026-10-01)

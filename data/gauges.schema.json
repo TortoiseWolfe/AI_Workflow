@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Public gauge snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generated_at", "activity", "providers"],
+  "properties": {
+    "generated_at": {"type": "string", "format": "date-time"},
+    "activity": {"enum": ["idle", "working"]},
+    "providers": {
+      "type": "array",
+      "minItems": 15,
+      "maxItems": 15,
+      "items": {"$ref": "#/$defs/dial"}
+    }
+  },
+  "$defs": {
+    "nullableNumber": {"type": ["number", "null"], "minimum": 0},
+    "dial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "as_of", "id", "display_name", "kind", "window", "weight", "used",
+        "limit", "unit", "percent", "state", "resets_at", "source", "context",
+        "context_state"
+      ],
+      "properties": {
+        "as_of": {"type": ["string", "null"], "format": "date-time"},
+        "id": {
+          "enum": [
+            "gemini", "groq", "cloudflare-workers-ai", "openrouter",
+            "antigravity", "ollama", "mistral", "sambanova", "github-models",
+            "claude-opus", "claude-sonnet", "claude-haiku", "claude-fable",
+            "codex", "copilot"
+          ]
+        },
+        "display_name": {"type": "string", "minLength": 1},
+        "kind": {"enum": ["free-tier", "engine"]},
+        "window": {"type": "string", "minLength": 1},
+        "weight": {"enum": ["small", "medium", "large"]},
+        "used": {"$ref": "#/$defs/nullableNumber"},
+        "limit": {"$ref": "#/$defs/nullableNumber"},
+        "unit": {"type": "string", "minLength": 1},
+        "percent": {"type": ["number", "null"], "minimum": 0},
+        "state": {
+          "enum": ["calibrated", "uncalibrated", "stale", "idle", "unclaimed"]
+        },
+        "resets_at": {"type": ["string", "null"], "format": "date-time"},
+        "source": {"enum": ["provider", "local-count"]},
+        "context": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "window_turns", "tokens_per_turn_median", "tokens_per_turn_p90",
+            "turns_over_200k", "compactions_total", "compactions_auto",
+            "compactions_manual", "reread_share", "input_tokens_per_call_median"
+          ],
+          "properties": {
+            "window_turns": {"$ref": "#/$defs/nullableNumber"},
+            "tokens_per_turn_median": {"$ref": "#/$defs/nullableNumber"},
+            "tokens_per_turn_p90": {"$ref": "#/$defs/nullableNumber"},
+            "turns_over_200k": {"$ref": "#/$defs/nullableNumber"},
+            "compactions_total": {"$ref": "#/$defs/nullableNumber"},
+            "compactions_auto": {"$ref": "#/$defs/nullableNumber"},
+            "compactions_manual": {"$ref": "#/$defs/nullableNumber"},
+            "reread_share": {
+              "type": ["number", "null"],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "input_tokens_per_call_median": {"$ref": "#/$defs/nullableNumber"}
+          }
+        },
+        "context_state": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["turns", "compactions", "reread", "input_tokens"],
+          "properties": {
+            "turns": {"enum": ["calibrated", "uncalibrated", "not-applicable"]},
+            "compactions": {"enum": ["calibrated", "uncalibrated", "not-applicable"]},
+            "reread": {"enum": ["calibrated", "uncalibrated", "not-applicable"]},
+            "input_tokens": {"enum": ["calibrated", "uncalibrated", "not-applicable"]}
+          }
+        }
+      }
+    }
+  },
+  "x-provider-weight-rationales": {
+    "gemini": {"weight": "large", "reason": "Primary general-purpose model, likely to carry frequent work."},
+    "groq": {"weight": "large", "reason": "Fast iteration makes it a likely high-volume route."},
+    "cloudflare-workers-ai": {"weight": "medium", "reason": "Useful for focused edge workloads, with a narrower expected role."},
+    "openrouter": {"weight": "medium", "reason": "Fallback and experimentation traffic, not the default route."},
+    "antigravity": {"weight": "medium", "reason": "CLI work is expected to be regular but specialized."},
+    "ollama": {"weight": "medium", "reason": "Local inference is useful for selected tasks but bounded by local capacity."},
+    "mistral": {"weight": "small", "reason": "Unclaimed at launch, so no current workload is expected."},
+    "sambanova": {"weight": "small", "reason": "Unclaimed at launch, so no current workload is expected."},
+    "github-models": {"weight": "small", "reason": "Unclaimed at launch, so no current workload is expected."}
+  },
+  "x-engine-dial-weight": {
+    "weight": "medium",
+    "reason": "Engine context readings are all shown at the same secondary scale."
+  }
+}
