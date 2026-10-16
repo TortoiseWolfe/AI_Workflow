@@ -4,9 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Aggregate free-tier usage and engine context readings, shown as brass gauges.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600&family=JetBrains+Mono:wght@400;500&display=swap">
 <title>Usage Gauges</title>
 <style>
 :root {
@@ -20,9 +17,9 @@
   --brass-light: #d0b568;
   --accent: #9b3825;
   --green: #315e42;
-  --display: "Barlow Condensed", "Arial Narrow", sans-serif;
-  --body: "Literata", Georgia, serif;
-  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --display: "Barlow Condensed", "Arial Narrow", "Helvetica Neue Condensed", Impact, sans-serif;
+  --body: Literata, Georgia, "Times New Roman", serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 }
 .stale-banner { margin: 12px 0 0; padding: 12px; border: 2px solid var(--accent); color: var(--accent); font: 600 13px/1.4 var(--mono); }
 @media (prefers-color-scheme: dark) {
@@ -108,10 +105,10 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
 .progress.over { stroke: var(--accent); stroke-dasharray: 4 3; }
 .tick { stroke: var(--muted); stroke-width: 1.5; }
 .needle { stroke: var(--accent); stroke-width: 3; stroke-linecap: round; transform-box: view-box; transform-origin: 110px 119px; transition: transform .7s ease; }
-.needle.stale { stroke: var(--muted); }
+.needle.stale, .needle.rest { stroke: var(--muted); }
 .hub { fill: var(--brass-light); stroke: var(--brass); stroke-width: 2; }
 .scale { fill: var(--muted); font: 9px var(--mono); }
-.reading { min-height: 2.5em; margin: -3px 0 2px; text-align: center; font-size: 12px; font-weight: 500; }
+.reading { min-height: 2.5em; margin: 4px 0 2px; text-align: center; font-size: 12px; font-weight: 500; }
 .state { display: flex; align-items: center; justify-content: center; gap: 7px; margin: 4px 0 8px; color: var(--muted); font-size: 10px; text-transform: uppercase; }
 .lamp { width: 8px; height: 8px; flex: none; border: 1px solid var(--muted); border-radius: 50%; background: transparent; }
 .lamp.on { border-color: var(--green); background: var(--green); box-shadow: 0 0 7px color-mix(in srgb, var(--green) 75%, transparent); }
@@ -150,7 +147,7 @@ footer { margin-top: 22px; color: var(--muted); font: 11px/1.5 var(--mono); }
     <p class="lede">At a glance: each provider has its own brass dial; the engines show how much context their turns carry.</p>
     <p class="lede">Percentages appear only after a full-window cross-check. No limit is guessed, and the context readings are totals, never individual activity.</p>
   </header>
-  <p class="notice" id="fixture-note">Synthetic fixture only — no live ledgers, provider accounts or usage are connected.</p>
+  <p class="notice" id="source-note">Real aggregate counts from one machine's usage ledger. Free-tier counts are calls the review panel made, not provider-console figures, so no percentage is shown yet. Codex and Copilot have no reader yet; the second machine joins later.</p>
   <p class="stale-banner" id="stale-banner" role="status" hidden>All gauge readings are stale.</p>
   <section class="toolbar" aria-label="Snapshot status">
     <p class="stamp" id="updated">Loading snapshot…</p>
@@ -172,23 +169,24 @@ const dateText = value => value ? new Date(value).toLocaleString() : "not record
 function ageText(value) {
   if (!value) return "age unknown";
   const age = Math.max(0, Date.now() - new Date(value).getTime());
-  if (age < 60 * 60 * 1000) return `${Math.floor(age / 60000)} minutes ago`;
+  if (age < 60 * 60 * 1000) return `${Math.floor(age / 60000)} min ago`;
   if (age < DAY) return `${Math.floor(age / 3600000)} hours ago`;
   return `${Math.floor(age / DAY)} days ago`;
 }
 
+const noReader = dial => dial.kind === "engine" && dial.as_of === null;
+
 function contextText(dial) {
   const context = dial.context;
+  if (noReader(dial)) return "No reader yet; nothing is estimated.";
   if (dial.kind === "free-tier") {
     return context.input_tokens_per_call_median === null
       ? "Input-token median: uncalibrated"
       : `Input-token median: ${number(context.input_tokens_per_call_median)} per call · uncalibrated`;
   }
-  const compactions = dial.context_state.compactions === "calibrated"
-    ? (context.compactions_total === null
-      ? "too few"
-      : `${number(context.compactions_total)} (${number(context.compactions_auto)} auto, ${number(context.compactions_manual)} manual)`)
-    : "uncalibrated";
+  const compactions = context.compactions_total === null
+    ? "too few to publish, or uncalibrated"
+    : `${number(context.compactions_total)} (${number(context.compactions_auto)} auto, ${number(context.compactions_manual)} manual) · uncalibrated`;
   const turns = context.tokens_per_turn_median !== null && context.tokens_per_turn_p90 !== null
     && context.window_turns !== null && context.turns_over_200k !== null
     ? `${number(context.window_turns)} turns; ${number(context.tokens_per_turn_median)} median / ${number(context.tokens_per_turn_p90)} p90 tokens per turn; ${number(context.turns_over_200k)} over 200K · uncalibrated`
@@ -203,7 +201,8 @@ function gaugeMarkup(dial) {
   const ratio = dial.percent === null ? 0 : Math.min(dial.percent, 100) / 100;
   const angle = -180 + ratio * 180;
   const dim = ["idle", "unclaimed"].includes(dial.state);
-  const status = dial.state === "idle" && dial.as_of
+  const status = noReader(dial) ? "No reader yet"
+    : dial.state === "idle" && dial.as_of
     ? `Idle since ${new Date(dial.as_of).toLocaleDateString()}`
     : dial.state === "unclaimed" ? "Not claimed"
       : dial.state === "stale" ? `Stale · last read ${ageText(dial.as_of)}`
@@ -214,8 +213,9 @@ function gaugeMarkup(dial) {
     : dial.state === "unclaimed" ? "No account yet · no measurement"
       : dial.state === "idle" ? `No calls in the current ${dial.window} window`
         : dial.state === "stale" ? `Last known ${number(dial.used ?? 0)} ${dial.unit}; not current`
-          : dial.kind === "engine" ? "Pacing and context load · uncalibrated"
-            : `${number(dial.used ?? 0)} ${dial.unit} · limit uncalibrated`;
+          : noReader(dial) ? "No reader yet · no reading"
+            : dial.kind === "engine" ? "Context load · weekly pacing uncalibrated"
+              : `${number(dial.used ?? 0)} ${dial.unit} this ${dial.window.replace("rolling ", "")} · no limit reader yet`;
   const lamp = dial.state === "calibrated" ? " on" : "";
   const percentageArc = dial.percent === null ? "" :
     `<path class="progress${dial.percent > 100 ? " over" : ""}" d="M 47 119 A 63 63 0 0 1 173 119" pathLength="100" stroke-dasharray="${ratio * 100} 100"/>`;
@@ -228,14 +228,14 @@ function gaugeMarkup(dial) {
   return `<article class="dial weight-${dial.weight}${dim ? " dim" : ""}">
     <div class="dial-head"><h2 class="dial-label">${dial.display_name}</h2><span class="kind">${dial.kind === "engine" ? "engine" : dial.weight}</span></div>
     <div class="face">
-      <svg viewBox="0 0 220 155" role="img" aria-label="${dial.display_name}: ${reading}">
+      <svg viewBox="0 0 220 176" role="img" aria-label="${dial.display_name}: ${reading}">
         <circle class="face-fill" cx="110" cy="87" r="79"/>
         <circle class="bezel" cx="110" cy="87" r="83"/>
         <path class="track" d="M 47 119 A 63 63 0 0 1 173 119"/>
         ${percentageArc}
         <path class="tick" d="M 47 119 l 8 -3 M 110 56 v 9 M 173 119 l -8 -3"/>
         <text class="scale" x="41" y="134">0</text><text class="scale" x="105" y="50">50</text><text class="scale" x="171" y="134">100</text>
-        <line class="needle${dial.state === "stale" ? " stale" : ""}" x1="110" y1="119" x2="173" y2="119" data-angle="${angle.toFixed(1)}" style="transform:rotate(-180deg)"/>
+        <line class="needle${dial.state === "stale" ? " stale" : dial.percent === null ? " rest" : ""}" x1="110" y1="119" x2="173" y2="119" data-angle="${angle.toFixed(1)}" style="transform:rotate(-180deg)"/>
         <circle class="hub" cx="110" cy="119" r="6"/>
       </svg>
     </div>
@@ -264,9 +264,7 @@ async function loadSnapshot() {
   if (!snapshot || !Array.isArray(snapshot.providers)) throw new Error("Snapshot format is invalid");
   const generated = new Date(snapshot.generated_at);
   if (Number.isNaN(generated.getTime())) throw new Error("Snapshot timestamp is invalid");
-  const age = Math.max(0, Date.now() - generated.getTime());
-  const ageLabel = age < DAY ? `${Math.floor(age / 3600000)} hours ago` : `${Math.floor(age / DAY)} days ago`;
-  document.getElementById("updated").textContent = `Updated ${generated.toLocaleString()} · ${ageLabel}`;
+  document.getElementById("updated").textContent = `Updated ${generated.toLocaleString()} · ${ageText(snapshot.generated_at)}`;
   document.getElementById("activity").textContent = `Fleet activity: ${snapshot.activity}`;
   document.getElementById("gauges").innerHTML = snapshot.providers.map(gaugeMarkup).join("");
   renderTable(snapshot.providers);

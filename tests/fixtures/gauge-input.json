@@ -1,4 +1,6 @@
 {
+  "ledger_as_of": "2026-10-16T14:29:00Z",
+  "last_activity": "2026-10-16T14:27:00Z",
   "calls": [
     {"timestamp": "2026-10-16T14:20:00Z", "provider_id": "gemini", "units": 1, "input_tokens": 1200},
     {"timestamp": "2026-10-16T14:25:00Z", "provider_id": "gemini", "units": 1, "input_tokens": 800},

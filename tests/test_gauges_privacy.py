@@ -125,7 +125,7 @@ class GaugePrivacyTests(unittest.TestCase):
         parser = ResourceParser()
         parser.feed(self.page)
         reject_private_strings(" ".join(parser.visible_text))
-        self.assertLessEqual(parser.external_hosts, {"fonts.googleapis.com", "fonts.gstatic.com"})
+        self.assertEqual(parser.external_hosts, set())  # SC-006: no third-party requests
         self.assertNotRegex(self.page, r"fetch\(\s*['\"]https?://")
 
     def test_page_has_responsive_light_dark_and_reduced_motion_support(self):
@@ -188,6 +188,36 @@ class GaugePrivacyTests(unittest.TestCase):
         self.assertIsNone(gemini["percent"])
         self.assertIn("needle.stale", self.page)
 
+    def test_a_quiet_provider_is_not_stale_but_a_silent_collector_is(self):
+        payload = copy.deepcopy(self.fixture)
+        payload["calls"] = [call for call in payload["calls"] if call["provider_id"] != "groq"]
+        payload["calls"].append({"timestamp": "2026-10-14T09:00:00Z", "provider_id": "groq", "units": 1, "input_tokens": 10})
+        payload["provider_reports"] = []
+        snapshot = collect_gauges.build_snapshot(payload, NOW)
+        self.assertEqual(self.dial(snapshot, "groq")["state"], "uncalibrated")
+        self.assertIsNone(self.dial(snapshot, "groq")["percent"])
+        payload["ledger_as_of"] = "2026-10-15T12:00:00Z"
+        for engine in payload["engines"]:
+            if engine["as_of"]:
+                engine["as_of"] = payload["ledger_as_of"]
+        snapshot = collect_gauges.build_snapshot(payload, NOW)
+        self.assertEqual(self.dial(snapshot, "groq")["state"], "stale")
+        self.assertEqual(self.dial(snapshot, "claude-opus")["state"], "stale")
+
+    def test_an_engine_with_no_reader_stays_empty_and_context_is_never_called_calibrated(self):
+        snapshot = collect_gauges.build_snapshot(self.fixture, NOW)
+        codex = self.dial(snapshot, "codex")
+        self.assertIsNone(codex["as_of"])
+        self.assertTrue(all(value is None for value in codex["context"].values()))
+        for dial in snapshot["providers"]:
+            self.assertNotIn("calibrated", dial["context_state"].values(), dial["id"])
+
+    def test_activity_follows_the_last_ledger_row(self):
+        self.assertEqual(collect_gauges.build_snapshot(self.fixture, NOW)["activity"], "working")
+        payload = copy.deepcopy(self.fixture)
+        payload["last_activity"] = "2026-10-16T09:00:00Z"
+        self.assertEqual(collect_gauges.build_snapshot(payload, NOW)["activity"], "idle")
+
     def test_idle_unclaimed_and_codex_notice_are_explicit(self):
         snapshot = collect_gauges.build_snapshot(self.fixture, NOW)
         self.assertEqual(self.dial(snapshot, "ollama")["state"], "idle")
@@ -199,7 +229,7 @@ class GaugePrivacyTests(unittest.TestCase):
     def test_compactions_are_suppressed_below_twenty_events(self):
         snapshot = collect_gauges.build_snapshot(self.fixture, NOW)
         sonnet = self.dial(snapshot, "claude-sonnet")
-        self.assertEqual(sonnet["context_state"]["compactions"], "calibrated")
+        self.assertEqual(sonnet["context_state"]["compactions"], "uncalibrated")
         self.assertEqual(sonnet["context_state"]["input_tokens"], "not-applicable")
         self.assertIsNone(sonnet["context"]["compactions_total"])
         self.assertIn("too few", self.page)

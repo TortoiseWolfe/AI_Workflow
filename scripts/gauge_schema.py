@@ -14,7 +14,7 @@ SCHEMA_PATH = ROOT / "data" / "gauges.schema.json"
 PROVIDERS = (
     ("gemini", "Gemini (AI Studio)", "daily", "requests", True),
     ("groq", "Groq", "daily", "requests", True),
-    ("cloudflare-workers-ai", "Cloudflare Workers AI", "daily", "Neurons", True),
+    ("cloudflare-workers-ai", "Cloudflare Workers AI", "daily", "requests", True),
     ("openrouter", "OpenRouter free", "daily", "requests", True),
     ("antigravity", "Antigravity CLI", "weekly", "invocations", True),
     ("ollama", "Ollama (local, unlimited)", "rolling hour", "requests/hour", True),
@@ -31,7 +31,7 @@ ENGINES = (
     ("copilot", "Copilot"),
 )
 ENGINE_WINDOWS = {engine_id: "weekly" for engine_id, _ in ENGINES}
-INPUT_ROOT_KEYS = {"calls", "provider_reports", "engines"}
+INPUT_ROOT_KEYS = {"ledger_as_of", "last_activity", "calls", "provider_reports", "engines"}
 CALL_KEYS = {"timestamp", "provider_id", "units", "input_tokens"}
 REPORT_KEYS = {"provider_id", "as_of", "used", "limit", "window_complete", "source", "resets_at"}
 ENGINE_KEYS = {
@@ -118,8 +118,10 @@ def window_start(window: str, now: datetime) -> datetime:
     return now - timedelta(hours=1)
 
 
-def validate_input(payload: Any) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]], dict[str, dict[str, Any]]]:
+def validate_input(payload: Any) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]], dict[str, dict[str, Any]], datetime, datetime]:
     root = exact_keys(payload, INPUT_ROOT_KEYS, "input")
+    ledger_as_of = parse_time(root["ledger_as_of"], "ledger_as_of")
+    last_activity = parse_time(root["last_activity"], "last_activity")
     calls = root["calls"]
     reports = root["provider_reports"]
     engines = root["engines"]
@@ -195,7 +197,7 @@ def validate_input(payload: Any) -> tuple[list[dict[str, Any]], dict[str, dict[s
             "as_of": parse_time(engine["as_of"], f"engines[{index}].as_of")
             if engine["as_of"] is not None else None,
         }
-    return clean_calls, clean_reports, clean_engines
+    return clean_calls, clean_reports, clean_engines, ledger_as_of, last_activity
 
 
 def validate_snapshot(snapshot: Any) -> None:

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the public aggregate snapshot from a strict local JSON input fixture."""
+"""Build the public aggregate snapshot from strict local aggregate JSON (read_local_ledger.py output or a fixture)."""
 
 from __future__ import annotations
 
@@ -28,6 +28,7 @@ from gauge_schema import (
 IDLE_AFTER = timedelta(days=7)
 REFRESH_INTERVAL = timedelta(hours=8)
 STALE_AFTER = 2 * REFRESH_INTERVAL
+ACTIVE_WITHIN = timedelta(hours=1)
 MIN_COMPACTIONS_TO_PUBLISH = 20
 
 
@@ -40,11 +41,10 @@ def _context_for_engine(engine: dict[str, Any] | None) -> tuple[dict[str, Any], 
     context.update(engine)
     context.pop("as_of", None)
     total = engine["compactions_total"]
-    if total is not None:
-        states["compactions"] = "calibrated"
     if total is not None and total < MIN_COMPACTIONS_TO_PUBLISH:
         for field in CONTEXT_GROUPS["compactions"]:
             context[field] = None
+    # Every group stays "uncalibrated" until a hand-counted sample confirms it (FR-009, FR-030).
     return context, states
 
 
@@ -52,20 +52,19 @@ def build_snapshot(payload: Any, now: datetime) -> dict[str, Any]:
     if now.tzinfo is None:
         raise InputError("now must include a timezone")
     now = now.astimezone(timezone.utc)
-    calls, reports, engines = validate_input(payload)
+    calls, reports, engines, ledger_as_of, last_activity = validate_input(payload)
     if any(call["timestamp"] > now for call in calls):
         raise InputError("calls cannot be dated in the future")
     if any(report["as_of"] > now for report in reports.values()):
         raise InputError("provider reports cannot be dated in the future")
     if any(engine["as_of"] and engine["as_of"] > now for engine in engines.values()):
         raise InputError("engine readings cannot be dated in the future")
+    if ledger_as_of > now or last_activity > now:
+        raise InputError("ledger times cannot be in the future")
 
     weights = load_catalog()
     dials = []
-    recent_activity = any(
-        engine["as_of"] is not None and now - engine["as_of"] <= timedelta(hours=8)
-        for engine in engines.values()
-    )
+    recent_activity = now - last_activity <= ACTIVE_WITHIN
     for provider_id, name, window, unit, claimed in PROVIDERS:
         start = window_start(window, now)
         relevant = [call for call in calls if call["provider_id"] == provider_id]
@@ -74,17 +73,16 @@ def build_snapshot(payload: Any, now: datetime) -> dict[str, Any]:
         token_counts = [call["input_tokens"] for call in current if call["input_tokens"] is not None]
         token_median = statistics.median(token_counts) if token_counts else None
         last_call = max((call["timestamp"] for call in relevant), default=None)
-        if last_call and now - last_call <= timedelta(hours=8):
-            recent_activity = True
 
         report = reports.get(provider_id)
-        source, used, limit, resets_at, as_of = "local-count", local_used, None, None, last_call
+        # A local count was read when the ledger was; a quiet provider is not a stale one.
+        source, used, limit, resets_at, as_of = "local-count", local_used, None, None, ledger_as_of
         state = "unclaimed" if not claimed else "uncalibrated"
         percent = None
         if not claimed:
             used = 0
         elif last_call and now - last_call > IDLE_AFTER:
-            state = "idle"
+            state, as_of = "idle", last_call  # as_of doubles as "idle since"
         elif report:
             source, as_of, resets_at = report["source"], report["as_of"], report["resets_at"]
             limit = report["limit"]
@@ -129,6 +127,7 @@ def build_snapshot(payload: Any, now: datetime) -> dict[str, Any]:
         engine = engines.get(engine_id)
         context, context_state = _context_for_engine(engine)
         as_of = engine["as_of"] if engine else None
+        engine_state = "stale" if as_of and now - as_of > STALE_AFTER else "uncalibrated"
         dials.append({
             "as_of": as_of.isoformat(timespec="seconds").replace("+00:00", "Z") if as_of else None,
             "id": engine_id,
@@ -140,7 +139,7 @@ def build_snapshot(payload: Any, now: datetime) -> dict[str, Any]:
             "limit": None,
             "unit": "tokens",
             "percent": None,
-            "state": "uncalibrated",
+            "state": engine_state,
             "resets_at": None,
             "source": "local-count",
             "context": context,
@@ -174,7 +173,7 @@ def write_snapshot(snapshot: dict[str, Any], output_path: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input", required=True, type=Path, help="aggregate JSON input; phase one uses a fixture")
+    parser.add_argument("--input", required=True, type=Path, help="aggregate JSON input, from read_local_ledger.py or a fixture")
     parser.add_argument("--output", required=True, type=Path, help="destination for the allowlisted snapshot")
     parser.add_argument("--now", help="optional timezone-aware ISO timestamp for repeatable tests")
     args = parser.parse_args()
