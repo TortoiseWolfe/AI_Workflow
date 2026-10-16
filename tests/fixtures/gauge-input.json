@@ -1,0 +1,28 @@
+{
+  "calls": [
+    {"timestamp": "2026-10-16T14:20:00Z", "provider_id": "gemini", "units": 1, "input_tokens": 1200},
+    {"timestamp": "2026-10-16T14:25:00Z", "provider_id": "gemini", "units": 1, "input_tokens": 800},
+    {"timestamp": "2026-10-16T14:21:00Z", "provider_id": "groq", "units": 1, "input_tokens": 400},
+    {"timestamp": "2026-10-16T14:22:00Z", "provider_id": "groq", "units": 1, "input_tokens": 900},
+    {"timestamp": "2026-10-16T14:23:00Z", "provider_id": "groq", "units": 1, "input_tokens": 700},
+    {"timestamp": "2026-10-16T14:24:00Z", "provider_id": "cloudflare-workers-ai", "units": 100, "input_tokens": 500},
+    {"timestamp": "2026-10-16T14:25:00Z", "provider_id": "openrouter", "units": 1, "input_tokens": 650},
+    {"timestamp": "2026-10-16T14:26:00Z", "provider_id": "openrouter", "units": 1, "input_tokens": 900},
+    {"timestamp": "2026-10-16T14:27:00Z", "provider_id": "antigravity", "units": 1, "input_tokens": null},
+    {"timestamp": "2026-10-05T12:00:00Z", "provider_id": "ollama", "units": 3, "input_tokens": null}
+  ],
+  "provider_reports": [
+    {"provider_id": "gemini", "as_of": "2026-10-16T14:29:00Z", "used": 2, "limit": 100, "window_complete": true, "source": "local-count", "resets_at": null},
+    {"provider_id": "groq", "as_of": "2026-10-16T14:29:00Z", "used": 3, "limit": 100, "window_complete": true, "source": "local-count", "resets_at": null},
+    {"provider_id": "cloudflare-workers-ai", "as_of": "2026-10-16T14:29:00Z", "used": 100, "limit": 10000, "window_complete": true, "source": "local-count", "resets_at": "2026-10-17T00:00:00Z"},
+    {"provider_id": "openrouter", "as_of": "2026-10-16T14:29:00Z", "used": 2, "limit": 50, "window_complete": true, "source": "provider", "resets_at": null}
+  ],
+  "engines": [
+    {"id": "claude-opus", "as_of": "2026-10-16T14:29:00Z", "window_turns": 80, "tokens_per_turn_median": 85000, "tokens_per_turn_p90": 180000, "turns_over_200k": 3, "compactions_total": 24, "compactions_auto": 18, "compactions_manual": 6, "reread_share": 0.71, "input_tokens_per_call_median": null},
+    {"id": "claude-sonnet", "as_of": "2026-10-16T14:29:00Z", "window_turns": 110, "tokens_per_turn_median": 62000, "tokens_per_turn_p90": 170000, "turns_over_200k": 1, "compactions_total": 19, "compactions_auto": 12, "compactions_manual": 7, "reread_share": 0.64, "input_tokens_per_call_median": null},
+    {"id": "claude-haiku", "as_of": "2026-10-16T14:29:00Z", "window_turns": null, "tokens_per_turn_median": null, "tokens_per_turn_p90": null, "turns_over_200k": null, "compactions_total": null, "compactions_auto": null, "compactions_manual": null, "reread_share": null, "input_tokens_per_call_median": null},
+    {"id": "claude-fable", "as_of": null, "window_turns": null, "tokens_per_turn_median": null, "tokens_per_turn_p90": null, "turns_over_200k": null, "compactions_total": null, "compactions_auto": null, "compactions_manual": null, "reread_share": null, "input_tokens_per_call_median": null},
+    {"id": "codex", "as_of": null, "window_turns": null, "tokens_per_turn_median": null, "tokens_per_turn_p90": null, "turns_over_200k": null, "compactions_total": null, "compactions_auto": null, "compactions_manual": null, "reread_share": null, "input_tokens_per_call_median": null},
+    {"id": "copilot", "as_of": "2026-10-16T14:29:00Z", "window_turns": 40, "tokens_per_turn_median": 24000, "tokens_per_turn_p90": 70000, "turns_over_200k": 0, "compactions_total": null, "compactions_auto": null, "compactions_manual": null, "reread_share": 0.42, "input_tokens_per_call_median": null}
+  ]
+}
