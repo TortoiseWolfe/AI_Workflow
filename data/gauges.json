@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-10-16T15:34:52Z",
+  "generated_at": "2026-10-17T22:21:59Z",
   "activity": "working",
   "providers": [
     {
-      "as_of": "2026-10-16T15:33:14Z",
+      "as_of": "2026-10-17T22:20:24Z",
       "id": "gemini",
       "display_name": "Gemini (AI Studio)",
       "kind": "free-tier",
@@ -35,7 +35,7 @@
       }
     },
     {
-      "as_of": "2026-10-16T15:33:14Z",
+      "as_of": "2026-10-17T22:20:24Z",
       "id": "groq",
       "display_name": "Groq",
       "kind": "free-tier",
@@ -67,7 +67,7 @@
       }
     },
     {
-      "as_of": "2026-10-16T15:33:14Z",
+      "as_of": "2026-10-17T22:20:24Z",
       "id": "cloudflare-workers-ai",
       "display_name": "Cloudflare Workers AI",
       "kind": "free-tier",
@@ -99,7 +99,7 @@
       }
     },
     {
-      "as_of": "2026-10-16T15:33:14Z",
+      "as_of": "2026-10-17T22:20:24Z",
       "id": "openrouter",
       "display_name": "OpenRouter free",
       "kind": "free-tier",
@@ -131,7 +131,7 @@
       }
     },
     {
-      "as_of": "2026-10-16T15:33:14Z",
+      "as_of": "2026-10-17T22:20:24Z",
       "id": "antigravity",
       "display_name": "Antigravity CLI",
       "kind": "free-tier",
@@ -195,7 +195,7 @@
       }
     },
     {
-      "as_of": "2026-10-16T15:33:14Z",
+      "as_of": "2026-10-17T22:20:24Z",
       "id": "mistral",
       "display_name": "Mistral Experiment",
       "kind": "free-tier",
@@ -227,7 +227,7 @@
       }
     },
     {
-      "as_of": "2026-10-16T15:33:14Z",
+      "as_of": "2026-10-17T22:20:24Z",
       "id": "sambanova",
       "display_name": "SambaNova Cloud",
       "kind": "free-tier",
@@ -259,7 +259,7 @@
       }
     },
     {
-      "as_of": "2026-10-16T15:33:14Z",
+      "as_of": "2026-10-17T22:20:24Z",
       "id": "github-models",
       "display_name": "GitHub Models",
       "kind": "free-tier",
@@ -291,7 +291,7 @@
       }
     },
     {
-      "as_of": "2026-10-16T15:33:14Z",
+      "as_of": "2026-10-17T22:20:24Z",
       "id": "claude-opus",
       "display_name": "Claude Opus",
       "kind": "engine",
@@ -305,14 +305,14 @@
       "resets_at": null,
       "source": "local-count",
       "context": {
-        "window_turns": 4100,
-        "tokens_per_turn_median": 149974.5,
-        "tokens_per_turn_p90": 295847,
-        "turns_over_200k": 1220,
-        "compactions_total": 42,
-        "compactions_auto": 42,
+        "window_turns": 7662,
+        "tokens_per_turn_median": 148626.0,
+        "tokens_per_turn_p90": 299992,
+        "turns_over_200k": 2348,
+        "compactions_total": 64,
+        "compactions_auto": 64,
         "compactions_manual": 0,
-        "reread_share": 0.972,
+        "reread_share": 0.976,
         "input_tokens_per_call_median": null
       },
       "context_state": {
@@ -323,7 +323,7 @@
       }
     },
     {
-      "as_of": "2026-10-16T15:33:14Z",
+      "as_of": "2026-10-17T22:20:24Z",
       "id": "claude-sonnet",
       "display_name": "Claude Sonnet",
       "kind": "engine",
@@ -337,14 +337,14 @@
       "resets_at": null,
       "source": "local-count",
       "context": {
-        "window_turns": 3170,
-        "tokens_per_turn_median": 100133.0,
-        "tokens_per_turn_p90": 162015,
+        "window_turns": 7390,
+        "tokens_per_turn_median": 94306.0,
+        "tokens_per_turn_p90": 155149,
         "turns_over_200k": 124,
-        "compactions_total": null,
-        "compactions_auto": null,
-        "compactions_manual": null,
-        "reread_share": 0.955,
+        "compactions_total": 52,
+        "compactions_auto": 52,
+        "compactions_manual": 0,
+        "reread_share": 0.96,
         "input_tokens_per_call_median": null
       },
       "context_state": {
@@ -355,7 +355,7 @@
       }
     },
     {
-      "as_of": "2026-10-16T15:33:14Z",
+      "as_of": "2026-10-17T22:20:24Z",
       "id": "claude-haiku",
       "display_name": "Claude Haiku",
       "kind": "engine",
@@ -369,14 +369,14 @@
       "resets_at": null,
       "source": "local-count",
       "context": {
-        "window_turns": 1445,
-        "tokens_per_turn_median": 56252,
-        "tokens_per_turn_p90": 68364,
+        "window_turns": 2093,
+        "tokens_per_turn_median": 56712,
+        "tokens_per_turn_p90": 69762,
         "turns_over_200k": 2,
         "compactions_total": null,
         "compactions_auto": null,
         "compactions_manual": null,
-        "reread_share": 0.773,
+        "reread_share": 0.776,
         "input_tokens_per_call_median": null
       },
       "context_state": {
@@ -387,7 +387,7 @@
       }
     },
     {
-      "as_of": "2026-10-16T15:33:14Z",
+      "as_of": "2026-10-17T22:20:24Z",
       "id": "claude-fable",
       "display_name": "Claude Fable",
       "kind": "engine",
@@ -401,14 +401,14 @@
       "resets_at": null,
       "source": "local-count",
       "context": {
-        "window_turns": 985,
-        "tokens_per_turn_median": 137413,
-        "tokens_per_turn_p90": 247221,
+        "window_turns": 1581,
+        "tokens_per_turn_median": 121989,
+        "tokens_per_turn_p90": 211880,
         "turns_over_200k": 189,
-        "compactions_total": 37,
-        "compactions_auto": 37,
+        "compactions_total": 51,
+        "compactions_auto": 51,
         "compactions_manual": 0,
-        "reread_share": 0.953,
+        "reread_share": 0.952,
         "input_tokens_per_call_median": null
       },
       "context_state": {
