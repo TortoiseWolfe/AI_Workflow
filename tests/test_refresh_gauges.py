@@ -224,12 +224,34 @@ if __name__ == "__main__":
         self.assertEqual(next_result.returncode, 0, next_result.stderr + next_result.stdout)
         self.assert_refresh_checkout_clean()
 
+    def test_unpushed_local_commit_is_refused_without_changing_or_pushing_it(self):
+        human_file = self.repo / "unpublished.txt"
+        human_file.write_text("local work\n", encoding="utf-8")
+        self.git("add", "unpublished.txt", cwd=self.repo)
+        self.git("commit", "-m", "local human work", cwd=self.repo)
+        human_commit = self.git("rev-parse", "HEAD", cwd=self.repo).stdout.strip()
+
+        result = self.run_refresh()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("result=failed:local-commits-not-pushed", (
+            self.state / "ai-workflow" / "refresh_gauges.log"
+        ).read_text())
+        self.assertEqual(self.git("rev-parse", "HEAD", cwd=self.repo).stdout.strip(), human_commit)
+        self.assertEqual(self.remote_commit(), self.initial_commit)
+        self.assertEqual(human_file.read_text(encoding="utf-8"), "local work\n")
+        self.assertEqual(self.git("status", "--porcelain", cwd=self.repo).stdout, "")
+        self.assertEqual(
+            (self.repo / "data" / "gauges.json").read_text(encoding="utf-8"),
+            self.original_snapshot,
+        )
+
     def test_rejected_push_aborts_conflicting_rebase_and_next_run_succeeds(self):
         writer = self.make_remote_writer()
         bin_dir = Path(self.temporary.name) / "bin"
         bin_dir.mkdir()
         wrapper = bin_dir / "git"
         marker = Path(self.temporary.name) / "remote-updated"
+        reset_log = Path(self.temporary.name) / "reset-log"
         wrapper.write_text(
             """#!/bin/sh
 if [ "$1" = "push" ] && [ ! -e "$MARKER" ]; then
@@ -247,6 +269,11 @@ PY
     "$REAL_GIT" -C "$WRITER" push origin main
     touch "$MARKER"
 fi
+if [ "$1" = "reset" ]; then
+    before=$("$REAL_GIT" rev-parse HEAD)
+    for target do :; done
+    printf '%s %s\\n' "$before" "$target" >> "$RESET_LOG"
+fi
 exec "$REAL_GIT" "$@"
 """,
             encoding="utf-8",
@@ -258,11 +285,36 @@ exec "$REAL_GIT" "$@"
             REAL_GIT=shutil.which("git"),
             MARKER=str(marker),
             WRITER=str(writer),
+            RESET_LOG=str(reset_log),
             REMOTE_GENERATED_AT="2026-10-16T22:00:00Z",
         )
         self.assertNotEqual(result.returncode, 0)
         self.assert_refresh_checkout_clean()
-        self.assertEqual(self.git("rev-parse", "HEAD", cwd=self.repo).stdout.strip(), self.remote_commit())
+        self.assertEqual(self.git("rev-parse", "HEAD", cwd=self.repo).stdout.strip(), self.initial_commit)
+        reset_entries = reset_log.read_text(encoding="utf-8").splitlines()
+        self.assertEqual(len(reset_entries), 1)
+        removed_commit, reset_target = reset_entries[0].split()
+        self.assertEqual(reset_target, self.initial_commit)
+        self.assertEqual(
+            self.git("rev-list", "--count", f"{self.initial_commit}..{removed_commit}", cwd=self.repo)
+            .stdout.strip(),
+            "1",
+        )
+        self.assertEqual(
+            self.git("rev-parse", f"{removed_commit}^", cwd=self.repo).stdout.strip(),
+            self.initial_commit,
+        )
+        self.assertEqual(
+            self.git(
+                "diff-tree", "--no-commit-id", "--name-only", "-r", removed_commit, cwd=self.repo
+            ).stdout.splitlines(),
+            ["data/gauges.json"],
+        )
+        self.assertEqual(
+            self.git("show", "-s", "--format=%s", removed_commit, cwd=self.repo).stdout.strip(),
+            "gauges: refresh data",
+        )
+        self.assertNotEqual(self.remote_commit(), self.initial_commit)
 
         next_result = self.run_refresh()
         self.assertEqual(next_result.returncode, 0, next_result.stderr + next_result.stdout)

@@ -47,23 +47,22 @@ run_step() {
     fi
 }
 
-reset_own_commit_to_origin() {
-    local head parent subject remote_main status
+reset_own_commit_to_base() {
+    local head parent commits status
 
     if ! head="$(git rev-parse HEAD)" ||
         ! parent="$(git rev-parse HEAD^)" ||
-        ! subject="$(git show -s --format=%s HEAD)" ||
-        ! remote_main="$(git rev-parse refs/remotes/origin/main)" ||
+        ! commits="$(git rev-list --count "$BASE_COMMIT..HEAD")" ||
         ! status="$(git status --porcelain --untracked-files=all)"; then
         return 1
     fi
     if [[ "$head" != "$SCRIPT_COMMIT" ||
         "$parent" != "$BASE_COMMIT" ||
-        "$subject" != "gauges: refresh data" ||
+        "$commits" != "1" ||
         -n "$status" ]]; then
         return 1
     fi
-    git reset --hard -q "$remote_main"
+    git reset --hard -q "$BASE_COMMIT"
 }
 
 cd -- "$ROOT"
@@ -92,6 +91,15 @@ if [[ -n "$status" ]]; then
 fi
 
 run_step "pre-collection-pull-failed" git pull --ff-only origin main
+
+if ! head_after_pull="$(timeout --foreground 30 git rev-parse HEAD)" ||
+    ! origin_main_after_pull="$(timeout --foreground 30 git rev-parse refs/remotes/origin/main)"; then
+    fail "post-pull-base-check-failed"
+fi
+if [[ "$head_after_pull" != "$origin_main_after_pull" ]]; then
+    fail "local-commits-not-pushed"
+fi
+BASE_COMMIT="$head_after_pull"
 
 WORK_DIR="$(mktemp -d "$STATE_DIR/.refresh-gauges.XXXXXX")"
 chmod 700 "$WORK_DIR"
@@ -166,8 +174,6 @@ else
         "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" >> "$LOG_FILE"
 fi
 
-BASE_COMMIT="$(timeout --foreground 30 git rev-parse HEAD)" ||
-    fail "base-commit-check-failed"
 run_step "commit-failed" git commit -m "gauges: refresh data"
 COMMITTED=1
 SCRIPT_COMMIT="$(timeout --foreground 30 git rev-parse HEAD)" ||
@@ -181,18 +187,16 @@ if ! timeout --foreground 300 git push origin main; then
         if [[ -d "$rebase_merge" || -d "$rebase_apply" ]]; then
             fail "rebase-abort-failed"
         fi
-        if ! reset_own_commit_to_origin; then
+        if ! reset_own_commit_to_base; then
             fail "pull-rebase-failed"
         fi
         fail "pull-rebase-failed"
     fi
 
-    BASE_COMMIT="$(timeout --foreground 30 git rev-parse HEAD^)" ||
-        fail "rebased-base-check-failed"
     SCRIPT_COMMIT="$(timeout --foreground 30 git rev-parse HEAD)" ||
         fail "rebased-commit-check-failed"
     if ! timeout --foreground 300 git push origin main; then
-        reset_own_commit_to_origin || true
+        reset_own_commit_to_base || true
         fail "push-failed"
     fi
 fi
