@@ -320,6 +320,97 @@ exec "$REAL_GIT" "$@"
         self.assertEqual(next_result.returncode, 0, next_result.stderr + next_result.stdout)
         self.assert_refresh_checkout_clean()
 
+    def write_git_wrapper(self, body):
+        bin_dir = Path(self.temporary.name) / "bin"
+        bin_dir.mkdir(exist_ok=True)
+        wrapper = bin_dir / "git"
+        wrapper.write_text("#!/bin/sh\n" + body + '\nexec "$REAL_GIT" "$@"\n', encoding="utf-8")
+        wrapper.chmod(0o755)
+        return {"PATH": f"{bin_dir}:{os.environ['PATH']}", "REAL_GIT": shutil.which("git")}
+
+    def log_text(self):
+        return (self.state / "ai-workflow" / "refresh_gauges.log").read_text(encoding="utf-8")
+
+    def test_double_push_failure_leaves_no_local_commit(self):
+        env = self.write_git_wrapper(
+            'if [ "$1" = "push" ]; then echo "remote: push refused" >&2; exit 1; fi'
+        )
+
+        result = self.run_refresh(**env)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("result=failed:push-failed", self.log_text())
+        self.assert_refresh_checkout_clean()
+        self.assertEqual(self.git("rev-parse", "HEAD", cwd=self.repo).stdout.strip(), self.initial_commit)
+
+        next_result = self.run_refresh()
+        self.assertEqual(next_result.returncode, 0, next_result.stderr + next_result.stdout)
+        self.assertIn("result=refreshed", self.log_text())
+
+    def test_double_push_failure_after_remote_advanced_leaves_no_local_commit(self):
+        writer = self.make_remote_writer()
+        marker = Path(self.temporary.name) / "remote-updated"
+        env = self.write_git_wrapper(
+            """if [ "$1" = "push" ]; then
+    if [ ! -e "$MARKER" ]; then
+        echo "other work" > "$WRITER/other.txt"
+        "$REAL_GIT" -C "$WRITER" add other.txt
+        "$REAL_GIT" -C "$WRITER" commit -q -m "other work"
+        "$REAL_GIT" -C "$WRITER" push -q origin main
+        touch "$MARKER"
+    fi
+    echo "remote: push refused" >&2
+    exit 1
+fi"""
+        )
+
+        result = self.run_refresh(MARKER=str(marker), WRITER=str(writer), **env)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("result=failed:push-failed", self.log_text())
+        self.assert_refresh_checkout_clean()
+        self.assertEqual(self.git("rev-parse", "HEAD", cwd=self.repo).stdout.strip(), self.remote_commit())
+        self.assertNotEqual(self.remote_commit(), self.initial_commit)
+
+        next_result = self.run_refresh()
+        self.assertEqual(next_result.returncode, 0, next_result.stderr + next_result.stdout)
+        self.assertIn("result=refreshed", self.log_text())
+        self.assertEqual(self.git("rev-parse", "HEAD", cwd=self.repo).stdout.strip(), self.remote_commit())
+
+    def test_failed_step_writes_scrubbed_stderr_to_log(self):
+        token = "ghp_" + "A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q7r8"
+        env = self.write_git_wrapper(
+            f"""if [ "$1" = "pull" ]; then
+    echo "fatal: unable to access 'https://user:{token}@github.com/o/r.git/': denied" >&2
+    echo "Permission denied (publickey)." >&2
+    exit 128
+fi"""
+        )
+
+        result = self.run_refresh(**env)
+        self.assertNotEqual(result.returncode, 0)
+        log = self.log_text()
+        self.assertIn("result=failed:pre-collection-pull-failed", log)
+        self.assertIn("Permission denied (publickey).", log)
+        self.assertIn("pre-collection-pull-failed stderr:", log)
+        self.assertNotIn(token, log)
+        self.assertNotIn("user:", log)
+
+    def test_git_prompts_are_disabled_and_ssh_github_remote_uses_https(self):
+        seen = Path(self.temporary.name) / "seen"
+        self.git("remote", "set-url", "origin", "git@github.com:Owner/Repo.git", cwd=self.repo)
+        env = self.write_git_wrapper(
+            """if [ "$1" = "pull" ]; then
+    printf 'prompt=%s url=%s\\n' "$GIT_TERMINAL_PROMPT" "$("$REAL_GIT" remote get-url origin)" > "$SEEN"
+    exit 1
+fi"""
+        )
+
+        result = self.run_refresh(SEEN=str(seen), **env)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(
+            seen.read_text(encoding="utf-8").strip(),
+            "prompt=0 url=https://github.com/Owner/Repo.git",
+        )
+
     def test_failed_commit_restores_and_unstages_data_for_next_run(self):
         hook = self.repo / ".git" / "hooks" / "pre-commit"
         hook.write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")

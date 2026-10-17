@@ -16,6 +16,18 @@ SCRIPT_COMMIT=""
 
 mkdir -p -- "$STATE_DIR"
 
+# The scheduler's shell has no terminal and no ssh agent, and the ssh key is
+# passphrase-protected, so git over SSH would wait forever for a passphrase.
+# Fetch and push over HTTPS (gh's credential helper holds the token) and never
+# let git prompt.
+git_config_count="${GIT_CONFIG_COUNT:-0}"
+export "GIT_CONFIG_KEY_$git_config_count=url.https://github.com/.insteadOf"
+export "GIT_CONFIG_VALUE_$git_config_count=git@github.com:"
+export GIT_CONFIG_COUNT=$((git_config_count + 1))
+export GIT_TERMINAL_PROMPT=0
+
+ERR_FILE="$(mktemp "$STATE_DIR/.refresh-gauges-err.XXXXXX")"
+
 finish() {
     exit_code=$?
     trap - EXIT
@@ -23,6 +35,7 @@ finish() {
         cp -- "$WORK_DIR/gauges.original.json" "$ROOT/data/gauges.json" || true
         git reset -q -- data/gauges.json || true
     fi
+    rm -f -- "$ERR_FILE"
     if [[ -n "$WORK_DIR" ]]; then
         rm -f -- "$WORK_DIR/ledger-input.json" "$WORK_DIR/gauges.original.json"
         rmdir -- "$WORK_DIR"
@@ -39,10 +52,32 @@ fail() {
     exit 1
 }
 
+# Append the last stderr lines of a failed step to the log, with URL
+# credentials and token-like strings masked.
+log_stderr() {
+    local label=$1 stamp
+    [[ -s "$ERR_FILE" ]] || return 0
+    stamp="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+    tail -n 20 -- "$ERR_FILE" |
+        sed -E \
+            -e 's#(://)[^/@[:space:]]*@#\1***@#g' \
+            -e 's#(gh[pousr]_|github_pat_)[A-Za-z0-9_]+#***#g' \
+            -e 's#[A-Za-z0-9_+/=-]{32,}#***#g' \
+            -e 's#^(.{300}).*#\1...#' \
+            -e "s#^#$stamp $label stderr: #" >> "$LOG_FILE" || true
+    tail -n 20 -- "$ERR_FILE" >&2 || true
+}
+
+# Run a command with a timeout, keeping its stderr for log_stderr.
+capture() {
+    timeout --foreground 300 "$@" 2>"$ERR_FILE"
+}
+
 run_step() {
     label=$1
     shift
-    if ! timeout --foreground 300 "$@"; then
+    if ! capture "$@"; then
+        log_stderr "$label"
         fail "$label"
     fi
 }
@@ -179,8 +214,10 @@ COMMITTED=1
 SCRIPT_COMMIT="$(timeout --foreground 30 git rev-parse HEAD)" ||
     fail "script-commit-check-failed"
 
-if ! timeout --foreground 300 git push origin main; then
-    if ! timeout --foreground 300 git pull --rebase origin main; then
+if ! capture git push origin main; then
+    log_stderr "first-push-failed"
+    if ! capture git pull --rebase origin main; then
+        log_stderr "pull-rebase-failed"
         timeout --foreground 30 git rebase --abort || true
         rebase_merge="$(git rev-parse --git-path rebase-merge)"
         rebase_apply="$(git rev-parse --git-path rebase-apply)"
@@ -193,9 +230,14 @@ if ! timeout --foreground 300 git push origin main; then
         fail "pull-rebase-failed"
     fi
 
-    SCRIPT_COMMIT="$(timeout --foreground 30 git rev-parse HEAD)" ||
+    # The rebase moved our commit onto the remote's newer tip, so the base to
+    # return to is that tip, not the one recorded before the first push.
+    if ! SCRIPT_COMMIT="$(timeout --foreground 30 git rev-parse HEAD)" ||
+        ! BASE_COMMIT="$(timeout --foreground 30 git rev-parse HEAD^)"; then
         fail "rebased-commit-check-failed"
-    if ! timeout --foreground 300 git push origin main; then
+    fi
+    if ! capture git push origin main; then
+        log_stderr "push-failed"
         reset_own_commit_to_base || true
         fail "push-failed"
     fi
