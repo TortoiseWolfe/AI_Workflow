@@ -77,6 +77,16 @@ Chapter 01's exercise has you clone [`hello-world-ai`](https://github.com/Turtle
 
 If you hit a question the repo didn't answer, or an exercise that didn't work, **open an issue**. The `/principles` directory exists precisely because every rule in here started as a war story. Your question is the next war story.
 
+## Live gauges refresh
+
+The scheduled refresh reads the local aggregate ledger, rebuilds `data/gauges.json`, validates its schema and privacy tests, then commits only that file to `main` and pushes it. It runs every eight hours; the local checkout must be clean and on `main`. Logs are written outside the repository to `${XDG_STATE_HOME:-$HOME/.local/state}/ai-workflow/refresh_gauges.log`.
+
+In Windows Task Scheduler, set the action to start a program with this command line, replacing the placeholder with the absolute WSL path to the script:
+
+```text
+C:\Windows\System32\conhost.exe --headless C:\Windows\System32\wsl.exe -d Debian -- bash -lc "<absolute path to scripts/refresh_gauges.sh>"
+```
+
 ---
 
 **Ready?** Start with [Chapter 00](00-start-here/).
