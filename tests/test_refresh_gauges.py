@@ -131,6 +131,26 @@ if __name__ == "__main__":
     def remote_commit(self):
         return self.git("--git-dir", self.remote, "rev-parse", "main", cwd=self.remote).stdout.strip()
 
+    def make_remote_writer(self):
+        writer = Path(self.temporary.name) / "remote-writer"
+        self.git("clone", self.remote, writer, cwd=self.temporary.name)
+        return writer
+
+    def commit_remote_gauge_change(self, writer, generated_at):
+        snapshot_path = writer / "data" / "gauges.json"
+        snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
+        snapshot["generated_at"] = generated_at
+        snapshot_path.write_text(json.dumps(snapshot, indent=2) + "\n", encoding="utf-8")
+        self.git("add", "data/gauges.json", cwd=writer)
+        self.git("commit", "-m", "manual gauge refresh", cwd=writer)
+        self.git("push", "origin", "main", cwd=writer)
+
+    def assert_refresh_checkout_clean(self):
+        self.assertEqual(self.git("branch", "--show-current", cwd=self.repo).stdout.strip(), "main")
+        self.assertEqual(self.git("status", "--porcelain", "--untracked-files=all", cwd=self.repo).stdout, "")
+        self.assertFalse((self.repo / ".git" / "rebase-merge").exists())
+        self.assertFalse((self.repo / ".git" / "rebase-apply").exists())
+
     def test_changed_snapshot_is_validated_committed_and_pushed_alone(self):
         result = self.run_refresh()
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
@@ -190,6 +210,99 @@ if __name__ == "__main__":
             "result=failed:schema-validation-failed",
             (self.state / "ai-workflow" / "refresh_gauges.log").read_text(),
         )
+
+    def test_remote_gauge_change_is_fast_forwarded_before_collection(self):
+        writer = self.make_remote_writer()
+        self.commit_remote_gauge_change(writer, "2026-10-16T23:00:00Z")
+
+        result = self.run_refresh()
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assert_refresh_checkout_clean()
+        self.assertEqual(self.git("rev-parse", "HEAD", cwd=self.repo).stdout.strip(), self.remote_commit())
+
+        next_result = self.run_refresh()
+        self.assertEqual(next_result.returncode, 0, next_result.stderr + next_result.stdout)
+        self.assert_refresh_checkout_clean()
+
+    def test_rejected_push_aborts_conflicting_rebase_and_next_run_succeeds(self):
+        writer = self.make_remote_writer()
+        bin_dir = Path(self.temporary.name) / "bin"
+        bin_dir.mkdir()
+        wrapper = bin_dir / "git"
+        marker = Path(self.temporary.name) / "remote-updated"
+        wrapper.write_text(
+            """#!/bin/sh
+if [ "$1" = "push" ] && [ ! -e "$MARKER" ]; then
+    python3 - "$WRITER/data/gauges.json" "$REMOTE_GENERATED_AT" <<'PY'
+import json
+import sys
+from pathlib import Path
+path = Path(sys.argv[1])
+snapshot = json.loads(path.read_text(encoding="utf-8"))
+snapshot["generated_at"] = sys.argv[2]
+path.write_text(json.dumps(snapshot, indent=2) + "\\n", encoding="utf-8")
+PY
+    "$REAL_GIT" -C "$WRITER" add data/gauges.json
+    "$REAL_GIT" -C "$WRITER" commit -m "manual gauge refresh"
+    "$REAL_GIT" -C "$WRITER" push origin main
+    touch "$MARKER"
+fi
+exec "$REAL_GIT" "$@"
+""",
+            encoding="utf-8",
+        )
+        wrapper.chmod(0o755)
+
+        result = self.run_refresh(
+            PATH=f"{bin_dir}:{os.environ['PATH']}",
+            REAL_GIT=shutil.which("git"),
+            MARKER=str(marker),
+            WRITER=str(writer),
+            REMOTE_GENERATED_AT="2026-10-16T22:00:00Z",
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assert_refresh_checkout_clean()
+        self.assertEqual(self.git("rev-parse", "HEAD", cwd=self.repo).stdout.strip(), self.remote_commit())
+
+        next_result = self.run_refresh()
+        self.assertEqual(next_result.returncode, 0, next_result.stderr + next_result.stdout)
+        self.assert_refresh_checkout_clean()
+
+    def test_failed_commit_restores_and_unstages_data_for_next_run(self):
+        hook = self.repo / ".git" / "hooks" / "pre-commit"
+        hook.write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")
+        hook.chmod(0o755)
+
+        result = self.run_refresh()
+        self.assertNotEqual(result.returncode, 0)
+        self.assert_refresh_checkout_clean()
+        self.assertEqual(
+            (self.repo / "data" / "gauges.json").read_text(encoding="utf-8"),
+            self.original_snapshot,
+        )
+        self.assertEqual(self.git("rev-parse", "HEAD", cwd=self.repo).stdout.strip(), self.initial_commit)
+
+        hook.unlink()
+        next_result = self.run_refresh()
+        self.assertEqual(next_result.returncode, 0, next_result.stderr + next_result.stdout)
+        self.assert_refresh_checkout_clean()
+
+    def test_gitleaks_finding_prevents_commit_and_unstages_data(self):
+        bin_dir = Path(self.temporary.name) / "bin"
+        bin_dir.mkdir()
+        gitleaks = bin_dir / "gitleaks"
+        gitleaks.write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")
+        gitleaks.chmod(0o755)
+
+        result = self.run_refresh(PATH=f"{bin_dir}:{os.environ['PATH']}")
+        self.assertNotEqual(result.returncode, 0)
+        self.assert_refresh_checkout_clean()
+        self.assertEqual(
+            (self.repo / "data" / "gauges.json").read_text(encoding="utf-8"),
+            self.original_snapshot,
+        )
+        self.assertEqual(self.git("rev-parse", "HEAD", cwd=self.repo).stdout.strip(), self.initial_commit)
+        self.assertEqual(self.remote_commit(), self.initial_commit)
 
 
 if __name__ == "__main__":

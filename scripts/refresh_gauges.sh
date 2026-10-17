@@ -11,6 +11,8 @@ GENERATED_AT=""
 WORK_DIR=""
 BACKUP_CREATED=0
 COMMITTED=0
+BASE_COMMIT=""
+SCRIPT_COMMIT=""
 
 mkdir -p -- "$STATE_DIR"
 
@@ -19,6 +21,7 @@ finish() {
     trap - EXIT
     if (( exit_code != 0 && BACKUP_CREATED == 1 && COMMITTED == 0 )); then
         cp -- "$WORK_DIR/gauges.original.json" "$ROOT/data/gauges.json" || true
+        git reset -q -- data/gauges.json || true
     fi
     if [[ -n "$WORK_DIR" ]]; then
         rm -f -- "$WORK_DIR/ledger-input.json" "$WORK_DIR/gauges.original.json"
@@ -42,6 +45,25 @@ run_step() {
     if ! timeout --foreground 300 "$@"; then
         fail "$label"
     fi
+}
+
+reset_own_commit_to_origin() {
+    local head parent subject remote_main status
+
+    if ! head="$(git rev-parse HEAD)" ||
+        ! parent="$(git rev-parse HEAD^)" ||
+        ! subject="$(git show -s --format=%s HEAD)" ||
+        ! remote_main="$(git rev-parse refs/remotes/origin/main)" ||
+        ! status="$(git status --porcelain --untracked-files=all)"; then
+        return 1
+    fi
+    if [[ "$head" != "$SCRIPT_COMMIT" ||
+        "$parent" != "$BASE_COMMIT" ||
+        "$subject" != "gauges: refresh data" ||
+        -n "$status" ]]; then
+        return 1
+    fi
+    git reset --hard -q "$remote_main"
 }
 
 cd -- "$ROOT"
@@ -68,6 +90,8 @@ fi
 if [[ -n "$status" ]]; then
     fail "worktree-not-clean"
 fi
+
+run_step "pre-collection-pull-failed" git pull --ff-only origin main
 
 WORK_DIR="$(mktemp -d "$STATE_DIR/.refresh-gauges.XXXXXX")"
 chmod 700 "$WORK_DIR"
@@ -135,10 +159,43 @@ fi
 if [[ "$staged_files" != "data/gauges.json" ]]; then
     fail "unexpected-staged-files"
 fi
+if command -v gitleaks >/dev/null 2>&1; then
+    run_step "gitleaks-failed" gitleaks protect --staged --no-banner --redact
+else
+    printf '%s gitleaks=skipped:not-installed\n' \
+        "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" >> "$LOG_FILE"
+fi
+
+BASE_COMMIT="$(timeout --foreground 30 git rev-parse HEAD)" ||
+    fail "base-commit-check-failed"
 run_step "commit-failed" git commit -m "gauges: refresh data"
 COMMITTED=1
-run_step "pull-rebase-failed" git pull --rebase origin main
-run_step "push-failed" git push origin main
+SCRIPT_COMMIT="$(timeout --foreground 30 git rev-parse HEAD)" ||
+    fail "script-commit-check-failed"
+
+if ! timeout --foreground 300 git push origin main; then
+    if ! timeout --foreground 300 git pull --rebase origin main; then
+        timeout --foreground 30 git rebase --abort || true
+        rebase_merge="$(git rev-parse --git-path rebase-merge)"
+        rebase_apply="$(git rev-parse --git-path rebase-apply)"
+        if [[ -d "$rebase_merge" || -d "$rebase_apply" ]]; then
+            fail "rebase-abort-failed"
+        fi
+        if ! reset_own_commit_to_origin; then
+            fail "pull-rebase-failed"
+        fi
+        fail "pull-rebase-failed"
+    fi
+
+    BASE_COMMIT="$(timeout --foreground 30 git rev-parse HEAD^)" ||
+        fail "rebased-base-check-failed"
+    SCRIPT_COMMIT="$(timeout --foreground 30 git rev-parse HEAD)" ||
+        fail "rebased-commit-check-failed"
+    if ! timeout --foreground 300 git push origin main; then
+        reset_own_commit_to_origin || true
+        fail "push-failed"
+    fi
+fi
 
 RESULT="refreshed"
 exit 0
