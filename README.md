@@ -81,6 +81,8 @@ If you hit a question the repo didn't answer, or an exercise that didn't work, *
 
 The scheduled refresh reads the local aggregate ledger, rebuilds `data/gauges.json`, validates its schema and privacy tests, then commits only that file to `main` and pushes it. It runs every eight hours; the local checkout must be clean and on `main`. Logs are written outside the repository to `${XDG_STATE_HOME:-$HOME/.local/state}/ai-workflow/refresh_gauges.log`.
 
+The scheduler's shell has no terminal and no ssh agent, so the script fetches and pushes over HTTPS (the `git@github.com:` remote is rewritten per run, and git never prompts) using the credential helper from `gh auth login`. When a step fails, its last stderr lines, with credentials masked, are added to the log above the `result=` line.
+
 In Windows Task Scheduler, set the action to start a program with this command line, replacing the placeholder with the absolute WSL path to the script:
 
 ```text
