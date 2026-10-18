@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-10-17T22:56:00Z",
-  "activity": "working",
+  "generated_at": "2026-10-18T06:22:16Z",
+  "activity": "idle",
   "providers": [
     {
-      "as_of": "2026-10-17T22:45:04Z",
+      "as_of": "2026-10-18T03:28:17Z",
       "id": "gemini",
       "display_name": "Gemini (AI Studio)",
       "kind": "free-tier",
@@ -35,7 +35,7 @@
       }
     },
     {
-      "as_of": "2026-10-17T22:45:04Z",
+      "as_of": "2026-10-18T03:28:17Z",
       "id": "groq",
       "display_name": "Groq",
       "kind": "free-tier",
@@ -67,7 +67,7 @@
       }
     },
     {
-      "as_of": "2026-10-17T22:45:04Z",
+      "as_of": "2026-10-18T03:28:17Z",
       "id": "cloudflare-workers-ai",
       "display_name": "Cloudflare Workers AI",
       "kind": "free-tier",
@@ -99,7 +99,7 @@
       }
     },
     {
-      "as_of": "2026-10-17T22:45:04Z",
+      "as_of": "2026-10-18T03:28:17Z",
       "id": "openrouter",
       "display_name": "OpenRouter free",
       "kind": "free-tier",
@@ -131,7 +131,7 @@
       }
     },
     {
-      "as_of": "2026-10-17T22:45:04Z",
+      "as_of": "2026-10-18T03:28:17Z",
       "id": "antigravity",
       "display_name": "Antigravity CLI",
       "kind": "free-tier",
@@ -195,7 +195,7 @@
       }
     },
     {
-      "as_of": "2026-10-17T22:45:04Z",
+      "as_of": "2026-10-18T03:28:17Z",
       "id": "mistral",
       "display_name": "Mistral Experiment",
       "kind": "free-tier",
@@ -227,7 +227,7 @@
       }
     },
     {
-      "as_of": "2026-10-17T22:45:04Z",
+      "as_of": "2026-10-18T03:28:17Z",
       "id": "sambanova",
       "display_name": "SambaNova Cloud",
       "kind": "free-tier",
@@ -259,7 +259,7 @@
       }
     },
     {
-      "as_of": "2026-10-17T22:45:04Z",
+      "as_of": "2026-10-18T03:28:17Z",
       "id": "github-models",
       "display_name": "GitHub Models",
       "kind": "free-tier",
@@ -291,7 +291,7 @@
       }
     },
     {
-      "as_of": "2026-10-17T22:45:04Z",
+      "as_of": "2026-10-18T03:28:17Z",
       "id": "claude-opus",
       "display_name": "Claude Opus",
       "kind": "engine",
@@ -305,10 +305,10 @@
       "resets_at": null,
       "source": "local-count",
       "context": {
-        "window_turns": 7756,
-        "tokens_per_turn_median": 148334.5,
-        "tokens_per_turn_p90": 299332,
-        "turns_over_200k": 2385,
+        "window_turns": 8336,
+        "tokens_per_turn_median": 148280.0,
+        "tokens_per_turn_p90": 295784,
+        "turns_over_200k": 2503,
         "compactions_total": 64,
         "compactions_auto": 64,
         "compactions_manual": 0,
@@ -323,7 +323,7 @@
       }
     },
     {
-      "as_of": "2026-10-17T22:45:04Z",
+      "as_of": "2026-10-18T03:28:17Z",
       "id": "claude-sonnet",
       "display_name": "Claude Sonnet",
       "kind": "engine",
@@ -337,12 +337,12 @@
       "resets_at": null,
       "source": "local-count",
       "context": {
-        "window_turns": 7447,
-        "tokens_per_turn_median": 93870,
-        "tokens_per_turn_p90": 155078,
+        "window_turns": 8449,
+        "tokens_per_turn_median": 92619,
+        "tokens_per_turn_p90": 153501,
         "turns_over_200k": 124,
-        "compactions_total": 52,
-        "compactions_auto": 52,
+        "compactions_total": 59,
+        "compactions_auto": 59,
         "compactions_manual": 0,
         "reread_share": 0.96,
         "input_tokens_per_call_median": null
@@ -355,7 +355,7 @@
       }
     },
     {
-      "as_of": "2026-10-17T22:45:04Z",
+      "as_of": "2026-10-18T03:28:17Z",
       "id": "claude-haiku",
       "display_name": "Claude Haiku",
       "kind": "engine",
@@ -369,9 +369,9 @@
       "resets_at": null,
       "source": "local-count",
       "context": {
-        "window_turns": 2104,
-        "tokens_per_turn_median": 56715.0,
-        "tokens_per_turn_p90": 69761,
+        "window_turns": 2262,
+        "tokens_per_turn_median": 56837.5,
+        "tokens_per_turn_p90": 69731,
         "turns_over_200k": 2,
         "compactions_total": null,
         "compactions_auto": null,
@@ -387,7 +387,7 @@
       }
     },
     {
-      "as_of": "2026-10-17T22:45:04Z",
+      "as_of": "2026-10-18T03:28:17Z",
       "id": "claude-fable",
       "display_name": "Claude Fable",
       "kind": "engine",
