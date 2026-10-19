@@ -21,8 +21,8 @@
       "additionalProperties": false,
       "required": [
         "as_of", "id", "display_name", "kind", "window", "weight", "used",
-        "limit", "unit", "percent", "state", "resets_at", "source", "context",
-        "context_state"
+        "limit", "unit", "percent", "state", "resets_at", "source", "cross_check",
+        "lit", "context", "context_state"
       ],
       "properties": {
         "as_of": {"type": ["string", "null"], "format": "date-time"},
@@ -48,6 +48,23 @@
         },
         "resets_at": {"type": ["string", "null"], "format": "date-time"},
         "source": {"enum": ["provider", "local-count"]},
+        "cross_check": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["at", "against", "theirs", "ours"],
+              "properties": {
+                "at": {"type": "string", "format": "date-time"},
+                "against": {"enum": ["provider headers", "provider report", "Claude /usage", "GitHub usage report"]},
+                "theirs": {"type": "number", "minimum": 0},
+                "ours": {"type": "number", "minimum": 0}
+              }
+            }
+          ]
+        },
+        "lit": {"type": "boolean"},
         "context": {
           "type": "object",
           "additionalProperties": false,

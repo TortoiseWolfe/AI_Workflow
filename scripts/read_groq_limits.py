@@ -88,5 +88,6 @@ def groq_report(now: dt.datetime, key_file: Path = KEY_FILE, opener=urllib.reque
         "limit": limit,
         "window_complete": True,
         "source": "provider",
+        "refill_seconds": 86400 / (limit / len(MODELS)),  # per model; the collector replays the ledger through this leak
         "resets_at": None,  # the budget refills one request at a time (86.4 s each), so no single reset time
     }

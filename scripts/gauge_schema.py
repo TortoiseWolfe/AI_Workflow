@@ -30,6 +30,7 @@ ENGINES = (
     ("codex", "Codex"),
     ("copilot", "Copilot"),
 )
+REASON_DIALS = {"copilot", "codex", "claude-opus", "claude-sonnet", "claude-haiku", "claude-fable"}
 ENGINE_WINDOWS = {engine_id: "weekly" for engine_id, _ in ENGINES}
 ENGINE_UNITS = {engine_id: "requests" if engine_id == "copilot" else "tokens" for engine_id, _ in ENGINES}
 COPILOT_REPORT_REASONS = {
@@ -44,8 +45,19 @@ COPILOT_REPORT_REASONS = {
 INPUT_ROOT_KEYS = {
     "ledger_as_of", "last_activity", "calls", "provider_reports", "engines", "copilot_report",
 }
+OPTIONAL_ROOT_KEYS = {"claude_weekly", "codex_report"}
 CALL_KEYS = {"timestamp", "provider_id", "units", "input_tokens"}
+OPTIONAL_CALL_KEYS = {"bucket"}  # which per-model budget a call drew on (Groq refills each model separately)
 REPORT_KEYS = {"provider_id", "as_of", "used", "limit", "window_complete", "source", "resets_at"}
+OPTIONAL_REPORT_KEYS = {"refill_seconds"}  # seconds for one request of a leaky budget to refill
+CLAUDE_FAMILIES = ("opus", "sonnet", "haiku", "fable")
+CLAUDE_WEEKLY_KEYS = {"as_of", "limit", "reset", "by_family", "check"}
+CHECK_KEYS = {"at", "theirs", "ours"}
+CODEX_REPORT_KEYS = {
+    "as_of", "used", "provider_percent", "provider_window_days", "provider_as_of", "provider_resets_at",
+}
+CROSS_CHECK_AGAINST = ("provider headers", "provider report", "Claude /usage", "GitHub usage report")
+CROSS_CHECK_KEYS = {"at", "against", "theirs", "ours"}
 ENGINE_KEYS = {
     "id", "as_of", "window_turns", "tokens_per_turn_median", "tokens_per_turn_p90",
     "turns_over_200k", "compactions_total", "compactions_auto", "compactions_manual",
@@ -91,10 +103,10 @@ def number_or_none(value: Any, field: str, *, maximum: float | None = None) -> f
     return value
 
 
-def exact_keys(value: Any, allowed: set[str], field: str) -> dict[str, Any]:
+def exact_keys(value: Any, allowed: set[str], field: str, optional: set[str] = frozenset()) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise InputError(f"{field} must be an object")
-    extra = set(value) - allowed
+    extra = set(value) - allowed - optional
     missing = allowed - set(value)
     if extra or missing:
         raise InputError(f"{field} has unsupported fields: extra={sorted(extra)}, missing={sorted(missing)}")
@@ -133,8 +145,17 @@ def window_start(window: str, now: datetime) -> datetime:
     return now - timedelta(hours=1)
 
 
-def validate_input(payload: Any) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]], dict[str, dict[str, Any]], datetime, datetime, dict[str, Any]]:
-    root = exact_keys(payload, INPUT_ROOT_KEYS, "input")
+def validate_check(raw: Any, field: str) -> dict[str, Any]:
+    check = exact_keys(raw, CROSS_CHECK_KEYS - {"against"}, field)
+    return {
+        "at": parse_time(check["at"], f"{field}.at"),
+        "theirs": number_or_none(check["theirs"], f"{field}.theirs"),
+        "ours": number_or_none(check["ours"], f"{field}.ours"),
+    }
+
+
+def validate_input(payload: Any) -> tuple:
+    root = exact_keys(payload, INPUT_ROOT_KEYS, "input", OPTIONAL_ROOT_KEYS)
     ledger_as_of = parse_time(root["ledger_as_of"], "ledger_as_of")
     last_activity = parse_time(root["last_activity"], "last_activity")
     calls = root["calls"]
@@ -147,7 +168,10 @@ def validate_input(payload: Any) -> tuple[list[dict[str, Any]], dict[str, dict[s
     engine_ids = {row[0] for row in ENGINES}
     clean_calls: list[dict[str, Any]] = []
     for index, raw in enumerate(calls):
-        call = exact_keys(raw, CALL_KEYS, f"calls[{index}]")
+        call = exact_keys(raw, CALL_KEYS, f"calls[{index}]", OPTIONAL_CALL_KEYS)
+        bucket = call.get("bucket")
+        if bucket is not None and (not isinstance(bucket, str) or not bucket.strip() or len(bucket) > 40):
+            raise InputError(f"calls[{index}].bucket must be a short name or null")
         if not isinstance(call["provider_id"], str) or call["provider_id"] not in provider_ids:
             raise InputError(f"calls[{index}].provider_id is not recognized")
         units = number_or_none(call["units"], f"calls[{index}].units")
@@ -158,11 +182,12 @@ def validate_input(payload: Any) -> tuple[list[dict[str, Any]], dict[str, dict[s
             "provider_id": call["provider_id"],
             "units": units,
             "input_tokens": number_or_none(call["input_tokens"], f"calls[{index}].input_tokens"),
+            "bucket": bucket,
         })
 
     clean_reports: dict[str, dict[str, Any]] = {}
     for index, raw in enumerate(reports):
-        report = exact_keys(raw, REPORT_KEYS, f"provider_reports[{index}]")
+        report = exact_keys(raw, REPORT_KEYS, f"provider_reports[{index}]", OPTIONAL_REPORT_KEYS)
         provider_id = report["provider_id"]
         if not isinstance(provider_id, str) or provider_id not in provider_ids or provider_id in clean_reports:
             raise InputError(f"provider_reports[{index}].provider_id is invalid or duplicated")
@@ -174,8 +199,12 @@ def validate_input(payload: Any) -> tuple[list[dict[str, Any]], dict[str, dict[s
         limit = number_or_none(report["limit"], f"provider_reports[{index}].limit")
         if limit == 0:
             raise InputError(f"provider_reports[{index}].limit must be greater than zero")
+        refill = number_or_none(report.get("refill_seconds"), f"provider_reports[{index}].refill_seconds")
+        if refill == 0:
+            raise InputError(f"provider_reports[{index}].refill_seconds must be greater than zero")
         clean_reports[provider_id] = {
             **report,
+            "refill_seconds": refill,
             "as_of": parse_time(report["as_of"], f"provider_reports[{index}].as_of"),
             "used": used,
             "limit": limit,
@@ -228,7 +257,33 @@ def validate_input(payload: Any) -> tuple[list[dict[str, Any]], dict[str, dict[s
             raise InputError("an unavailable Copilot report requires a reason")
     elif copilot_report["as_of"] is None or copilot_report["reason"] is not None:
         raise InputError("a Copilot report count requires a successful timestamped report")
-    return clean_calls, clean_reports, clean_engines, ledger_as_of, last_activity, copilot_report
+    claude_weekly = None
+    if root.get("claude_weekly") is not None:
+        weekly = exact_keys(root["claude_weekly"], CLAUDE_WEEKLY_KEYS, "claude_weekly")
+        limit = number_or_none(weekly["limit"], "claude_weekly.limit")
+        if not limit:
+            raise InputError("claude_weekly.limit must be greater than zero")
+        families = exact_keys(weekly["by_family"], set(CLAUDE_FAMILIES), "claude_weekly.by_family")
+        claude_weekly = {
+            "as_of": parse_time(weekly["as_of"], "claude_weekly.as_of"),
+            "limit": limit,
+            "reset": parse_time(weekly["reset"], "claude_weekly.reset"),
+            "by_family": {name: number_or_none(families[name], f"claude_weekly.by_family.{name}") or 0 for name in CLAUDE_FAMILIES},
+            "check": validate_check(weekly["check"], "claude_weekly.check") if weekly["check"] is not None else None,
+        }
+    codex_report = None
+    if root.get("codex_report") is not None:
+        codex = exact_keys(root["codex_report"], CODEX_REPORT_KEYS, "codex_report")
+        codex_report = {
+            "as_of": parse_time(codex["as_of"], "codex_report.as_of"),
+            "used": number_or_none(codex["used"], "codex_report.used"),
+            "provider_percent": number_or_none(codex["provider_percent"], "codex_report.provider_percent"),
+            "provider_window_days": number_or_none(codex["provider_window_days"], "codex_report.provider_window_days"),
+            "provider_as_of": parse_time(codex["provider_as_of"], "codex_report.provider_as_of") if codex["provider_as_of"] else None,
+            "provider_resets_at": parse_time(codex["provider_resets_at"], "codex_report.provider_resets_at") if codex["provider_resets_at"] else None,
+        }
+    return (clean_calls, clean_reports, clean_engines, ledger_as_of, last_activity, copilot_report,
+            claude_weekly, codex_report)
 
 
 def validate_snapshot(snapshot: Any) -> None:
@@ -248,6 +303,7 @@ def validate_snapshot(snapshot: Any) -> None:
     allowed = {
         "as_of", "id", "display_name", "kind", "window", "weight", "used", "limit",
         "unit", "percent", "state", "resets_at", "source", "context", "context_state", "reason",
+        "cross_check", "lit",
     }
     context_keys = set(CONTEXT_FIELDS)
     group_keys = set(CONTEXT_GROUPS)
@@ -275,12 +331,28 @@ def validate_snapshot(snapshot: Any) -> None:
             raise InputError(f"providers[{index}].source is invalid")
         if "reason" in dial:
             reason = dial["reason"]
-            if dial["id"] != "copilot" or (
+            if dial["id"] not in REASON_DIALS or (
                 reason is not None and (not isinstance(reason, str) or not reason.strip() or len(reason) > 200)
             ):
                 raise InputError(f"providers[{index}].reason is invalid")
         if (not claimed and dial["state"] != "unclaimed") or (claimed and dial["state"] == "unclaimed"):
             raise InputError("provider claim state does not match the configured dial")
+        if not isinstance(dial["lit"], bool):
+            raise InputError(f"providers[{index}].lit must be true or false")
+        check = dial["cross_check"]
+        if check is not None:
+            exact_keys(check, CROSS_CHECK_KEYS, f"providers[{index}].cross_check")
+            parse_time(check["at"], f"providers[{index}].cross_check.at")
+            if check["against"] not in CROSS_CHECK_AGAINST:
+                raise InputError(f"providers[{index}].cross_check.against is not recognized")
+            for field in ("theirs", "ours"):
+                if number_or_none(check[field], f"providers[{index}].cross_check.{field}") is None:
+                    raise InputError(f"providers[{index}].cross_check.{field} is required")
+        if dial["lit"] and (
+            dial["state"] != "calibrated" or dial["percent"] is None or dial["limit"] is None
+            or check is None or dial["as_of"] is None
+        ):
+            raise InputError(f"providers[{index}] is lit without a source, limit, fresh reading and cross-check")
         exact_keys(dial["context"], context_keys, f"providers[{index}].context")
         exact_keys(dial["context_state"], group_keys, f"providers[{index}].context_state")
         for field in context_keys:
