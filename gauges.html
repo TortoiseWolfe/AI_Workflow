@@ -10,8 +10,8 @@
   color-scheme: light dark;
   --room: #1a110a;
   --room-deep: #0b0704;
-  --steel: #2c2a27;
-  --steel-dark: #171513;
+  --steel: #2a2723;
+  --steel-dark: #161411;
   --steel-edge: #4a4038;
   --plate-top: #e0b462;
   --plate-bottom: #8e6125;
@@ -32,112 +32,109 @@
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  padding: 24px 16px 48px;
+  padding: 18px 14px 36px;
   min-height: 100vh;
   background: radial-gradient(ellipse at 50% -10%, #3d2816 0%, var(--room) 55%, var(--room-deep) 100%), var(--room);
   color: var(--ink);
-  font: 15px/1.45 var(--type);
+  font: 14px/1.4 var(--type);
 }
 a { color: var(--gold); text-underline-offset: 3px; }
-.wrap { width: min(100%, 1320px); margin: auto; display: grid; gap: 16px; }
+.wrap { width: min(100%, 1240px); margin: auto; display: grid; gap: 12px; }
 h1, h2, h3, summary { font-family: var(--display); }
 .nameplate {
   position: relative;
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px;
-  padding: 16px 40px;
-  border-radius: 8px;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 20px;
+  padding: 10px 34px;
+  border-radius: 6px;
   background: linear-gradient(180deg, var(--plate-top) 0%, #b07a2f 40%, #7a4f1b 100%);
   color: var(--soot);
-  box-shadow: inset 0 2px 0 var(--brass-light), inset 0 -3px 0 #3d2509, 0 8px 20px #000c;
+  box-shadow: inset 0 2px 0 var(--brass-light), inset 0 -3px 0 #3d2509, 0 6px 16px #000c;
 }
 .nameplate::before, .nameplate::after {
-  content: ""; position: absolute; top: 50%; width: 12px; height: 12px; margin-top: -6px; border-radius: 50%;
+  content: ""; position: absolute; top: 50%; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, var(--brass-light), #a8742c 55%, #4d300f);
   box-shadow: 0 1px 2px #000;
 }
-.nameplate::before { left: 14px; }
-.nameplate::after { right: 14px; }
-.eyebrow { margin: 0; font: 13px/1.2 var(--display); letter-spacing: .18em; text-transform: uppercase; }
-h1 { margin: 2px 0 0; font-size: clamp(2rem, 6vw, 2.9rem); font-weight: 800; line-height: 1; letter-spacing: .06em; text-shadow: 0 1px 0 var(--brass-light), 0 -1px 0 #4d300f; }
-.readouts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; }
-.stamp { margin: 0; padding: 7px 12px; border-radius: 4px; background: #140d07; color: #f1d08a; box-shadow: inset 0 2px 6px #000, 0 1px 0 var(--brass-light); font-size: 13px; }
+.nameplate::before { left: 12px; }
+.nameplate::after { right: 12px; }
+h1 { margin: 0; font-size: clamp(1.6rem, 5vw, 2.3rem); font-weight: 800; line-height: 1; letter-spacing: .06em; text-shadow: 0 1px 0 var(--brass-light), 0 -1px 0 #4d300f; }
+.readouts { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
+.stamp { margin: 0; padding: 5px 10px; border-radius: 4px; background: #140d07; color: #f1d08a; box-shadow: inset 0 2px 6px #000, 0 1px 0 var(--brass-light); font-size: 12px; }
 #lit-count { color: var(--glow); }
-.lede { margin: 0; color: var(--muted); font-size: 13px; max-width: 110ch; }
-.stale-banner { margin: 0; padding: 10px 14px; border-radius: 6px; border: 2px solid var(--red); background: #3a0f0a; color: #ffb3a6; font: 600 13px/1.4 var(--type); }
+.lede { margin: 0; color: var(--muted); font-size: 12px; }
+.stale-banner { margin: 0; padding: 8px 12px; border-radius: 6px; border: 2px solid var(--red); background: #3a0f0a; color: #ffb3a6; font: 600 13px/1.4 var(--type); }
+.cockpit { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 12px; }
 .bay {
-  padding: 18px;
+  padding: 12px 14px 14px;
   border-radius: 10px;
   background: repeating-linear-gradient(90deg, #ffffff05 0 2px, #00000008 2px 5px), linear-gradient(165deg, var(--steel), var(--steel-dark));
   box-shadow: inset 0 0 0 2px var(--steel-edge), inset 0 2px 0 #5a5048, inset 0 0 40px #000c, 0 8px 20px #000a;
 }
-.bay + .bay { margin-top: 16px; }
-.bay-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 20px; margin-bottom: 14px; }
-.bay h2 { margin: 0; color: var(--gold); font-size: 17px; letter-spacing: .2em; text-transform: uppercase; }
-.bay-head p { margin: 0; color: var(--muted); font-size: 13px; }
-.bay-body { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
-.instrument { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; }
-.instrument.master { flex: 0 1 400px; min-width: 260px; }
-.instrument.single { flex: 0 1 230px; min-width: 190px; }
+.bay h2 { margin: 0 0 10px; color: var(--gold); font-size: 14px; letter-spacing: .16em; text-transform: uppercase; }
+.bay h2 span { color: var(--muted); font: 12px var(--type); letter-spacing: 0; text-transform: none; }
+.assistants { display: grid; gap: 14px; }
+.assistants > .instrument { width: min(100%, 380px); justify-self: center; }
+.assistants .others { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.assistants .others .instrument svg { max-width: 220px; margin: 0 auto; }
+.free { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 8px; }
+.instrument { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; margin: 0; }
 .instrument svg { display: block; width: 100%; height: auto; }
-.master svg { max-width: 400px; }
-.single svg { max-width: 230px; }
-.side { flex: 1 1 360px; min-width: 240px; display: grid; gap: 14px; align-content: start; }
-.meters { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
 .plate {
-  padding: 5px 14px;
+  max-width: 100%;
+  padding: 2px 10px 3px;
   border-radius: 3px;
   background: linear-gradient(180deg, var(--plate-top), var(--plate-bottom));
   color: var(--soot);
   text-align: center;
   box-shadow: inset 0 1px 0 var(--brass-light), 0 2px 4px #000a;
-  font-size: 12px;
 }
-.plate h3 { margin: 0; font-size: 14px; font-weight: 800; letter-spacing: .06em; }
-.plate p { margin: 0; }
-.needle { transform-box: view-box; transform-origin: 200px 200px; transition: transform 1.1s cubic-bezier(.3, 1.4, .5, 1); }
-.needle.stale path, .needle.rest path { fill: #6b5a44; }
-.key { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
-.key li { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 4px; background: var(--ivory); color: var(--soot); box-shadow: inset 0 0 0 2px #b8893b, 0 2px 6px #000a; font-size: 12px; line-height: 1.35; }
-.key strong { display: block; font: 800 14px var(--display); }
-.chip { width: 24px; height: 24px; flex: none; border-radius: 50%; display: grid; place-items: center; color: #f6ead0; font: 800 13px var(--display); box-shadow: 0 0 0 2px var(--soot); }
-.meter { padding: 10px; border-radius: 8px; background: linear-gradient(180deg, #3a3632, #1c1a18); box-shadow: inset 0 1px 0 #5a5048, 0 4px 10px #000a; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
-.drum-bezel { position: relative; padding: 5px; border-radius: 5px; background: linear-gradient(180deg, var(--plate-top), #7a4f1b); box-shadow: inset 0 1px 0 var(--brass-light), 0 2px 4px #000; }
-.drums { display: flex; gap: 2px; padding: 3px; border-radius: 3px; background: #0c0805; box-shadow: inset 0 2px 6px #000; }
-.drum { width: 18px; height: 28px; display: grid; place-items: center; border-radius: 2px; background: linear-gradient(180deg, #2a2724 0%, #f0e6d0 22%, #fffaf0 50%, #f0e6d0 78%, #2a2724 100%); color: #140d07; font: 700 18px var(--type); }
-.flag { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-8deg); padding: 2px 10px; border: 2px solid var(--soot); background: repeating-linear-gradient(-45deg, #c0281c 0 6px, #f6ead0 6px 12px); color: var(--soot); font: 800 13px var(--display); letter-spacing: .1em; text-shadow: 0 0 3px #f6ead0; white-space: nowrap; }
-.meter h3 { margin: 0; color: var(--gold); font-size: 13px; font-weight: 800; letter-spacing: .04em; }
-.meter p { margin: 0; color: var(--muted); font-size: 11px; }
-.logbook { width: 100%; }
-.logbook summary { padding: 3px 2px; color: var(--gold); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; text-align: center; list-style-position: inside; }
-.logbook-body { margin-top: 4px; padding: 8px; border-radius: 4px; background: var(--ivory); color: var(--soot); font: 11px/1.45 var(--type); text-align: left; }
-.facts { display: grid; gap: 3px; margin: 0; }
-.facts div { display: flex; justify-content: space-between; gap: 8px; }
-.facts dt, .facts dd { margin: 0; }
-.facts dt { font-weight: 700; }
-.facts dd { text-align: right; overflow-wrap: anywhere; }
-.context { margin: 6px 0 0; }
-.codex-note { margin: 6px 0 0; color: var(--red); font-weight: 700; }
-.legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
-.legend li { padding: 10px 12px; border-radius: 6px; background: var(--ivory); color: var(--soot); box-shadow: inset 0 0 0 3px #b8893b, 0 3px 8px #000a; font-size: 12px; line-height: 1.45; }
-.legend strong { font-family: var(--display); font-size: 14px; letter-spacing: .04em; }
+.plate h3 { margin: 0; font-size: 12px; font-weight: 800; letter-spacing: .05em; line-height: 1.25; }
+.note { margin: 0; color: var(--muted); font-size: 11px; text-align: center; line-height: 1.3; }
+.instrument.lit .note { color: var(--glow); }
+/* dial faces: lit = light behind the face, dark = instrument unpowered */
+.g .face { fill: url(#face-dark); }
+.g .ink { fill: #6e6454; }
+.g .tick { stroke: #5e5546; }
+.g .leak { stroke: #0e0904; }
+.g .readout { fill: #5a5040; }
+.g .needle path { fill: #4d443a; }
+.g.lit .face { fill: url(#face-lit); }
+.g.lit .ink { fill: #24140a; }
+.g.lit .tick { stroke: #24140a; }
+.g.lit .leak { stroke: #ffcf7a; filter: url(#bloom); }
+.g.lit .readout { fill: #ffcf7a; }
+.g.lit .needle path { fill: #5c160f; }
+.g.lit .needle.tagged path { fill: currentColor; }
+.needle { transform-box: view-box; transform-origin: 150px 150px; transition: transform 1.1s cubic-bezier(.3, 1.4, .5, 1); }
+.needle.stale path, .needle.rest path { fill: #4d443a !important; }
+.key { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 10px; width: 100%; margin: 4px 0 0; padding: 0; list-style: none; font-size: 12px; }
+.key li { display: flex; align-items: center; gap: 6px; }
+.chip { width: 18px; height: 18px; flex: none; border-radius: 50%; display: grid; place-items: center; color: #f6ead0; font: 800 11px var(--display); box-shadow: 0 0 0 1.5px #000; }
+.key b { color: var(--glow); font-weight: 400; margin-left: auto; }
+.legend { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.legend li { padding: 7px 10px; border-radius: 5px; background: var(--ivory); color: var(--soot); box-shadow: inset 0 0 0 2px #b8893b; font-size: 11px; line-height: 1.4; }
+.legend strong { font-family: var(--display); font-size: 12px; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 details.table { border-top: 1px solid var(--steel-edge); border-bottom: 1px solid var(--steel-edge); }
-details.table > summary { padding: 10px 2px; color: var(--gold); font-size: 1.1rem; letter-spacing: .08em; }
+details.table > summary { padding: 8px 2px; color: var(--gold); font-size: 1rem; letter-spacing: .08em; }
 summary { cursor: pointer; }
 summary:focus-visible, a:focus-visible { outline: 3px solid var(--glow); outline-offset: 3px; }
 .table-scroll { overflow-x: auto; padding-bottom: 12px; }
 table { width: 100%; border-collapse: collapse; font: 12px/1.5 var(--type); }
-th, td { padding: 7px; border-bottom: 1px solid var(--steel-edge); text-align: left; vertical-align: top; }
+th, td { padding: 6px; border-bottom: 1px solid var(--steel-edge); text-align: left; vertical-align: top; }
 th { color: var(--gold); }
 .error { padding: 14px; border: 2px solid var(--red); border-radius: 8px; background: #3a0f0a; }
 footer { color: var(--muted); font-size: 12px; }
+@media (max-width: 980px) {
+  .cockpit { grid-template-columns: minmax(0, 1fr); }
+  .legend { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 @media (max-width: 520px) {
-  body { padding: 16px 10px 36px; }
-  .nameplate { padding: 14px 30px; }
-  .bay { padding: 12px; }
-  .bay-body { gap: 16px; justify-content: center; }
-  .meters { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-  .drum { width: 14px; height: 24px; font-size: 15px; }
+  body { padding: 12px 8px 30px; }
+  .bay { padding: 10px; }
+  .free { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 4px; }
+  .legend { grid-template-columns: minmax(0, 1fr); }
+  .plate h3 { font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
@@ -148,45 +145,35 @@ footer { color: var(--muted); font-size: 12px; }
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
     <radialGradient id="brass" cx="32%" cy="28%" r="85%"><stop offset="0" stop-color="#fff0c0"/><stop offset=".35" stop-color="#d6a24c"/><stop offset=".75" stop-color="#8a5a1e"/><stop offset="1" stop-color="#4a2e0c"/></radialGradient>
-    <linearGradient id="flange" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3632"/><stop offset="1" stop-color="#1c1a18"/></linearGradient>
-    <radialGradient id="face-lit" cx="50%" cy="46%" r="58%"><stop offset="0" stop-color="#fff6dc"/><stop offset=".7" stop-color="#f3d99c"/><stop offset="1" stop-color="#b98d45"/></radialGradient>
-    <radialGradient id="face-dark" cx="50%" cy="46%" r="58%"><stop offset="0" stop-color="#d8cdb6"/><stop offset=".7" stop-color="#b9ab90"/><stop offset="1" stop-color="#7d705a"/></radialGradient>
-    <radialGradient id="halo" cx="50%" cy="50%" r="50%"><stop offset=".72" stop-color="#ffb547" stop-opacity=".55"/><stop offset="1" stop-color="#ffb547" stop-opacity="0"/></radialGradient>
-    <radialGradient id="vignette" cx="50%" cy="50%" r="50%"><stop offset=".8" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></radialGradient>
-    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <radialGradient id="face-lit" cx="50%" cy="50%" r="55%"><stop offset="0" stop-color="#fffaea"/><stop offset=".55" stop-color="#fbe7b4"/><stop offset=".9" stop-color="#e8bd6a"/><stop offset="1" stop-color="#c98f35"/></radialGradient>
+    <radialGradient id="face-dark" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#4a4337"/><stop offset=".8" stop-color="#2e2921"/><stop offset="1" stop-color="#1b1813"/></radialGradient>
+    <radialGradient id="vignette" cx="50%" cy="50%" r="50%"><stop offset=".82" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".5"/></radialGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".32"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <filter id="bloom" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.5"/></filter>
   </defs>
 </svg>
 <main class="wrap">
   <header class="nameplate">
-    <div>
-      <p class="eyebrow">Instrument panel · aggregate readings</p>
-      <h1>Usage Gauges</h1>
-    </div>
+    <h1>Usage Gauges</h1>
     <div class="readouts" role="group" aria-label="Snapshot status">
       <p class="stamp" id="updated">Loading snapshot…</p>
       <p class="stamp" id="activity"></p>
       <p class="stamp" id="lit-count"></p>
     </div>
   </header>
-  <p class="lede" id="source-note">Real aggregate counts from one machine's usage ledger and from the providers' own rate-limit figures. An instrument is backlit only when its reading is lit; one with no known limit is a plain counter, never a guessed needle. Context readings are totals, never individual activity.</p>
+  <p class="lede" id="source-note">Each gauge shows how much of an allowance is used before it resets. A gauge is lit only when its limit is known and its reading is fresh and checked; otherwise it stays dark with the needle parked. Aggregate counts only, never individual activity.</p>
   <p class="stale-banner" id="stale-banner" role="status" hidden>All gauge readings are stale.</p>
-  <section id="gauges" aria-label="Provider and engine gauges" aria-live="polite">
-    <div class="bay">
-      <div class="bay-head"><h2>Engines</h2><p>The coding assistants that fly the craft · weekly allowance</p></div>
-      <div class="bay-body" id="engines"></div>
-    </div>
-    <div class="bay">
-      <div class="bay-head"><h2>Fuel tanks</h2><p>Free-tier quotas the side jobs burn · hourly to monthly</p></div>
-      <div class="bay-body" id="tanks"></div>
-    </div>
+  <section id="gauges" class="cockpit" aria-label="Provider and engine gauges" aria-live="polite">
+    <div class="bay"><h2>Coding assistants <span>· weekly allowance</span></h2><div class="assistants" id="engines"></div></div>
+    <div class="bay"><h2>Free-tier APIs <span>· daily to monthly quotas</span></h2><div class="free" id="tanks"></div></div>
   </section>
   <section id="legend" aria-labelledby="legend-title">
     <h2 class="visually-hidden" id="legend-title">What lit means</h2>
     <ol class="legend">
-      <li><strong>Source</strong> · the reading comes from the provider itself (a usage report or rate-limit headers), or from a local count checked against the provider's own figure.</li>
-      <li><strong>Limit</strong> · the real ceiling for that window is known, so it gets a needle. A count with no limit stays a plain counter.</li>
-      <li><strong>Fresh</strong> · the instrument shows when it was read, and goes dark once the reading is older than 16 hours, two refresh windows.</li>
-      <li><strong>Proven</strong> · the reading has matched a second source it did not make, at least once, and the check is recorded in the data.</li>
+      <li><strong>Source</strong> · read from the provider itself, or a local count checked against the provider's own figure.</li>
+      <li><strong>Limit</strong> · the real ceiling for the window is known, so the needle shows a percent of it.</li>
+      <li><strong>Fresh</strong> · read within the last 16 hours, two refresh windows.</li>
+      <li><strong>Proven</strong> · matched a second source it did not make, at least once, on record.</li>
     </ol>
   </section>
   <details class="table">
@@ -247,103 +234,69 @@ function contextText(dial) {
 }
 
 
-function statusAndReading(dial) {
-  const lit = isLit(dial);
-  const status = noReader(dial) ? "No reader yet"
-    : dial.state === "idle" && dial.as_of
-    ? `Idle since ${new Date(dial.as_of).toLocaleDateString()}`
-    : dial.state === "unclaimed" ? "Not claimed"
-      : dial.state === "stale" ? `Stale · last read ${ageText(dial.as_of)}`
-        : lit ? "Lit"
-          : dial.state === "calibrated" ? "Dim · reading is too old to trust"
-            : dial.limit === null ? "Dim · no limit known"
-              : "Dim · not yet cross-checked";
-  const unitName = dial.kind === "engine" && dial.unit === "tokens" ? "weighted tokens" : dial.unit;
-  const reading = lit && dial.percent !== null
-    ? `${number(dial.percent)}% of ${dial.window} allowance · ${number(dial.used)} of ${number(dial.limit)} ${unitName}`
-    : dial.state === "unclaimed" ? "No account yet · no measurement"
-      : dial.state === "idle" ? `No calls in the current ${dial.window} window`
-        : dial.state === "stale" ? `Last known ${number(dial.used ?? 0)} ${dial.unit}; not current`
-          : noReader(dial) ? "No reader yet · no reading"
-            : dial.kind === "engine" && dial.used !== null
-              ? `${number(dial.used)} ${dial.unit} this week · count only, no limit known`
-              : dial.kind === "engine" ? "Context load · weekly pacing uncalibrated"
-              : `${number(dial.used ?? 0)} ${dial.unit} this ${dial.window.replace("rolling ", "")} · no limit reader yet`;
-  return { lit, status, reading };
-}
 
 const NEEDLE_STYLE = {
-  "claude-opus": { letter: "O", color: "#9c2a1c", dark: "#5c160f", length: 156 },
-  "claude-sonnet": { letter: "S", color: "#2f5d8a", dark: "#1c3550", length: 138 },
-  "claude-fable": { letter: "F", color: "#6b3f8a", dark: "#3a2150", length: 112 },
-  "claude-haiku": { letter: "H", color: "#3f7a3a", dark: "#1d3a1a", length: 94 },
+  "claude-opus": { letter: "O", color: "#9c2a1c", length: 116 },
+  "claude-sonnet": { letter: "S", color: "#2f5d8a", length: 100 },
+  "claude-fable": { letter: "F", color: "#6b3f8a", length: 82 },
+  "claude-haiku": { letter: "H", color: "#3f7a3a", length: 64 },
 };
-const ARC_SCALE = "M 86.86 313.14 A 160 160 0 1 1 313.14 313.14";
-const ARC_RIM = "M 79.79 320.21 A 170 170 0 1 1 320.21 320.21";
+const ARC_SCALE = "M 66.56 233.44 A 118 118 0 1 1 233.44 233.44";
+const ARC_RIM = "M 61.88 238.12 A 124.6 124.6 0 1 1 238.12 238.12";
 const showsNeedle = dial => isLit(dial) && dial.percent !== null;
 const angleFor = percent => (-135 + Math.min(percent, 100) * 2.7).toFixed(1);
 const compact = value => new Intl.NumberFormat(undefined, { notation: "compact", maximumFractionDigits: 1 }).format(value);
 
+function noteText(dial) {
+  if (showsNeedle(dial)) {
+    const unit = dial.kind === "engine" && dial.unit === "tokens" ? "weighted tokens" : dial.unit;
+    return `${compact(dial.used)} of ${compact(dial.limit)} ${unit} · ${dial.window}`;
+  }
+  if (dial.state === "unclaimed") return "Dark · no account yet";
+  if (noReader(dial)) return "Dark · no reader yet";
+  if (dial.state === "stale") return `Dark · last read ${ageText(dial.as_of)}`;
+  if (dial.limit === null) return "Dark · no limit known";
+  if (dial.state === "calibrated") return "Dark · reading too old";
+  return "Dark · not yet cross-checked";
+}
+
 function needleMarkup(dial, style) {
   const moving = showsNeedle(dial);
-  const tipY = 200 - style.length;
+  const tip = 150 - style.length;
   const angle = moving ? angleFor(dial.percent) : "-138";
   const tag = style.letter
-    ? `<circle cx="200" cy="${tipY - 6}" r="11" fill="${style.color}" stroke="${style.dark}" stroke-width="2"/>`
-      + `<text x="200" y="${tipY - 1}" text-anchor="middle" font-family="Georgia, serif" font-weight="800" font-size="13" fill="#f6ead0" transform="rotate(${-Number(angle)} 200 ${tipY - 6})">${style.letter}</text>`
+    ? `<circle cx="150" cy="${tip - 5}" r="8.5" fill="${moving ? style.color : "#4d443a"}" stroke="#000" stroke-opacity=".6" stroke-width="1.5"/>`
+      + `<text x="150" y="${tip - 1}" text-anchor="middle" font-family="Georgia, serif" font-weight="800" font-size="11" fill="#f6ead0" transform="rotate(${-Number(angle)} 150 ${tip - 5})">${style.letter}</text>`
     : "";
-  return `<g class="needle${dial.state === "stale" ? " stale" : !moving ? " rest" : ""}" data-angle="${angle}" style="transform:rotate(-138deg)">
-    <path d="M 196 ${200 + 26} L 198.6 ${tipY} L 201.4 ${tipY} L 204 ${200 + 26} Z" fill="${style.dark}"/>${tag}</g>`;
+  return `<g class="needle${style.letter ? " tagged" : ""}${dial.state === "stale" ? " stale" : !moving ? " rest" : ""}" data-angle="${angle}" style="transform:rotate(-138deg);color:${style.color || "#5c160f"}">
+    <path d="M 147 170 L 149 ${tip} L 151 ${tip} L 153 170 Z"/>${tag}</g>`;
 }
 
 function dialSvg({ label, title, sub, windowText, lit, needles, rim = "" }) {
-  const scale = [[109.5, 296, 0], [73.6, 188, 20], [141.9, 94, 40], [258.1, 94, 60], [326.4, 188, 80], [290.5, 296, 100]]
+  const scale = [[84.9, 221, 0], [59.1, 141, 20], [108.2, 74, 40], [191.8, 74, 60], [240.9, 141, 80], [215.1, 221, 100]]
     .map(([x, y, n]) => `<text x="${x}" y="${y}">${n}</text>`).join("");
-  return `<svg viewBox="0 0 400 400" role="img" aria-label="${escapeHtml(label)}">
-    <rect x="4" y="4" width="392" height="392" rx="34" fill="url(#flange)" stroke="#000" stroke-opacity=".6"/>
-    <g fill="url(#brass)" stroke="#2a1a0c"><circle cx="32" cy="32" r="10"/><circle cx="368" cy="32" r="10"/><circle cx="32" cy="368" r="10"/><circle cx="368" cy="368" r="10"/></g>
-    <g stroke="#2a1a0c" stroke-width="2.5" stroke-linecap="round"><path d="M 25 37 L 39 27"/><path d="M 362 26 L 374 38"/><path d="M 26 362 L 38 374"/><path d="M 361 372 L 375 364"/></g>
-    ${lit ? `<circle cx="200" cy="200" r="198" fill="url(#halo)"/>` : ""}
-    <circle cx="200" cy="200" r="190" fill="url(#brass)"/>
-    <circle cx="200" cy="200" r="188" fill="none" stroke="#2a1a0c" stroke-opacity=".45" stroke-width="5" stroke-dasharray="1.6 2.4"/>
-    <circle cx="200" cy="200" r="178" fill="#1a1006"/>
-    <circle cx="200" cy="200" r="174" fill="url(#${lit ? "face-lit" : "face-dark"})"/>
+  return `<svg class="g${lit ? " lit" : ""}" viewBox="0 0 300 300" role="img" aria-label="${escapeHtml(label)}">
+    <circle cx="150" cy="152" r="149" fill="#000" opacity=".55"/>
+    <circle cx="150" cy="150" r="147" fill="url(#brass)"/>
+    <circle cx="150" cy="150" r="144.5" fill="none" stroke="#2a1a0c" stroke-opacity=".45" stroke-width="4" stroke-dasharray="1.4 2.2"/>
+    <circle cx="150" cy="150" r="138" fill="#0e0904"/>
+    <circle class="leak" cx="150" cy="150" r="135.5" fill="none" stroke-width="4"/>
+    <circle class="face" cx="150" cy="150" r="133"/>
     ${rim}
-    <path d="${ARC_SCALE}" fill="none" stroke="#a3261b" stroke-width="7" pathLength="100" stroke-dasharray="0 85 15 100"/>
-    <path d="${ARC_SCALE}" fill="none" stroke="#24140a" stroke-width="16" pathLength="101" stroke-dasharray="0.45 9.55"/>
-    <path d="${ARC_SCALE}" fill="none" stroke="#24140a" stroke-width="8" pathLength="101" stroke-dasharray="0.25 1.75"/>
-    <g font-family="Georgia, serif" font-size="22" font-weight="800" fill="#24140a" text-anchor="middle">${scale}</g>
-    <text x="200" y="128" text-anchor="middle" font-family="Georgia, serif" font-weight="800" font-size="20" letter-spacing="4" fill="#24140a">${escapeHtml(title)}</text>
-    <text x="200" y="150" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="14" fill="#5a3a1c">${escapeHtml(sub)}</text>
-    <rect x="140" y="262" width="120" height="36" rx="4" fill="#140d07" stroke="url(#brass)" stroke-width="3"/>
-    <text x="200" y="288" text-anchor="middle" font-family="'Courier New', monospace" font-weight="700" font-size="22" fill="${lit ? "#ffcf7a" : "#8a7a60"}">${escapeHtml(windowText)}</text>
-    <text x="200" y="345" text-anchor="middle" font-family="Georgia, serif" font-size="10" letter-spacing="2" fill="#7a5a32">AETHER INSTRUMENT CO.</text>
+    <path d="${ARC_SCALE}" fill="none" stroke="#a3261b" stroke-width="3" pathLength="100" stroke-dasharray="0 85 15 100" opacity="${lit ? 1 : .45}" transform="translate(0 0)"/>
+    <path class="tick" d="${ARC_SCALE}" fill="none" stroke-width="12" pathLength="101" stroke-dasharray="0.45 9.55"/>
+    <path class="tick" d="${ARC_SCALE}" fill="none" stroke-width="6" pathLength="101" stroke-dasharray="0.25 1.75"/>
+    <g class="ink" font-family="Georgia, serif" font-size="18" font-weight="800" text-anchor="middle">${scale}</g>
+    <text class="ink" x="150" y="104" text-anchor="middle" font-family="Georgia, serif" font-weight="800" font-size="${title.length > 9 ? 13 : 16}" letter-spacing="3">${escapeHtml(title)}</text>
+    <text class="ink" x="150" y="120" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="11">${escapeHtml(sub)}</text>
+    <rect x="110" y="194" width="80" height="26" rx="3" fill="#0c0805" stroke="url(#brass)" stroke-width="2"/>
+    <text class="readout" x="150" y="213" text-anchor="middle" font-family="'Courier New', monospace" font-weight="700" font-size="17">${escapeHtml(windowText)}</text>
     ${needles}
-    <circle cx="200" cy="200" r="20" fill="url(#brass)" stroke="#2a1a0c" stroke-width="2"/>
-    <circle cx="200" cy="200" r="6" fill="#2a1a0c"/>
-    <circle cx="200" cy="200" r="174" fill="url(#vignette)"/>
-    <path d="M 60 170 A 142 142 0 0 1 300 74 A 175 175 0 0 0 60 170 Z" fill="url(#glass)"/>
+    <circle cx="150" cy="150" r="14" fill="url(#brass)" stroke="#2a1a0c" stroke-width="1.5"/>
+    <circle cx="150" cy="150" r="4" fill="#2a1a0c"/>
+    <circle cx="150" cy="150" r="133" fill="url(#vignette)"/>
+    <path d="M 40 128 A 110 110 0 0 1 225 52 A 134 134 0 0 0 40 128 Z" fill="url(#glass)"/>
   </svg>`;
-}
-
-function logbook(dial, extra = "") {
-  const isCodex = dial.id === "codex";
-  const codexNote = isCodex && Date.now() < Date.parse("2026-11-01T00:00:00Z")
-    ? `<p class="codex-note">No free usage until 31 Oct 2026.</p>`
-    : isCodex ? `<p class="codex-note">The free-usage start date has passed; no allowance is wired.</p>` : "";
-  const providerNote = dial.id === "antigravity" ? `<p class="context">No published limit; raw invocation count only.</p>` : "";
-  const reasonNote = dial.reason ? `<p class="context">${escapeHtml(dial.reason)}</p>` : "";
-  return `<details class="logbook"><summary>Logbook</summary><div class="logbook-body">
-    <dl class="facts">
-      <div><dt>Window</dt><dd>${dial.window}</dd></div>
-      <div><dt>Source</dt><dd>${sourceText(dial)}</dd></div>
-      <div><dt>Last read</dt><dd>${dateText(dial.as_of)}</dd></div>
-      <div><dt>Last cross-check</dt><dd>${checkText(dial)}</dd></div>
-      <div><dt>Reset</dt><dd>${dateText(dial.resets_at)}</dd></div>
-    </dl>
-    ${extra || `<p class="context"><strong>Context:</strong> ${contextText(dial)}</p>`}
-    ${providerNote}${codexNote}${reasonNote}
-  </div></details>`;
 }
 
 function masterMarkup(dials) {
@@ -356,79 +309,53 @@ function masterMarkup(dials) {
     .map(id => moving.find(dial => dial.id === id)).filter(Boolean)
     .map(dial => {
       const length = Math.max(0, Math.min(dial.percent, 100 - start));
-      const segment = `<path d="${ARC_RIM}" fill="none" stroke="${NEEDLE_STYLE[dial.id].color}" stroke-width="9" pathLength="100" stroke-dasharray="0 ${start.toFixed(2)} ${length.toFixed(2)} 100"/>`;
+      const segment = `<path d="${ARC_RIM}" fill="none" stroke="${NEEDLE_STYLE[dial.id].color}" stroke-width="5" pathLength="100" stroke-dasharray="0 ${start.toFixed(2)} ${length.toFixed(2)} 100"/>`;
       start += length;
       return segment;
     }).join("");
   const total = moving.reduce((sum, dial) => sum + dial.percent, 0);
   const label = lit
     ? `Claude weekly limit: ${number(total)}% used by the four models together. ` + moving.map(dial => `${dial.display_name} ${number(dial.percent)}%`).join(", ") + "."
-    : "Claude weekly limit: no lit reading.";
-  const first = ordered[ordered.length - 1];
+    : "Claude weekly limit: dark, no lit reading.";
   const svg = dialSvg({
-    label, title: "CLAUDE", sub: "one weekly limit · percent", lit,
+    label, title: "CLAUDE", sub: "shared weekly limit", lit,
     windowText: lit ? `${number(total)}%` : "—",
-    rim: `<path d="${ARC_RIM}" fill="none" stroke="#2a1a0c" stroke-opacity=".15" stroke-width="9"/>${rim}`,
-    needles: ordered.map(dial => needleMarkup(dial, NEEDLE_STYLE[dial.id])).join(""),
+    rim, needles: ordered.map(dial => needleMarkup(dial, NEEDLE_STYLE[dial.id])).join(""),
   });
+  const resets = ordered.find(dial => dial.resets_at);
   const key = ["claude-opus", "claude-sonnet", "claude-fable", "claude-haiku"]
     .map(id => ordered.find(dial => dial.id === id)).filter(Boolean)
-    .map(dial => {
-      const { status } = statusAndReading(dial);
-      const value = showsNeedle(dial) ? `${number(dial.percent)}%` : status;
-      const used = dial.used === null ? "no reading" : `${compact(dial.used)} weighted`;
-      return `<li><span class="chip" style="background:${NEEDLE_STYLE[dial.id].color}" aria-hidden="true">${NEEDLE_STYLE[dial.id].letter}</span><span><strong>${dial.display_name.replace("Claude ", "")} · ${value}</strong>${used}</span></li>`;
-    }).join("");
-  const contexts = ordered.slice().reverse()
-    .map(dial => `<p class="context"><strong>${dial.display_name}:</strong> ${contextText(dial)}</p>`).join("");
-  const plate = first && first.resets_at
-    ? `Resets ${dateText(first.resets_at)} · ${lit ? "together " + number(total) + "% used" : "not lit"}`
-    : "One weekly limit shared by all four models";
-  return {
-    gauge: `<article class="instrument master">${svg}<div class="plate"><p>${plate}</p></div>${first ? logbook(first, contexts) : ""}</article>`,
-    key: `<ul class="key" aria-label="Needle key">${key}</ul>`,
-  };
+    .map(dial => `<li><span class="chip" style="background:${NEEDLE_STYLE[dial.id].color}" aria-hidden="true">${NEEDLE_STYLE[dial.id].letter}</span>${dial.display_name.replace("Claude ", "")}<b>${showsNeedle(dial) ? `${number(dial.percent)}%` : "dark"}</b></li>`).join("");
+  const note = resets ? `Resets ${new Date(resets.resets_at).toLocaleString(undefined, { weekday: "short", hour: "numeric", minute: "2-digit" })}` : "One limit shared by all four models";
+  return `<figure class="instrument${lit ? " lit" : ""}">${svg}<div class="plate"><h3>Claude · all four models</h3></div><p class="note">${note}</p><ul class="key" aria-label="Needle key">${key}</ul></figure>`;
 }
 
 function singleMarkup(dial) {
-  const { status, reading } = statusAndReading(dial);
+  const lit = showsNeedle(dial);
+  const named = dial.display_name.replace(/ \(.*\)$/, "").replace(" free", "");
+  const short = named.length > 10 ? named.split(" ")[0] : named;
   const svg = dialSvg({
-    label: `${dial.display_name}: ${reading}`,
-    title: dial.display_name.toUpperCase(), sub: `${dial.window} · percent`, lit: true,
-    windowText: `${number(dial.percent)}%`,
-    needles: needleMarkup(dial, { letter: "", dark: "#5c160f", length: 150 }),
+    label: `${dial.display_name}: ${noteText(dial)}`,
+    title: short.toUpperCase(), sub: `${dial.window} · % used`, lit,
+    windowText: lit ? `${number(dial.percent)}%` : "—",
+    needles: needleMarkup(dial, { letter: "", length: 112 }),
   });
-  return `<article class="instrument single">${svg}<div class="plate"><h3>${dial.display_name}</h3><p>${reading}</p><p>${status}</p></div>${logbook(dial)}</article>`;
-}
-
-function meterMarkup(dial) {
-  const { status, reading } = statusAndReading(dial);
-  const flag = dial.state === "unclaimed" || noReader(dial) ? "OFF" : dial.state === "stale" ? "STALE" : "";
-  const value = flag === "OFF" || dial.used === null ? 0 : Math.round(dial.used);
-  const width = dial.kind === "engine" ? 8 : 4;
-  const digits = String(value).padStart(width, "0").slice(-9).split("")
-    .map(digit => `<span class="drum">${digit}</span>`).join("");
-  return `<article class="meter" aria-label="${escapeHtml(`${dial.display_name}: ${reading}`)}">
-    <div class="drum-bezel"><div class="drums" aria-hidden="true">${digits}</div>${flag ? `<span class="flag" aria-hidden="true">${flag}</span>` : ""}</div>
-    <h3>${dial.display_name}</h3>
-    <p>${reading}</p>
-    <p>${status}</p>
-    ${logbook(dial)}
-  </article>`;
+  const codexNote = dial.id !== "codex" ? ""
+    : Date.now() < Date.parse("2026-11-01T00:00:00Z") ? "No free usage until 31 Oct 2026."
+      : "The free-usage start date has passed; no allowance is wired.";
+  const extra = codexNote ? `<p class="note">${codexNote}</p>` : "";
+  const hover = dial.reason ? ` title="${escapeHtml(dial.reason)}"` : "";
+  return `<figure class="instrument${lit ? " lit" : ""}"${hover}>${svg}<div class="plate"><h3>${dial.display_name}</h3></div><p class="note">${noteText(dial)}</p>${extra}</figure>`;
 }
 
 function renderBays(dials) {
   const claude = dials.filter(dial => dial.id.startsWith("claude-"));
   const engines = dials.filter(dial => dial.kind === "engine" && !dial.id.startsWith("claude-"));
   const tanks = dials.filter(dial => dial.kind !== "engine");
-  const master = claude.length ? masterMarkup(claude) : { gauge: "", key: "" };
-  const engineGauges = engines.filter(showsNeedle).map(singleMarkup).join("");
-  const engineMeters = engines.filter(dial => !showsNeedle(dial)).map(meterMarkup).join("");
   document.getElementById("engines").innerHTML =
-    `${master.gauge}${engineGauges}<div class="side">${master.key}<div class="meters">${engineMeters}</div></div>`;
-  const tankGauges = tanks.filter(showsNeedle).map(singleMarkup).join("");
-  const tankMeters = tanks.filter(dial => !showsNeedle(dial)).map(meterMarkup).join("");
-  document.getElementById("tanks").innerHTML = `${tankGauges}<div class="side"><div class="meters">${tankMeters}</div></div>`;
+    `${claude.length ? masterMarkup(claude) : ""}<div class="others">${engines.map(singleMarkup).join("")}</div>`;
+  const byLit = list => list.filter(showsNeedle).concat(list.filter(dial => !showsNeedle(dial)));
+  document.getElementById("tanks").innerHTML = byLit(tanks).map(singleMarkup).join("");
 }
 
 function renderTable(dials) {
