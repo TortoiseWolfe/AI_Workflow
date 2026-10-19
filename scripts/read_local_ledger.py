@@ -34,6 +34,7 @@ HOME = Path.home()
 DEFAULT_HUB_SCRIPTS = HOME / "repos" / "hub" / "scripts"
 DEFAULT_DB = HOME / ".local" / "share" / "ledger" / "ledger.db"
 DEFAULT_COPILOT_DB = HOME / ".copilot" / "session-store.db"
+CLAUDE_SCRIPTS = HOME / ".claude" / "scripts"
 COPILOT_USAGE_ENDPOINT = "users/TortoiseWolfe/settings/billing/premium_request/usage"
 
 # Review-panel experts in the ledger, folded onto the dial that carries their free tier.
@@ -220,10 +221,38 @@ def premium_request_usage(now: dt.datetime, week_start: dt.datetime) -> tuple[fl
     return total, None
 
 
-def build_input(reader, db: Path, now: dt.datetime, copilot_db: Path = DEFAULT_COPILOT_DB) -> dict:
+def probe_groq(now: dt.datetime, scripts: Path = CLAUDE_SCRIPTS) -> dict | None:
+    """Read Groq's own request count; log each probe to the usage ledger so both sides count it."""
+    import read_groq_limits
+
+    logger = scripts / "ledger_log.py"
+    if not logger.is_file():
+        return None
+    spec = importlib.util.spec_from_file_location("ledger_log", logger)
+    ledger_log = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(ledger_log)
+    models = dict(read_groq_limits.MODELS)
+
+    def log(expert: str) -> None:
+        ledger_log.append(ledger_log.record(
+            "AI_Workflow", expert, models[expert], 0, 0, 0, "public", "gauge-probe"))
+
+    report = read_groq_limits.groq_report(now, log=log)
+    if report is not None:
+        subprocess.run(
+            [sys.executable, str(scripts / "usage_ledger.py"), "ingest", "--quiet"],
+            capture_output=True, timeout=120, check=False,
+        )
+    return report
+
+
+def build_input(
+    reader, db: Path, now: dt.datetime, copilot_db: Path = DEFAULT_COPILOT_DB, groq_probe=None,
+) -> dict:
     if now.tzinfo is None:
         raise ValueError("now must include a timezone")
     now = now.astimezone(dt.timezone.utc)
+    groq_row = groq_probe(now) if groq_probe else None
     conn = reader.open_ro(str(db))
     ledger = reader.Ledger(conn)
     last_row = ledger.last_ts()
@@ -253,7 +282,7 @@ def build_input(reader, db: Path, now: dt.datetime, copilot_db: Path = DEFAULT_C
         "ledger_as_of": iso(ingested),
         "last_activity": iso(last_row),
         "calls": provider_calls(conn),
-        "provider_reports": [],  # no provider console or key-endpoint reader yet
+        "provider_reports": [groq_row] if groq_row else [],  # only Groq has a header reader so far
         "engines": engines,
         "copilot_report": {
             "local_used": copilot["used"] if copilot is not None else None,
@@ -274,7 +303,7 @@ def main() -> None:
     args = parser.parse_args()
     now = dt.datetime.fromisoformat(args.now.replace("Z", "+00:00")) if args.now else dt.datetime.now(dt.timezone.utc)
     reader = load_reader(args.hub_scripts)
-    payload = build_input(reader, args.db, now, args.copilot_db)
+    payload = build_input(reader, args.db, now, args.copilot_db, groq_probe=probe_groq)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     os.chmod(args.output, 0o600)
