@@ -8,121 +8,108 @@
 <style>
 :root {
   color-scheme: light dark;
-  --room: #2b1c10;
-  --room-deep: #140c06;
-  --wood: #3a2414;
-  --wood-dark: #22150b;
-  --brass: #c38f3e;
-  --brass-light: #ffe2a0;
-  --brass-dark: #5e3c14;
-  --plate-top: #d9a956;
+  --room: #1a110a;
+  --room-deep: #0b0704;
+  --steel: #2c2a27;
+  --steel-dark: #171513;
+  --steel-edge: #4a4038;
+  --plate-top: #e0b462;
   --plate-bottom: #8e6125;
-  --ivory: #f6ead0;
-  --ivory-edge: #d9c39a;
+  --brass-light: #ffe8b0;
+  --ivory: #f3e4c2;
   --soot: #24140a;
   --ink: #f1e3c4;
-  --muted: #d9c39a;
+  --muted: #c9b48c;
+  --gold: #e8b860;
+  --glow: #ffcf7a;
   --red: #a3261b;
-  --amber: #ffb547;
-  --green: #6fdc7f;
   --display: Copperplate, "Copperplate Gothic Bold", "Copperplate Gothic Light", "Palatino Linotype", Palatino, Georgia, serif;
   --type: "American Typewriter", "Courier New", Courier, ui-monospace, monospace;
 }
 @media (prefers-color-scheme: dark) {
-  :root { --room: #1d120a; --room-deep: #080402; --wood: #2f1d10; --wood-dark: #180e06; }
+  :root { --room: #120c07; --room-deep: #050302; }
 }
 * { box-sizing: border-box; }
 body {
   margin: 0;
   padding: 24px 16px 48px;
   min-height: 100vh;
-  background: radial-gradient(ellipse at 50% 0%, #4a2f1a 0%, var(--room) 50%, var(--room-deep) 100%), var(--room);
+  background: radial-gradient(ellipse at 50% -10%, #3d2816 0%, var(--room) 55%, var(--room-deep) 100%), var(--room);
   color: var(--ink);
   font: 15px/1.45 var(--type);
 }
-a { color: var(--amber); text-underline-offset: 3px; }
-.wrap { width: min(100%, 1360px); margin: auto; display: grid; gap: 16px; }
-h1, h2, summary { font-family: var(--display); }
+a { color: var(--gold); text-underline-offset: 3px; }
+.wrap { width: min(100%, 1320px); margin: auto; display: grid; gap: 16px; }
+h1, h2, h3, summary { font-family: var(--display); }
 .nameplate {
   position: relative;
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px;
-  padding: 16px 30px;
-  border-radius: 10px;
-  background: linear-gradient(180deg, var(--plate-top) 0%, #a8742c 45%, #7a4f1b 100%);
+  padding: 16px 40px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, var(--plate-top) 0%, #b07a2f 40%, #7a4f1b 100%);
   color: var(--soot);
-  box-shadow: inset 0 2px 0 var(--brass-light), inset 0 -3px 0 #4d300f, 0 6px 18px #000a;
+  box-shadow: inset 0 2px 0 var(--brass-light), inset 0 -3px 0 #3d2509, 0 8px 20px #000c;
 }
-.rivets::before, .rivets::after {
-  content: ""; position: absolute; top: 50%; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, var(--brass-light), var(--brass) 50%, var(--brass-dark));
-  box-shadow: 0 1px 2px #000a;
+.nameplate::before, .nameplate::after {
+  content: ""; position: absolute; top: 50%; width: 12px; height: 12px; margin-top: -6px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--brass-light), #a8742c 55%, #4d300f);
+  box-shadow: 0 1px 2px #000;
 }
-.rivets::before { left: 10px; }
-.rivets::after { right: 10px; }
+.nameplate::before { left: 14px; }
+.nameplate::after { right: 14px; }
 .eyebrow { margin: 0; font: 13px/1.2 var(--display); letter-spacing: .18em; text-transform: uppercase; }
-h1 { margin: 2px 0 0; font-size: clamp(2rem, 6vw, 3rem); font-weight: 800; line-height: 1; letter-spacing: .06em; text-shadow: 0 1px 0 var(--brass-light); }
+h1 { margin: 2px 0 0; font-size: clamp(2rem, 6vw, 2.9rem); font-weight: 800; line-height: 1; letter-spacing: .06em; text-shadow: 0 1px 0 var(--brass-light), 0 -1px 0 #4d300f; }
 .readouts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; }
-.stamp { margin: 0; padding: 7px 12px; border-radius: 6px; background: #1f140b; color: #f1d08a; box-shadow: inset 0 2px 6px #000; font-size: 13px; }
-#lit-count { color: var(--green); }
+.stamp { margin: 0; padding: 7px 12px; border-radius: 4px; background: #140d07; color: #f1d08a; box-shadow: inset 0 2px 6px #000, 0 1px 0 var(--brass-light); font-size: 13px; }
+#lit-count { color: var(--glow); }
 .lede { margin: 0; color: var(--muted); font-size: 13px; max-width: 110ch; }
 .stale-banner { margin: 0; padding: 10px 14px; border-radius: 6px; border: 2px solid var(--red); background: #3a0f0a; color: #ffb3a6; font: 600 13px/1.4 var(--type); }
 .bay {
-  padding: 14px;
-  border-radius: 12px;
-  background: linear-gradient(160deg, var(--wood), var(--wood-dark));
-  box-shadow: inset 0 0 0 3px #6e4a1f, inset 0 0 30px #000c;
-}
-.bay h2 { margin: 0 0 10px; color: #e8b860; font-size: 16px; letter-spacing: .2em; text-transform: uppercase; }
-.grid { display: grid; gap: 12px; align-items: stretch; }
-.engines .grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
-.tanks .grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
-.dial {
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  min-width: 0;
-  padding: 10px 8px 8px;
+  padding: 18px;
   border-radius: 10px;
-  background: linear-gradient(145deg, #5a3a1c, #2e1d0e);
-  box-shadow: inset 0 1px 0 #8a6232, 0 4px 10px #0008;
+  background: repeating-linear-gradient(90deg, #ffffff05 0 2px, #00000008 2px 5px), linear-gradient(165deg, var(--steel), var(--steel-dark));
+  box-shadow: inset 0 0 0 2px var(--steel-edge), inset 0 2px 0 #5a5048, inset 0 0 40px #000c, 0 8px 20px #000a;
 }
-.dial.dim .face { filter: saturate(.55) brightness(.86); }
-.face { width: 100%; max-width: 176px; }
-.tanks .face { max-width: 132px; }
-svg { display: block; width: 100%; height: auto; }
-.face-fill { fill: url(#ivory); }
-.tanks .face-fill { fill: var(--ivory); }
-.redline { fill: none; stroke: var(--red); stroke-width: 7; }
-.progress { fill: none; stroke: #c9821f; stroke-width: 5; opacity: .75; }
-.progress.over { stroke: var(--red); stroke-dasharray: 4 3; }
-.tick { fill: none; stroke: var(--soot); }
-.scale { fill: var(--soot); font: 600 13px var(--display); text-anchor: middle; }
-.unit { fill: #5a3a1c; font: 11px var(--display); text-anchor: middle; letter-spacing: .06em; text-transform: uppercase; }
-.big { fill: #f1d08a; font: 15px var(--type); text-anchor: middle; }
-.tanks .big { font-size: 19px; }
-.window { fill: #1f140b; stroke: url(#brass); stroke-width: 2; }
-.window + .big, .big.lit { fill: #f1d08a; }
-.needle { fill: var(--red); transform-box: view-box; transform-origin: 100px 100px; transition: transform .9s cubic-bezier(.3, 1.5, .5, 1); }
-.needle.stale, .needle.rest { fill: #6b5a44; }
-.glare { fill: #fff; opacity: .2; }
+.bay + .bay { margin-top: 16px; }
+.bay-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 20px; margin-bottom: 14px; }
+.bay h2 { margin: 0; color: var(--gold); font-size: 17px; letter-spacing: .2em; text-transform: uppercase; }
+.bay-head p { margin: 0; color: var(--muted); font-size: 13px; }
+.bay-body { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+.instrument { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; }
+.instrument.master { flex: 0 1 400px; min-width: 260px; }
+.instrument.single { flex: 0 1 230px; min-width: 190px; }
+.instrument svg { display: block; width: 100%; height: auto; }
+.master svg { max-width: 400px; }
+.single svg { max-width: 230px; }
+.side { flex: 1 1 360px; min-width: 240px; display: grid; gap: 14px; align-content: start; }
+.meters { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
 .plate {
-  width: 100%;
-  padding: 5px 8px;
-  border-radius: 4px;
+  padding: 5px 14px;
+  border-radius: 3px;
   background: linear-gradient(180deg, var(--plate-top), var(--plate-bottom));
   color: var(--soot);
   text-align: center;
-  box-shadow: inset 0 1px 0 var(--brass-light), 0 2px 4px #0008;
+  box-shadow: inset 0 1px 0 var(--brass-light), 0 2px 4px #000a;
+  font-size: 12px;
 }
-.dial-label { margin: 0; font: 800 14px/1.2 var(--display); letter-spacing: .06em; }
-.tanks .dial-label { font-size: 12px; }
-.reading { margin: 2px 0 0; font-size: 12px; line-height: 1.3; }
-.tanks .reading { font-size: 11px; }
-.state { margin-top: auto !important; display: flex; align-items: center; justify-content: center; gap: 7px; margin: 0; color: var(--muted); font-size: 11px; text-align: center; }
-.lamp { width: 11px; height: 11px; flex: none; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #6a4a2a, #2a1a0c); box-shadow: inset 0 1px 2px #000; }
-.lamp.on { background: radial-gradient(circle at 35% 35%, #eaffd8, var(--green) 45%, #1f6a2c); box-shadow: 0 0 10px var(--green), 0 0 2px #fff; }
-.lamp.amber { background: radial-gradient(circle at 35% 35%, #fff1c8, var(--amber) 45%, #8a4a10); box-shadow: 0 0 8px var(--amber); }
-.logbook { width: 100%; margin: 0; border: 0; }
-.logbook summary { padding: 4px 2px; color: #e8b860; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; text-align: center; list-style-position: inside; }
-.logbook-body { padding: 8px; border-radius: 4px; background: var(--ivory); color: var(--soot); font: 11px/1.45 var(--type); }
+.plate h3 { margin: 0; font-size: 14px; font-weight: 800; letter-spacing: .06em; }
+.plate p { margin: 0; }
+.needle { transform-box: view-box; transform-origin: 200px 200px; transition: transform 1.1s cubic-bezier(.3, 1.4, .5, 1); }
+.needle.stale path, .needle.rest path { fill: #6b5a44; }
+.key { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.key li { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 4px; background: var(--ivory); color: var(--soot); box-shadow: inset 0 0 0 2px #b8893b, 0 2px 6px #000a; font-size: 12px; line-height: 1.35; }
+.key strong { display: block; font: 800 14px var(--display); }
+.chip { width: 24px; height: 24px; flex: none; border-radius: 50%; display: grid; place-items: center; color: #f6ead0; font: 800 13px var(--display); box-shadow: 0 0 0 2px var(--soot); }
+.meter { padding: 10px; border-radius: 8px; background: linear-gradient(180deg, #3a3632, #1c1a18); box-shadow: inset 0 1px 0 #5a5048, 0 4px 10px #000a; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+.drum-bezel { position: relative; padding: 5px; border-radius: 5px; background: linear-gradient(180deg, var(--plate-top), #7a4f1b); box-shadow: inset 0 1px 0 var(--brass-light), 0 2px 4px #000; }
+.drums { display: flex; gap: 2px; padding: 3px; border-radius: 3px; background: #0c0805; box-shadow: inset 0 2px 6px #000; }
+.drum { width: 18px; height: 28px; display: grid; place-items: center; border-radius: 2px; background: linear-gradient(180deg, #2a2724 0%, #f0e6d0 22%, #fffaf0 50%, #f0e6d0 78%, #2a2724 100%); color: #140d07; font: 700 18px var(--type); }
+.flag { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-8deg); padding: 2px 10px; border: 2px solid var(--soot); background: repeating-linear-gradient(-45deg, #c0281c 0 6px, #f6ead0 6px 12px); color: var(--soot); font: 800 13px var(--display); letter-spacing: .1em; text-shadow: 0 0 3px #f6ead0; white-space: nowrap; }
+.meter h3 { margin: 0; color: var(--gold); font-size: 13px; font-weight: 800; letter-spacing: .04em; }
+.meter p { margin: 0; color: var(--muted); font-size: 11px; }
+.logbook { width: 100%; }
+.logbook summary { padding: 3px 2px; color: var(--gold); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; text-align: center; list-style-position: inside; }
+.logbook-body { margin-top: 4px; padding: 8px; border-radius: 4px; background: var(--ivory); color: var(--soot); font: 11px/1.45 var(--type); text-align: left; }
 .facts { display: grid; gap: 3px; margin: 0; }
 .facts div { display: flex; justify-content: space-between; gap: 8px; }
 .facts dt, .facts dd { margin: 0; }
@@ -131,25 +118,26 @@ svg { display: block; width: 100%; height: auto; }
 .context { margin: 6px 0 0; }
 .codex-note { margin: 6px 0 0; color: var(--red); font-weight: 700; }
 .legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
-.legend li { padding: 10px 12px; border-radius: 8px; background: var(--ivory); color: var(--soot); box-shadow: inset 0 0 0 3px var(--brass), 0 3px 8px #0008; font-size: 12px; line-height: 1.45; }
+.legend li { padding: 10px 12px; border-radius: 6px; background: var(--ivory); color: var(--soot); box-shadow: inset 0 0 0 3px #b8893b, 0 3px 8px #000a; font-size: 12px; line-height: 1.45; }
 .legend strong { font-family: var(--display); font-size: 14px; letter-spacing: .04em; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-details.table { border-top: 1px solid #6e4a1f; border-bottom: 1px solid #6e4a1f; }
-details.table > summary { cursor: pointer; padding: 10px 2px; color: #e8b860; font-size: 1.1rem; letter-spacing: .08em; }
+details.table { border-top: 1px solid var(--steel-edge); border-bottom: 1px solid var(--steel-edge); }
+details.table > summary { padding: 10px 2px; color: var(--gold); font-size: 1.1rem; letter-spacing: .08em; }
 summary { cursor: pointer; }
-summary:focus-visible, a:focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; }
+summary:focus-visible, a:focus-visible { outline: 3px solid var(--glow); outline-offset: 3px; }
 .table-scroll { overflow-x: auto; padding-bottom: 12px; }
 table { width: 100%; border-collapse: collapse; font: 12px/1.5 var(--type); }
-th, td { padding: 7px; border-bottom: 1px solid #6e4a1f; text-align: left; vertical-align: top; }
-th { color: #e8b860; }
+th, td { padding: 7px; border-bottom: 1px solid var(--steel-edge); text-align: left; vertical-align: top; }
+th { color: var(--gold); }
 .error { padding: 14px; border: 2px solid var(--red); border-radius: 8px; background: #3a0f0a; }
 footer { color: var(--muted); font-size: 12px; }
 @media (max-width: 520px) {
   body { padding: 16px 10px 36px; }
-  .nameplate { padding: 14px 24px; }
-  .bay { padding: 10px; }
-  .engines .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-  .tanks .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .nameplate { padding: 14px 30px; }
+  .bay { padding: 12px; }
+  .bay-body { gap: 16px; justify-content: center; }
+  .meters { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .drum { width: 14px; height: 24px; font-size: 15px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
@@ -159,12 +147,17 @@ footer { color: var(--muted); font-size: 12px; }
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
-    <radialGradient id="brass" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#ffe2a0"/><stop offset=".45" stop-color="#c38f3e"/><stop offset="1" stop-color="#5e3c14"/></radialGradient>
-    <radialGradient id="ivory" cx="50%" cy="40%" r="65%"><stop offset="0" stop-color="#fbf1dc"/><stop offset="1" stop-color="#d9c39a"/></radialGradient>
+    <radialGradient id="brass" cx="32%" cy="28%" r="85%"><stop offset="0" stop-color="#fff0c0"/><stop offset=".35" stop-color="#d6a24c"/><stop offset=".75" stop-color="#8a5a1e"/><stop offset="1" stop-color="#4a2e0c"/></radialGradient>
+    <linearGradient id="flange" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3632"/><stop offset="1" stop-color="#1c1a18"/></linearGradient>
+    <radialGradient id="face-lit" cx="50%" cy="46%" r="58%"><stop offset="0" stop-color="#fff6dc"/><stop offset=".7" stop-color="#f3d99c"/><stop offset="1" stop-color="#b98d45"/></radialGradient>
+    <radialGradient id="face-dark" cx="50%" cy="46%" r="58%"><stop offset="0" stop-color="#d8cdb6"/><stop offset=".7" stop-color="#b9ab90"/><stop offset="1" stop-color="#7d705a"/></radialGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%"><stop offset=".72" stop-color="#ffb547" stop-opacity=".55"/><stop offset="1" stop-color="#ffb547" stop-opacity="0"/></radialGradient>
+    <radialGradient id="vignette" cx="50%" cy="50%" r="50%"><stop offset=".8" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></radialGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
   </defs>
 </svg>
 <main class="wrap">
-  <header class="nameplate rivets">
+  <header class="nameplate">
     <div>
       <p class="eyebrow">Instrument panel · aggregate readings</p>
       <h1>Usage Gauges</h1>
@@ -175,19 +168,25 @@ footer { color: var(--muted); font-size: 12px; }
       <p class="stamp" id="lit-count"></p>
     </div>
   </header>
-  <p class="lede" id="source-note">Real aggregate counts from one machine's usage ledger and from the providers' own rate-limit figures. A needle moves only for a lit dial; a dial without a known limit rests on its peg, shows its count, and stays dim. Context readings are totals, never individual activity.</p>
+  <p class="lede" id="source-note">Real aggregate counts from one machine's usage ledger and from the providers' own rate-limit figures. An instrument is backlit only when its reading is lit; one with no known limit is a plain counter, never a guessed needle. Context readings are totals, never individual activity.</p>
   <p class="stale-banner" id="stale-banner" role="status" hidden>All gauge readings are stale.</p>
   <section id="gauges" aria-label="Provider and engine gauges" aria-live="polite">
-    <div class="bay engines"><h2>Engines · weekly context load</h2><div class="grid" id="engines"></div></div>
-    <div class="bay tanks" style="margin-top:16px"><h2>Fuel tanks · free-tier providers</h2><div class="grid" id="tanks"></div></div>
+    <div class="bay">
+      <div class="bay-head"><h2>Engines</h2><p>The coding assistants that fly the craft · weekly allowance</p></div>
+      <div class="bay-body" id="engines"></div>
+    </div>
+    <div class="bay">
+      <div class="bay-head"><h2>Fuel tanks</h2><p>Free-tier quotas the side jobs burn · hourly to monthly</p></div>
+      <div class="bay-body" id="tanks"></div>
+    </div>
   </section>
   <section id="legend" aria-labelledby="legend-title">
     <h2 class="visually-hidden" id="legend-title">What lit means</h2>
     <ol class="legend">
       <li><strong>Source</strong> · the reading comes from the provider itself (a usage report or rate-limit headers), or from a local count checked against the provider's own figure.</li>
-      <li><strong>Limit</strong> · the real ceiling for that window is known, so the needle shows a percent of it. A count with no limit stays dim.</li>
-      <li><strong>Fresh</strong> · the dial shows when it was read, and goes dim once the reading is older than 16 hours, two refresh windows.</li>
-      <li><strong>Proven</strong> · the dial has matched a second source it did not make, at least once, and the check is recorded in the data.</li>
+      <li><strong>Limit</strong> · the real ceiling for that window is known, so it gets a needle. A count with no limit stays a plain counter.</li>
+      <li><strong>Fresh</strong> · the instrument shows when it was read, and goes dark once the reading is older than 16 hours, two refresh windows.</li>
+      <li><strong>Proven</strong> · the reading has matched a second source it did not make, at least once, and the check is recorded in the data.</li>
     </ol>
   </section>
   <details class="table">
@@ -247,11 +246,9 @@ function contextText(dial) {
   return `${turns}. Compactions: ${compactions}. ${reread}.`;
 }
 
-function gaugeMarkup(dial) {
-  const showNeedle = isLit(dial) && dial.percent !== null;
-  const ratio = showNeedle ? Math.min(dial.percent, 100) / 100 : 0;
+
+function statusAndReading(dial) {
   const lit = isLit(dial);
-  const dim = !lit;
   const status = noReader(dial) ? "No reader yet"
     : dial.state === "idle" && dial.as_of
     ? `Idle since ${new Date(dial.as_of).toLocaleDateString()}`
@@ -272,76 +269,173 @@ function gaugeMarkup(dial) {
               ? `${number(dial.used)} ${dial.unit} this week · count only, no limit known`
               : dial.kind === "engine" ? "Context load · weekly pacing uncalibrated"
               : `${number(dial.used ?? 0)} ${dial.unit} this ${dial.window.replace("rolling ", "")} · no limit reader yet`;
-  const lamp = lit ? " on" : dial.state === "unclaimed" ? " amber" : "";
-  const ARC = "M 43.43 156.57 A 80 80 0 1 1 156.57 156.57";
-  const percentageArc = !showNeedle ? "" :
-    `<path class="progress${dial.percent > 100 ? " over" : ""}" d="${ARC}" pathLength="100" stroke-dasharray="${(ratio * 100).toFixed(2)} 100"/>`;
-  const compact = value => new Intl.NumberFormat(undefined, { notation: "compact", maximumFractionDigits: 1 }).format(value);
-  const big = showNeedle ? `${number(dial.percent)}%`
-    : dial.state === "unclaimed" || noReader(dial) || dial.used === null ? "—" : compact(dial.used);
-  const unitLabel = showNeedle ? dial.window.replace("rolling ", "") : dial.state === "unclaimed" ? "unclaimed" : "count only";
-  const isEngine = dial.kind === "engine";
-  const scale = isEngine
-    ? `<text class="scale" x="58" y="148">0</text><text class="scale" x="46" y="82">25</text><text class="scale" x="100" y="44">50</text><text class="scale" x="154" y="82">75</text><text class="scale" x="140" y="148">100</text>`
-    : `<text class="scale" x="60" y="150">0</text><text class="scale" x="140" y="150">100</text>`;
-  const ticks = isEngine
-    ? `<path class="tick" d="${ARC}" stroke-width="9" pathLength="101" stroke-dasharray="0.7 9.3"/><path class="tick" d="${ARC}" stroke-width="4" pathLength="101" stroke-dasharray="0.3 1.7"/>`
-    : `<path class="tick" d="${ARC}" stroke-width="10" pathLength="101" stroke-dasharray="0.8 24.45"/>`;
+  return { lit, status, reading };
+}
+
+const NEEDLE_STYLE = {
+  "claude-opus": { letter: "O", color: "#9c2a1c", dark: "#5c160f", length: 156 },
+  "claude-sonnet": { letter: "S", color: "#2f5d8a", dark: "#1c3550", length: 138 },
+  "claude-fable": { letter: "F", color: "#6b3f8a", dark: "#3a2150", length: 112 },
+  "claude-haiku": { letter: "H", color: "#3f7a3a", dark: "#1d3a1a", length: 94 },
+};
+const ARC_SCALE = "M 86.86 313.14 A 160 160 0 1 1 313.14 313.14";
+const ARC_RIM = "M 79.79 320.21 A 170 170 0 1 1 320.21 320.21";
+const showsNeedle = dial => isLit(dial) && dial.percent !== null;
+const angleFor = percent => (-135 + Math.min(percent, 100) * 2.7).toFixed(1);
+const compact = value => new Intl.NumberFormat(undefined, { notation: "compact", maximumFractionDigits: 1 }).format(value);
+
+function needleMarkup(dial, style) {
+  const moving = showsNeedle(dial);
+  const tipY = 200 - style.length;
+  const angle = moving ? angleFor(dial.percent) : "-138";
+  const tag = style.letter
+    ? `<circle cx="200" cy="${tipY - 6}" r="11" fill="${style.color}" stroke="${style.dark}" stroke-width="2"/>`
+      + `<text x="200" y="${tipY - 1}" text-anchor="middle" font-family="Georgia, serif" font-weight="800" font-size="13" fill="#f6ead0" transform="rotate(${-Number(angle)} 200 ${tipY - 6})">${style.letter}</text>`
+    : "";
+  return `<g class="needle${dial.state === "stale" ? " stale" : !moving ? " rest" : ""}" data-angle="${angle}" style="transform:rotate(-138deg)">
+    <path d="M 196 ${200 + 26} L 198.6 ${tipY} L 201.4 ${tipY} L 204 ${200 + 26} Z" fill="${style.dark}"/>${tag}</g>`;
+}
+
+function dialSvg({ label, title, sub, windowText, lit, needles, rim = "" }) {
+  const scale = [[109.5, 296, 0], [73.6, 188, 20], [141.9, 94, 40], [258.1, 94, 60], [326.4, 188, 80], [290.5, 296, 100]]
+    .map(([x, y, n]) => `<text x="${x}" y="${y}">${n}</text>`).join("");
+  return `<svg viewBox="0 0 400 400" role="img" aria-label="${escapeHtml(label)}">
+    <rect x="4" y="4" width="392" height="392" rx="34" fill="url(#flange)" stroke="#000" stroke-opacity=".6"/>
+    <g fill="url(#brass)" stroke="#2a1a0c"><circle cx="32" cy="32" r="10"/><circle cx="368" cy="32" r="10"/><circle cx="32" cy="368" r="10"/><circle cx="368" cy="368" r="10"/></g>
+    <g stroke="#2a1a0c" stroke-width="2.5" stroke-linecap="round"><path d="M 25 37 L 39 27"/><path d="M 362 26 L 374 38"/><path d="M 26 362 L 38 374"/><path d="M 361 372 L 375 364"/></g>
+    ${lit ? `<circle cx="200" cy="200" r="198" fill="url(#halo)"/>` : ""}
+    <circle cx="200" cy="200" r="190" fill="url(#brass)"/>
+    <circle cx="200" cy="200" r="188" fill="none" stroke="#2a1a0c" stroke-opacity=".45" stroke-width="5" stroke-dasharray="1.6 2.4"/>
+    <circle cx="200" cy="200" r="178" fill="#1a1006"/>
+    <circle cx="200" cy="200" r="174" fill="url(#${lit ? "face-lit" : "face-dark"})"/>
+    ${rim}
+    <path d="${ARC_SCALE}" fill="none" stroke="#a3261b" stroke-width="7" pathLength="100" stroke-dasharray="0 85 15 100"/>
+    <path d="${ARC_SCALE}" fill="none" stroke="#24140a" stroke-width="16" pathLength="101" stroke-dasharray="0.45 9.55"/>
+    <path d="${ARC_SCALE}" fill="none" stroke="#24140a" stroke-width="8" pathLength="101" stroke-dasharray="0.25 1.75"/>
+    <g font-family="Georgia, serif" font-size="22" font-weight="800" fill="#24140a" text-anchor="middle">${scale}</g>
+    <text x="200" y="128" text-anchor="middle" font-family="Georgia, serif" font-weight="800" font-size="20" letter-spacing="4" fill="#24140a">${escapeHtml(title)}</text>
+    <text x="200" y="150" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="14" fill="#5a3a1c">${escapeHtml(sub)}</text>
+    <rect x="140" y="262" width="120" height="36" rx="4" fill="#140d07" stroke="url(#brass)" stroke-width="3"/>
+    <text x="200" y="288" text-anchor="middle" font-family="'Courier New', monospace" font-weight="700" font-size="22" fill="${lit ? "#ffcf7a" : "#8a7a60"}">${escapeHtml(windowText)}</text>
+    <text x="200" y="345" text-anchor="middle" font-family="Georgia, serif" font-size="10" letter-spacing="2" fill="#7a5a32">AETHER INSTRUMENT CO.</text>
+    ${needles}
+    <circle cx="200" cy="200" r="20" fill="url(#brass)" stroke="#2a1a0c" stroke-width="2"/>
+    <circle cx="200" cy="200" r="6" fill="#2a1a0c"/>
+    <circle cx="200" cy="200" r="174" fill="url(#vignette)"/>
+    <path d="M 60 170 A 142 142 0 0 1 300 74 A 175 175 0 0 0 60 170 Z" fill="url(#glass)"/>
+  </svg>`;
+}
+
+function logbook(dial, extra = "") {
   const isCodex = dial.id === "codex";
   const codexNote = isCodex && Date.now() < Date.parse("2026-11-01T00:00:00Z")
     ? `<p class="codex-note">No free usage until 31 Oct 2026.</p>`
     : isCodex ? `<p class="codex-note">The free-usage start date has passed; no allowance is wired.</p>` : "";
-  const providerNote = dial.id === "antigravity"
-    ? `<p class="context">No published limit; raw invocation count only.</p>` : "";
-  const reasonNote = dial.reason
-    ? `<p class="context">${escapeHtml(dial.reason)}</p>` : "";
-  return `<article class="dial weight-${dial.weight}${dim ? " dim" : ""}">
-    <div class="face">
-      <svg viewBox="0 0 200 200" role="img" aria-label="${dial.display_name}: ${reading}">
-        <circle cx="100" cy="100" r="97" fill="url(#brass)"/>
-        <circle cx="100" cy="100" r="86" fill="#2a1a0c"/>
-        <circle class="face-fill" cx="100" cy="100" r="83"/>
-        <path class="redline" d="${ARC}" pathLength="100" stroke-dasharray="0 85 15 100"/>
-        ${percentageArc}
-        ${ticks}
-        ${scale}
-        ${isEngine ? `<text class="unit" x="100" y="136">${unitLabel}</text>` : ""}
-        <rect class="window" x="66" y="${isEngine ? 152 : 150}" width="68" height="${isEngine ? 22 : 26}" rx="3"/>
-        <text class="big" x="100" y="${isEngine ? 168 : 169}">${big}</text>
-        <path class="needle${dial.state === "stale" ? " stale" : !showNeedle ? " rest" : ""}" d="M 97 112 L 100 30 L 103 112 Z" data-angle="${(-135 + ratio * 270).toFixed(1)}" data-rest="${showNeedle ? "" : "1"}" style="transform:rotate(-138deg)"/>
-        <circle cx="100" cy="100" r="10" fill="url(#brass)" stroke="#4d300f" stroke-width="1.5"/>
-        <circle cx="100" cy="100" r="3" fill="#2a1a0c"/>
-        <ellipse class="glare" cx="80" cy="58" rx="52" ry="26" transform="rotate(-25 80 58)"/>
-      </svg>
-    </div>
-    <div class="plate">
-      <h3 class="dial-label">${dial.display_name}</h3>
-      <p class="reading">${reading}</p>
-    </div>
-    <p class="state"><span class="lamp${lamp}" aria-hidden="true"></span>${status}</p>
-    <details class="logbook">
-      <summary>Logbook</summary>
-      <div class="logbook-body">
-        <dl class="facts">
-          <div><dt>Window</dt><dd>${dial.window}</dd></div>
-          <div><dt>Source</dt><dd>${sourceText(dial)}</dd></div>
-          <div><dt>Last read</dt><dd>${dateText(dial.as_of)}</dd></div>
-          <div><dt>Last cross-check</dt><dd>${checkText(dial)}</dd></div>
-          <div><dt>Reset</dt><dd>${dateText(dial.resets_at)}</dd></div>
-        </dl>
-        <p class="context"><strong>Context:</strong> ${contextText(dial)}</p>
-        ${providerNote}
-        ${codexNote}
-        ${reasonNote}
-      </div>
-    </details>
+  const providerNote = dial.id === "antigravity" ? `<p class="context">No published limit; raw invocation count only.</p>` : "";
+  const reasonNote = dial.reason ? `<p class="context">${escapeHtml(dial.reason)}</p>` : "";
+  return `<details class="logbook"><summary>Logbook</summary><div class="logbook-body">
+    <dl class="facts">
+      <div><dt>Window</dt><dd>${dial.window}</dd></div>
+      <div><dt>Source</dt><dd>${sourceText(dial)}</dd></div>
+      <div><dt>Last read</dt><dd>${dateText(dial.as_of)}</dd></div>
+      <div><dt>Last cross-check</dt><dd>${checkText(dial)}</dd></div>
+      <div><dt>Reset</dt><dd>${dateText(dial.resets_at)}</dd></div>
+    </dl>
+    ${extra || `<p class="context"><strong>Context:</strong> ${contextText(dial)}</p>`}
+    ${providerNote}${codexNote}${reasonNote}
+  </div></details>`;
+}
+
+function masterMarkup(dials) {
+  const ordered = ["claude-haiku", "claude-fable", "claude-sonnet", "claude-opus"]
+    .map(id => dials.find(dial => dial.id === id)).filter(Boolean);
+  const moving = ordered.filter(showsNeedle);
+  const lit = moving.length > 0;
+  let start = 0;
+  const rim = ["claude-opus", "claude-sonnet", "claude-haiku", "claude-fable"]
+    .map(id => moving.find(dial => dial.id === id)).filter(Boolean)
+    .map(dial => {
+      const length = Math.max(0, Math.min(dial.percent, 100 - start));
+      const segment = `<path d="${ARC_RIM}" fill="none" stroke="${NEEDLE_STYLE[dial.id].color}" stroke-width="9" pathLength="100" stroke-dasharray="0 ${start.toFixed(2)} ${length.toFixed(2)} 100"/>`;
+      start += length;
+      return segment;
+    }).join("");
+  const total = moving.reduce((sum, dial) => sum + dial.percent, 0);
+  const label = lit
+    ? `Claude weekly limit: ${number(total)}% used by the four models together. ` + moving.map(dial => `${dial.display_name} ${number(dial.percent)}%`).join(", ") + "."
+    : "Claude weekly limit: no lit reading.";
+  const first = ordered[ordered.length - 1];
+  const svg = dialSvg({
+    label, title: "CLAUDE", sub: "one weekly limit · percent", lit,
+    windowText: lit ? `${number(total)}%` : "—",
+    rim: `<path d="${ARC_RIM}" fill="none" stroke="#2a1a0c" stroke-opacity=".15" stroke-width="9"/>${rim}`,
+    needles: ordered.map(dial => needleMarkup(dial, NEEDLE_STYLE[dial.id])).join(""),
+  });
+  const key = ["claude-opus", "claude-sonnet", "claude-fable", "claude-haiku"]
+    .map(id => ordered.find(dial => dial.id === id)).filter(Boolean)
+    .map(dial => {
+      const { status } = statusAndReading(dial);
+      const value = showsNeedle(dial) ? `${number(dial.percent)}%` : status;
+      const used = dial.used === null ? "no reading" : `${compact(dial.used)} weighted`;
+      return `<li><span class="chip" style="background:${NEEDLE_STYLE[dial.id].color}" aria-hidden="true">${NEEDLE_STYLE[dial.id].letter}</span><span><strong>${dial.display_name.replace("Claude ", "")} · ${value}</strong>${used}</span></li>`;
+    }).join("");
+  const contexts = ordered.slice().reverse()
+    .map(dial => `<p class="context"><strong>${dial.display_name}:</strong> ${contextText(dial)}</p>`).join("");
+  const plate = first && first.resets_at
+    ? `Resets ${dateText(first.resets_at)} · ${lit ? "together " + number(total) + "% used" : "not lit"}`
+    : "One weekly limit shared by all four models";
+  return {
+    gauge: `<article class="instrument master">${svg}<div class="plate"><p>${plate}</p></div>${first ? logbook(first, contexts) : ""}</article>`,
+    key: `<ul class="key" aria-label="Needle key">${key}</ul>`,
+  };
+}
+
+function singleMarkup(dial) {
+  const { status, reading } = statusAndReading(dial);
+  const svg = dialSvg({
+    label: `${dial.display_name}: ${reading}`,
+    title: dial.display_name.toUpperCase(), sub: `${dial.window} · percent`, lit: true,
+    windowText: `${number(dial.percent)}%`,
+    needles: needleMarkup(dial, { letter: "", dark: "#5c160f", length: 150 }),
+  });
+  return `<article class="instrument single">${svg}<div class="plate"><h3>${dial.display_name}</h3><p>${reading}</p><p>${status}</p></div>${logbook(dial)}</article>`;
+}
+
+function meterMarkup(dial) {
+  const { status, reading } = statusAndReading(dial);
+  const flag = dial.state === "unclaimed" || noReader(dial) ? "OFF" : dial.state === "stale" ? "STALE" : "";
+  const value = flag === "OFF" || dial.used === null ? 0 : Math.round(dial.used);
+  const width = dial.kind === "engine" ? 8 : 4;
+  const digits = String(value).padStart(width, "0").slice(-9).split("")
+    .map(digit => `<span class="drum">${digit}</span>`).join("");
+  return `<article class="meter" aria-label="${escapeHtml(`${dial.display_name}: ${reading}`)}">
+    <div class="drum-bezel"><div class="drums" aria-hidden="true">${digits}</div>${flag ? `<span class="flag" aria-hidden="true">${flag}</span>` : ""}</div>
+    <h3>${dial.display_name}</h3>
+    <p>${reading}</p>
+    <p>${status}</p>
+    ${logbook(dial)}
   </article>`;
+}
+
+function renderBays(dials) {
+  const claude = dials.filter(dial => dial.id.startsWith("claude-"));
+  const engines = dials.filter(dial => dial.kind === "engine" && !dial.id.startsWith("claude-"));
+  const tanks = dials.filter(dial => dial.kind !== "engine");
+  const master = claude.length ? masterMarkup(claude) : { gauge: "", key: "" };
+  const engineGauges = engines.filter(showsNeedle).map(singleMarkup).join("");
+  const engineMeters = engines.filter(dial => !showsNeedle(dial)).map(meterMarkup).join("");
+  document.getElementById("engines").innerHTML =
+    `${master.gauge}${engineGauges}<div class="side">${master.key}<div class="meters">${engineMeters}</div></div>`;
+  const tankGauges = tanks.filter(showsNeedle).map(singleMarkup).join("");
+  const tankMeters = tanks.filter(dial => !showsNeedle(dial)).map(meterMarkup).join("");
+  document.getElementById("tanks").innerHTML = `${tankGauges}<div class="side"><div class="meters">${tankMeters}</div></div>`;
 }
 
 function renderTable(dials) {
   const rows = dials.map(dial => `<tr><th scope="row">${dial.display_name}</th><td>${dial.kind}</td><td>${dial.state}</td><td>${isLit(dial) ? "yes" : "no"}</td><td>${sourceText(dial)}</td><td>${checkText(dial)}</td><td>${dial.percent === null ? "—" : `${number(dial.percent)}%`}</td><td>${dial.used === null ? "—" : `${number(dial.used)} ${dial.unit}`}</td><td>${dial.window}</td><td>${contextText(dial)}</td></tr>`).join("");
   document.getElementById("table-view").innerHTML = `<table><thead><tr><th>Dial</th><th>Kind</th><th>State</th><th>Lit</th><th>Source</th><th>Last cross-check</th><th>Percent</th><th>Reading</th><th>Window</th><th>Context</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
+
 
 async function loadSnapshot() {
   const response = await fetch(DATA_URL, { cache: "no-store" });
@@ -353,15 +447,14 @@ async function loadSnapshot() {
   document.getElementById("updated").textContent = `Updated ${generated.toLocaleString()} · ${ageText(snapshot.generated_at)}`;
   document.getElementById("activity").textContent = `Fleet activity: ${snapshot.activity}`;
   document.getElementById("lit-count").textContent = `Lit: ${snapshot.providers.filter(isLit).length} of ${snapshot.providers.length}`;
-  document.getElementById("engines").innerHTML = snapshot.providers.filter(dial => dial.kind === "engine").map(gaugeMarkup).join("");
-  document.getElementById("tanks").innerHTML = snapshot.providers.filter(dial => dial.kind !== "engine").map(gaugeMarkup).join("");
+  renderBays(snapshot.providers);
   renderTable(snapshot.providers);
   document.getElementById("stale-banner").hidden = !snapshot.providers.every(dial => dial.state === "stale");
-  requestAnimationFrame(() => {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
     document.querySelectorAll(".needle[data-angle]").forEach(needle => {
-      if (!needle.dataset.rest) needle.style.transform = `rotate(${needle.dataset.angle}deg)`;
+      needle.style.transform = `rotate(${needle.dataset.angle}deg)`;
     });
-  });
+  }));
 }
 
 loadSnapshot().catch(error => {
