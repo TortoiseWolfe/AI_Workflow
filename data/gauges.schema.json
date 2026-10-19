@@ -41,6 +41,7 @@
         "used": {"$ref": "#/$defs/nullableNumber"},
         "limit": {"$ref": "#/$defs/nullableNumber"},
         "unit": {"type": "string", "minLength": 1},
+        "reason": {"type": ["string", "null"], "maxLength": 200},
         "percent": {"type": ["number", "null"], "minimum": 0},
         "state": {
           "enum": ["calibrated", "uncalibrated", "stale", "idle", "unclaimed"]

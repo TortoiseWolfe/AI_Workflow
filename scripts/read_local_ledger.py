@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Turn the local usage ledger into the aggregate input that collect_gauges.py reads.
 
-    read_local_ledger.py --output PATH [--now ISO] [--hub-scripts DIR] [--db PATH]
+    read_local_ledger.py --output PATH [--now ISO] [--hub-scripts DIR] [--db PATH] [--copilot-db PATH]
 
 Read-only. It reuses the existing readers rather than copying them: the ledger
 database (opened mode=ro) and the context-load helpers of model_quality_report.py.
@@ -9,7 +9,7 @@ Only counts, token numbers and timestamps leave this script. Repo names, session
 ids and file paths are read to join rows and are never written. Write the output
 outside any repo: it is an intermediate file, not the published one.
 
-A source with no reader yet (Codex and Copilot session context, provider consoles)
+A source with no reader yet (Codex session context, provider consoles)
 is left null so the page says so, never filled with a guess.
 """
 
@@ -19,15 +19,22 @@ import argparse
 import datetime as dt
 import importlib.util
 import json
+import math
 import os
+import sqlite3
 import statistics
+import subprocess
 import sys
 from collections import defaultdict
+from datetime import timedelta
 from pathlib import Path
+from urllib.parse import urlencode
 
 HOME = Path.home()
 DEFAULT_HUB_SCRIPTS = HOME / "repos" / "hub" / "scripts"
 DEFAULT_DB = HOME / ".local" / "share" / "ledger" / "ledger.db"
+DEFAULT_COPILOT_DB = HOME / ".copilot" / "session-store.db"
+COPILOT_USAGE_ENDPOINT = "users/TortoiseWolfe/settings/billing/premium_request/usage"
 
 # Review-panel experts in the ledger, folded onto the dial that carries their free tier.
 EXPERT_TO_DIAL = {
@@ -119,7 +126,104 @@ def claude_engines(reader, ledger, lo: float, hi: float, project_glob: str) -> d
     return out
 
 
-def build_input(reader, db: Path, now: dt.datetime) -> dict:
+def copilot_engine(db: Path, now: dt.datetime, reader) -> tuple[dict | None, str | None]:
+    week_start = reader.week_start_for(now)
+    uri = f"{db.resolve().as_uri()}?mode=ro"
+    try:
+        conn = sqlite3.connect(uri, uri=True, timeout=1)
+    except sqlite3.OperationalError as error:
+        return None, copilot_database_error(error)
+
+    try:
+        rows = conn.execute(
+            "SELECT COALESCE(input_tokens, 0)+COALESCE(cache_read_tokens, 0)+"
+            "COALESCE(cache_write_tokens, 0), COALESCE(request_multiplier, 1) "
+            "FROM assistant_usage_events "
+            "WHERE julianday(created_at)>=julianday(?) AND julianday(created_at)<julianday(?)",
+            (week_start.isoformat(), (now + timedelta(seconds=1)).isoformat()),
+        ).fetchall()
+    except sqlite3.OperationalError as error:
+        reason = copilot_database_error(error)
+        if reason is None:
+            raise
+        return None, reason
+    finally:
+        conn.close()
+
+    contexts = [int(row[0]) for row in rows]
+    return {
+        "used": sum(float(row[1]) for row in rows),
+        "window_turns": len(contexts),
+        "tokens_per_turn_median": statistics.median(contexts) if contexts else None,
+        "tokens_per_turn_p90": reader.percentile(contexts, 0.9) if contexts else None,
+        "turns_over_200k": sum(value > 200_000 for value in contexts),
+        "compactions_total": None,
+        "compactions_auto": None,
+        "compactions_manual": None,
+        "reread_share": None,
+        "input_tokens_per_call_median": None,
+    }, None
+
+
+def copilot_database_error(error: sqlite3.OperationalError) -> str | None:
+    message = str(error).lower()
+    if "locked" in message or "busy" in message:
+        return "local-database-locked"
+    if "unable to open database file" in message:
+        return "local-database-unavailable"
+    return None
+
+
+def premium_request_usage(now: dt.datetime, week_start: dt.datetime) -> tuple[float | None, str | None]:
+    total = 0.0
+    day = week_start
+    while day.date() <= now.date():
+        query = urlencode({
+            "year": day.year, "month": day.month, "day": day.day, "product": "Copilot",
+        })
+        try:
+            result = subprocess.run(
+                ["gh", "api", f"{COPILOT_USAGE_ENDPOINT}?{query}"],
+                capture_output=True, text=True, timeout=30, check=False,
+            )
+        except FileNotFoundError:
+            return None, "gh-cli-unavailable"
+        except subprocess.TimeoutExpired:
+            return None, "github-report-unavailable"
+        if result.returncode:
+            if "404" in result.stderr:
+                return None, "github-report-404-user-scope"
+            return None, "github-report-unavailable"
+        try:
+            response = json.loads(result.stdout)
+            items = response["usageItems"]
+            if not isinstance(items, list):
+                raise ValueError
+            for item in items:
+                amount = item["grossQuantity"]
+                if (
+                    isinstance(amount, bool)
+                    or not isinstance(amount, (int, float))
+                    or not math.isfinite(amount)
+                    or amount < 0
+                ):
+                    raise ValueError
+                product = item.get("product")
+                if product is not None and not isinstance(product, str):
+                    raise ValueError
+                if product is not None and product.casefold() != "copilot":
+                    continue
+                total += float(amount)
+        except (KeyError, TypeError, ValueError, json.JSONDecodeError):
+            return None, "github-report-invalid"
+        day += timedelta(days=1)
+    return total, None
+
+
+def build_input(reader, db: Path, now: dt.datetime, copilot_db: Path = DEFAULT_COPILOT_DB) -> dict:
+    if now.tzinfo is None:
+        raise ValueError("now must include a timezone")
+    now = now.astimezone(dt.timezone.utc)
     conn = reader.open_ro(str(db))
     ledger = reader.Ledger(conn)
     last_row = ledger.last_ts()
@@ -129,16 +233,34 @@ def build_input(reader, db: Path, now: dt.datetime) -> dict:
         raise SystemExit("the ledger has no rows or no ingest time; refusing to publish a guess")
     week_start = reader.week_start_for(now)
     measured = claude_engines(reader, ledger, week_start.timestamp(), now.timestamp() + 1, reader.DEFAULT_PROJECT_GLOB)
+    copilot, local_error = copilot_engine(copilot_db, now, reader)
+    report_used, report_error = (None, local_error)
+    if copilot is not None:
+        report_used, report_error = premium_request_usage(now, week_start)
     engines = []
     for engine_id in ALL_ENGINES:
         reading = measured.get(engine_id)
-        engines.append({"id": engine_id, "as_of": iso(ingested) if reading else None, **(reading or EMPTY)})
+        if engine_id == "copilot" and copilot is not None:
+            # the request count travels in copilot_report.local_used, not in the engine row
+            reading = {key: value for key, value in copilot.items() if key != "used"}
+        engines.append({
+            "id": engine_id,
+            "as_of": iso(now.timestamp()) if engine_id == "copilot" and reading is not None
+            else iso(ingested) if reading else None,
+            **(reading or EMPTY),
+        })
     return {
         "ledger_as_of": iso(ingested),
         "last_activity": iso(last_row),
         "calls": provider_calls(conn),
         "provider_reports": [],  # no provider console or key-endpoint reader yet
         "engines": engines,
+        "copilot_report": {
+            "local_used": copilot["used"] if copilot is not None else None,
+            "reported_used": report_used,
+            "as_of": iso(now.timestamp()) if report_used is not None else None,
+            "reason": report_error,
+        },
     }
 
 
@@ -148,10 +270,11 @@ def main() -> None:
     parser.add_argument("--now", help="timezone-aware ISO timestamp, for repeatable runs")
     parser.add_argument("--hub-scripts", type=Path, default=DEFAULT_HUB_SCRIPTS)
     parser.add_argument("--db", type=Path, default=DEFAULT_DB)
+    parser.add_argument("--copilot-db", type=Path, default=DEFAULT_COPILOT_DB)
     args = parser.parse_args()
     now = dt.datetime.fromisoformat(args.now.replace("Z", "+00:00")) if args.now else dt.datetime.now(dt.timezone.utc)
     reader = load_reader(args.hub_scripts)
-    payload = build_input(reader, args.db, now)
+    payload = build_input(reader, args.db, now, args.copilot_db)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     os.chmod(args.output, 0o600)

@@ -31,7 +31,19 @@ ENGINES = (
     ("copilot", "Copilot"),
 )
 ENGINE_WINDOWS = {engine_id: "weekly" for engine_id, _ in ENGINES}
-INPUT_ROOT_KEYS = {"ledger_as_of", "last_activity", "calls", "provider_reports", "engines"}
+ENGINE_UNITS = {engine_id: "requests" if engine_id == "copilot" else "tokens" for engine_id, _ in ENGINES}
+COPILOT_REPORT_REASONS = {
+    None,
+    "local-database-unavailable",
+    "local-database-locked",
+    "gh-cli-unavailable",
+    "github-report-404-user-scope",
+    "github-report-unavailable",
+    "github-report-invalid",
+}
+INPUT_ROOT_KEYS = {
+    "ledger_as_of", "last_activity", "calls", "provider_reports", "engines", "copilot_report",
+}
 CALL_KEYS = {"timestamp", "provider_id", "units", "input_tokens"}
 REPORT_KEYS = {"provider_id", "as_of", "used", "limit", "window_complete", "source", "resets_at"}
 ENGINE_KEYS = {
@@ -39,6 +51,7 @@ ENGINE_KEYS = {
     "turns_over_200k", "compactions_total", "compactions_auto", "compactions_manual",
     "reread_share", "input_tokens_per_call_median",
 }
+COPILOT_REPORT_KEYS = {"local_used", "reported_used", "as_of", "reason"}
 CONTEXT_FIELDS = (
     "window_turns", "tokens_per_turn_median", "tokens_per_turn_p90", "turns_over_200k",
     "compactions_total", "compactions_auto", "compactions_manual", "reread_share",
@@ -118,13 +131,14 @@ def window_start(window: str, now: datetime) -> datetime:
     return now - timedelta(hours=1)
 
 
-def validate_input(payload: Any) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]], dict[str, dict[str, Any]], datetime, datetime]:
+def validate_input(payload: Any) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]], dict[str, dict[str, Any]], datetime, datetime, dict[str, Any]]:
     root = exact_keys(payload, INPUT_ROOT_KEYS, "input")
     ledger_as_of = parse_time(root["ledger_as_of"], "ledger_as_of")
     last_activity = parse_time(root["last_activity"], "last_activity")
     calls = root["calls"]
     reports = root["provider_reports"]
     engines = root["engines"]
+    copilot_report = dict(exact_keys(root["copilot_report"], COPILOT_REPORT_KEYS, "copilot_report"))
     if not all(isinstance(rows, list) for rows in (calls, reports, engines)):
         raise InputError("calls, provider_reports and engines must be arrays")
     provider_ids = {row[0] for row in PROVIDERS}
@@ -197,7 +211,22 @@ def validate_input(payload: Any) -> tuple[list[dict[str, Any]], dict[str, dict[s
             "as_of": parse_time(engine["as_of"], f"engines[{index}].as_of")
             if engine["as_of"] is not None else None,
         }
-    return clean_calls, clean_reports, clean_engines, ledger_as_of, last_activity
+    for field in ("local_used", "reported_used"):
+        copilot_report[field] = number_or_none(copilot_report[field], f"copilot_report.{field}")
+    reason = copilot_report["reason"]
+    if reason is not None and (not isinstance(reason, str) or reason not in COPILOT_REPORT_REASONS):
+        raise InputError("copilot_report.reason is not recognized")
+    if copilot_report["as_of"] is not None:
+        copilot_report["as_of"] = parse_time(copilot_report["as_of"], "copilot_report.as_of")
+    if copilot_report["local_used"] is None:
+        if copilot_report["reported_used"] is not None or copilot_report["as_of"] is not None:
+            raise InputError("a Copilot report cannot exist without a local reading")
+    elif copilot_report["reported_used"] is None:
+        if copilot_report["reason"] is None:
+            raise InputError("an unavailable Copilot report requires a reason")
+    elif copilot_report["as_of"] is None or copilot_report["reason"] is not None:
+        raise InputError("a Copilot report count requires a successful timestamped report")
+    return clean_calls, clean_reports, clean_engines, ledger_as_of, last_activity, copilot_report
 
 
 def validate_snapshot(snapshot: Any) -> None:
@@ -210,18 +239,24 @@ def validate_snapshot(snapshot: Any) -> None:
     catalog = load_catalog()
     known = {row[0]: (row[1], "free-tier", row[2], row[3], row[4]) for row in PROVIDERS}
     known.update({
-        engine_id: (display_name, "engine", ENGINE_WINDOWS[engine_id], "tokens", True)
+        engine_id: (display_name, "engine", ENGINE_WINDOWS[engine_id], ENGINE_UNITS[engine_id], True)
         for engine_id, display_name in ENGINES
     })
     seen = set()
     allowed = {
         "as_of", "id", "display_name", "kind", "window", "weight", "used", "limit",
-        "unit", "percent", "state", "resets_at", "source", "context", "context_state",
+        "unit", "percent", "state", "resets_at", "source", "context", "context_state", "reason",
     }
     context_keys = set(CONTEXT_FIELDS)
     group_keys = set(CONTEXT_GROUPS)
     for index, raw in enumerate(root["providers"]):
-        dial = exact_keys(raw, allowed, f"providers[{index}]")
+        if not isinstance(raw, dict):
+            raise InputError(f"providers[{index}] must be an object")
+        missing = (allowed - {"reason"}) - set(raw)
+        extra = set(raw) - allowed
+        if missing or extra:
+            raise InputError(f"providers[{index}] has unsupported fields: extra={sorted(extra)}, missing={sorted(missing)}")
+        dial = raw
         if not isinstance(dial["id"], str) or dial["id"] not in known or dial["id"] in seen:
             raise InputError(f"providers[{index}].id is unknown or duplicated")
         seen.add(dial["id"])
@@ -236,6 +271,12 @@ def validate_snapshot(snapshot: Any) -> None:
             raise InputError(f"providers[{index}].state is invalid")
         if dial["source"] not in ("provider", "local-count"):
             raise InputError(f"providers[{index}].source is invalid")
+        if "reason" in dial:
+            reason = dial["reason"]
+            if dial["id"] != "copilot" or (
+                reason is not None and (not isinstance(reason, str) or not reason.strip() or len(reason) > 200)
+            ):
+                raise InputError(f"providers[{index}].reason is invalid")
         if (not claimed and dial["state"] != "unclaimed") or (claimed and dial["state"] == "unclaimed"):
             raise InputError("provider claim state does not match the configured dial")
         exact_keys(dial["context"], context_keys, f"providers[{index}].context")

@@ -147,7 +147,7 @@ footer { margin-top: 22px; color: var(--muted); font: 11px/1.5 var(--mono); }
     <p class="lede">At a glance: each provider has its own brass dial; the engines show how much context their turns carry.</p>
     <p class="lede">Percentages appear only after a full-window cross-check. No limit is guessed, and the context readings are totals, never individual activity.</p>
   </header>
-  <p class="notice" id="source-note">Real aggregate counts from one machine's usage ledger. Free-tier counts are calls the review panel made, not provider-console figures, so no percentage is shown yet. Codex and Copilot have no reader yet; the second machine joins later.</p>
+  <p class="notice" id="source-note">Real aggregate counts from one machine's usage ledger. Free-tier counts are calls the review panel made, not provider-console figures, so no percentage is shown yet. Copilot readings are only calibrated after a local count matches GitHub's premium-request usage report; Codex has no reader yet.</p>
   <p class="stale-banner" id="stale-banner" role="status" hidden>All gauge readings are stale.</p>
   <section class="toolbar" aria-label="Snapshot status">
     <p class="stamp" id="updated">Loading snapshot…</p>
@@ -166,6 +166,9 @@ const DATA_URL = "data/gauges.json";
 const DAY = 24 * 60 * 60 * 1000;
 const number = value => new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(value);
 const dateText = value => value ? new Date(value).toLocaleString() : "not recorded";
+const escapeHtml = value => String(value).replace(/[<>&"]/g, character => ({
+  "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;"
+}[character]));
 function ageText(value) {
   if (!value) return "age unknown";
   const age = Math.max(0, Date.now() - new Date(value).getTime());
@@ -214,7 +217,9 @@ function gaugeMarkup(dial) {
       : dial.state === "idle" ? `No calls in the current ${dial.window} window`
         : dial.state === "stale" ? `Last known ${number(dial.used ?? 0)} ${dial.unit}; not current`
           : noReader(dial) ? "No reader yet · no reading"
-            : dial.kind === "engine" ? "Context load · weekly pacing uncalibrated"
+            : dial.kind === "engine" && dial.used !== null
+              ? `${number(dial.used)} ${dial.unit} this week · context load`
+              : dial.kind === "engine" ? "Context load · weekly pacing uncalibrated"
               : `${number(dial.used ?? 0)} ${dial.unit} this ${dial.window.replace("rolling ", "")} · no limit reader yet`;
   const lamp = dial.state === "calibrated" ? " on" : "";
   const percentageArc = dial.percent === null ? "" :
@@ -225,6 +230,8 @@ function gaugeMarkup(dial) {
     : isCodex ? `<p class="codex-note">The free-usage start date has passed; no allowance is wired.</p>` : "";
   const providerNote = dial.id === "antigravity"
     ? `<p class="context">No published limit; raw invocation count only.</p>` : "";
+  const reasonNote = dial.reason
+    ? `<p class="context">${escapeHtml(dial.reason)}</p>` : "";
   return `<article class="dial weight-${dial.weight}${dim ? " dim" : ""}">
     <div class="dial-head"><h2 class="dial-label">${dial.display_name}</h2><span class="kind">${dial.kind === "engine" ? "engine" : dial.weight}</span></div>
     <div class="face">
@@ -249,6 +256,7 @@ function gaugeMarkup(dial) {
     <p class="context"><strong>Context:</strong> ${contextText(dial)}</p>
     ${providerNote}
     ${codexNote}
+    ${reasonNote}
   </article>`;
 }
 

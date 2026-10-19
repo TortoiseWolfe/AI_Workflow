@@ -16,6 +16,7 @@ from gauge_schema import (
     CONTEXT_FIELDS,
     CONTEXT_GROUPS,
     ENGINES,
+    ENGINE_UNITS,
     PROVIDERS,
     InputError,
     load_catalog,
@@ -52,13 +53,15 @@ def build_snapshot(payload: Any, now: datetime) -> dict[str, Any]:
     if now.tzinfo is None:
         raise InputError("now must include a timezone")
     now = now.astimezone(timezone.utc)
-    calls, reports, engines, ledger_as_of, last_activity = validate_input(payload)
+    calls, reports, engines, ledger_as_of, last_activity, copilot_report = validate_input(payload)
     if any(call["timestamp"] > now for call in calls):
         raise InputError("calls cannot be dated in the future")
     if any(report["as_of"] > now for report in reports.values()):
         raise InputError("provider reports cannot be dated in the future")
     if any(engine["as_of"] and engine["as_of"] > now for engine in engines.values()):
         raise InputError("engine readings cannot be dated in the future")
+    if copilot_report["as_of"] and copilot_report["as_of"] > now:
+        raise InputError("copilot report cannot be dated in the future")
     if ledger_as_of > now or last_activity > now:
         raise InputError("ledger times cannot be in the future")
 
@@ -128,23 +131,46 @@ def build_snapshot(payload: Any, now: datetime) -> dict[str, Any]:
         context, context_state = _context_for_engine(engine)
         as_of = engine["as_of"] if engine else None
         engine_state = "stale" if as_of and now - as_of > STALE_AFTER else "uncalibrated"
-        dials.append({
+        dial = {
             "as_of": as_of.isoformat(timespec="seconds").replace("+00:00", "Z") if as_of else None,
             "id": engine_id,
             "display_name": name,
             "kind": "engine",
             "window": "weekly",
             "weight": "medium",
-            "used": None,
+            "used": copilot_report["local_used"] if engine_id == "copilot" else None,
             "limit": None,
-            "unit": "tokens",
+            "unit": ENGINE_UNITS[engine_id],
             "percent": None,
             "state": engine_state,
             "resets_at": None,
             "source": "local-count",
             "context": context,
             "context_state": context_state,
-        })
+        }
+        if engine_id == "copilot":
+            reason = {
+                "local-database-unavailable": "Local Copilot usage database is missing or unreadable.",
+                "local-database-locked": "Local Copilot usage database is locked; no local count was read.",
+                "gh-cli-unavailable": "GitHub CLI is unavailable; premium-request usage was not checked.",
+                "github-report-404-user-scope": "GitHub premium-request usage returned 404; the gh token needs the user scope.",
+                "github-report-unavailable": "GitHub premium-request usage report is unavailable.",
+                "github-report-invalid": "GitHub premium-request usage report had an unsupported response.",
+            }.get(copilot_report["reason"])
+            if (
+                copilot_report["local_used"] is not None
+                and copilot_report["reported_used"] is not None
+                and copilot_report["as_of"] is not None
+            ):
+                report_used = copilot_report["reported_used"]
+                tolerance = max(copilot_report["local_used"], report_used) * 0.05
+                if abs(copilot_report["local_used"] - report_used) <= tolerance:
+                    dial["state"] = "calibrated"
+                    reason = None
+                else:
+                    reason = "GitHub premium-request usage differs from the local count by more than 5%."
+            dial["reason"] = reason
+        dials.append(dial)
 
     snapshot = {
         "generated_at": now.isoformat(timespec="seconds").replace("+00:00", "Z"),
