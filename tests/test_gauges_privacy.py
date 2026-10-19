@@ -108,7 +108,7 @@ class GaugePrivacyTests(unittest.TestCase):
             {
                 "as_of", "id", "display_name", "kind", "window", "weight", "used",
                 "limit", "unit", "percent", "state", "resets_at", "source", "reason",
-                "context", "context_state",
+                "cross_check", "lit", "context", "context_state",
             },
         )
         self.assertEqual(set(dial_schema["properties"]["context"]["properties"]), set(collect_gauges.CONTEXT_FIELDS))

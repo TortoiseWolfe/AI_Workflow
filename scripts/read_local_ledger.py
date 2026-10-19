@@ -30,6 +30,9 @@ from datetime import timedelta
 from pathlib import Path
 from urllib.parse import urlencode
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import read_codex_sessions
+
 HOME = Path.home()
 DEFAULT_HUB_SCRIPTS = HOME / "repos" / "hub" / "scripts"
 DEFAULT_DB = HOME / ".local" / "share" / "ledger" / "ledger.db"
@@ -80,8 +83,58 @@ def provider_calls(conn) -> list[dict]:
             "timestamp": iso(seconds), "provider_id": dial, "units": 1,
             # A panel row with 0 input tokens means the count was not recorded.
             "input_tokens": input_tokens if input_tokens else None,
+            # Groq refills each model's budget separately, so the expert names the budget.
+            "bucket": expert if dial == "groq" else None,
         })
     return sorted(calls, key=lambda call: call["timestamp"])
+
+
+def _when(value: str) -> dt.datetime:
+    return dt.datetime.fromisoformat(value).astimezone(dt.timezone.utc)
+
+
+def claude_weekly_check(calibration: dict) -> dict | None:
+    """Predict Claude's latest /usage reading from the earlier ones, so the check is not the fit's own data.
+
+    The weekly estimate is a least-squares line through the origin over /usage readings. Refit without the
+    newest reading and ask what it would have said for that reading's use; the gap is the honest error.
+    """
+    try:
+        readings = sorted(calibration["readings"], key=lambda row: _when(row["at"]))
+        *earlier, latest = readings
+        if not earlier:
+            return None
+        weights = [float(row["weighted"]) for row in earlier]
+        factor = sum(float(row["pct"]) * w for row, w in zip(earlier, weights)) / sum(w * w for w in weights)
+        return {
+            "at": iso(_when(latest["at"]).timestamp()),
+            "theirs": float(latest["pct"]),
+            "ours": round(factor * float(latest["weighted"]), 1),
+        }
+    except (KeyError, TypeError, ValueError, ZeroDivisionError):
+        return None
+
+
+def claude_weekly(reader, ledger, now: dt.datetime, week_start, ingested: float, calibration_path=None) -> dict | None:
+    """The shared weekly limit and each model's slice of it, from the hub's own projection (model_quality_report.py)."""
+    calibration = reader.load_calibration(str(calibration_path or reader.DEFAULT_CAL))
+    if calibration is None:
+        return None
+    projection = reader.project(ledger, now, calibration, week_start)
+    factor = float(calibration["pct_per_unit"])
+    by_family = {name: 0.0 for name in CLAUDE_DIALS}
+    for _repo, model, *values in ledger._rows(week_start.timestamp(), now.timestamp()):
+        family = reader.family(model)
+        if family in by_family:
+            by_family[family] += reader.weighted(model, *values, cache_w=reader.LIMIT_CACHE_READ_WEIGHT)
+    stale = reader.calibration_note(calibration, now) is not None
+    return {
+        "as_of": iso(ingested),
+        "limit": round(projection["implied_limit_units"]),
+        "reset": iso(projection["reset"].timestamp()),
+        "by_family": {name: round(units) for name, units in by_family.items()},
+        "check": None if stale else claude_weekly_check(calibration),
+    }
 
 
 def claude_engines(reader, ledger, lo: float, hi: float, project_glob: str) -> dict[str, dict]:
@@ -248,6 +301,7 @@ def probe_groq(now: dt.datetime, scripts: Path = CLAUDE_SCRIPTS) -> dict | None:
 
 def build_input(
     reader, db: Path, now: dt.datetime, copilot_db: Path = DEFAULT_COPILOT_DB, groq_probe=None,
+    claude_calibration=None, codex_sessions: Path = read_codex_sessions.SESSIONS,
 ) -> dict:
     if now.tzinfo is None:
         raise ValueError("now must include a timezone")
@@ -284,6 +338,8 @@ def build_input(
         "calls": provider_calls(conn),
         "provider_reports": [groq_row] if groq_row else [],  # only Groq has a header reader so far
         "engines": engines,
+        "claude_weekly": claude_weekly(reader, ledger, now, week_start, ingested, claude_calibration),
+        "codex_report": read_codex_sessions.codex_report(now, week_start, codex_sessions),
         "copilot_report": {
             "local_used": copilot["used"] if copilot is not None else None,
             "reported_used": report_used,

@@ -118,6 +118,11 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
 .facts dd { text-align: right; overflow-wrap: anywhere; }
 .context { margin: 9px 0 0; color: var(--muted); font: 11px/1.45 var(--mono); }
 .context strong { color: var(--ink); font-weight: 500; }
+.legend { margin: 18px 0 0; padding: 12px 14px; border: 1px solid var(--brass); border-radius: 8px; background: var(--panel); }
+.legend h2 { margin: 0 0 6px; font-size: 1.25rem; }
+.legend ol { margin: 0; padding-left: 1.3em; font: 13px/1.5 var(--mono); color: var(--muted); }
+.legend li { margin: 3px 0; }
+.legend strong { color: var(--ink); font-weight: 600; }
 .codex-note { margin: 8px 0 0; color: var(--accent); font: 11px/1.45 var(--mono); }
 details { margin-top: 22px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 summary { cursor: pointer; padding: 12px 2px; font-family: var(--display); font-size: 1.25rem; }
@@ -145,13 +150,23 @@ footer { margin-top: 22px; color: var(--muted); font: 11px/1.5 var(--mono); }
     <div class="eyebrow">Instrument panel · aggregate readings</div>
     <h1>Usage <span style="color:var(--brass)">gauges</span></h1>
     <p class="lede">At a glance: each provider has its own brass dial; the engines show how much context their turns carry.</p>
-    <p class="lede">Percentages appear only after a full-window cross-check. No limit is guessed, and the context readings are totals, never individual activity.</p>
+    <p class="lede">A needle moves only for a lit dial. No limit is guessed, and the context readings are totals, never individual activity.</p>
   </header>
-  <p class="notice" id="source-note">Real aggregate counts from one machine's usage ledger. Free-tier counts are calls the review panel made, not provider-console figures, so no percentage is shown yet. Copilot readings are only calibrated after a local count matches GitHub's premium-request usage report; Codex has no reader yet.</p>
+  <p class="notice" id="source-note">Real aggregate counts from one machine's usage ledger and from the providers' own rate-limit figures. A dial without a known limit shows its count as a number and stays dim.</p>
+  <section class="legend" id="legend" aria-label="What a lit dial means">
+    <h2>What lit means</h2>
+    <ol>
+      <li><strong>Source</strong>: the reading comes from the provider itself (a usage report or rate-limit headers), or from a local count that has been checked against the provider's own figure.</li>
+      <li><strong>Limit</strong>: the real ceiling for that window is known, so the needle shows a percent of it. A count with no limit stays dim and shows as a number only.</li>
+      <li><strong>Fresh</strong>: the dial shows when it was read, and goes dim once the reading is older than 16 hours, two refresh windows.</li>
+      <li><strong>Proven</strong>: the dial has matched a second source it did not make, at least once, and the check is recorded in the data.</li>
+    </ol>
+  </section>
   <p class="stale-banner" id="stale-banner" role="status" hidden>All gauge readings are stale.</p>
   <section class="toolbar" aria-label="Snapshot status">
     <p class="stamp" id="updated">Loading snapshot…</p>
     <p class="stamp" id="activity"></p>
+    <p class="stamp" id="lit-count"></p>
   </section>
   <section id="gauges" class="grid" aria-label="Provider and engine gauges" aria-live="polite"></section>
   <details>
@@ -165,7 +180,18 @@ footer { margin-top: 22px; color: var(--muted); font: 11px/1.5 var(--mono); }
 const DATA_URL = "data/gauges.json";
 const DAY = 24 * 60 * 60 * 1000;
 const number = value => new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 }).format(value);
-const dateText = value => value ? new Date(value).toLocaleString() : "not recorded";
+const dateText = value => value ? new Date(value).toLocaleString(undefined, { hour12: true }) : "not recorded";
+const FRESH_WITHIN = 16 * 60 * 60 * 1000;  // two refresh windows
+const isFresh = dial => Boolean(dial.as_of) && Date.now() - new Date(dial.as_of).getTime() <= FRESH_WITHIN;
+const isLit = dial => dial.lit === true && isFresh(dial);
+const sourceText = dial => dial.source === "provider"
+  ? "Provider's own figure"
+  : dial.cross_check ? "Local count, checked" : "Local count";
+function checkText(dial) {
+  const check = dial.cross_check;
+  if (!check) return "none yet";
+  return `${dateText(check.at)} · ${check.against}: ${number(check.theirs)} vs ${number(check.ours)}`;
+}
 const escapeHtml = value => String(value).replace(/[<>&"]/g, character => ({
   "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;"
 }[character]));
@@ -201,28 +227,33 @@ function contextText(dial) {
 }
 
 function gaugeMarkup(dial) {
-  const ratio = dial.percent === null ? 0 : Math.min(dial.percent, 100) / 100;
+  const showNeedle = isLit(dial) && dial.percent !== null;
+  const ratio = showNeedle ? Math.min(dial.percent, 100) / 100 : 0;
   const angle = -180 + ratio * 180;
-  const dim = ["idle", "unclaimed"].includes(dial.state);
+  const lit = isLit(dial);
+  const dim = !lit;
   const status = noReader(dial) ? "No reader yet"
     : dial.state === "idle" && dial.as_of
     ? `Idle since ${new Date(dial.as_of).toLocaleDateString()}`
     : dial.state === "unclaimed" ? "Not claimed"
       : dial.state === "stale" ? `Stale · last read ${ageText(dial.as_of)}`
-        : dial.state === "calibrated" ? "Calibrated"
-          : "Uncalibrated";
-  const reading = dial.state === "calibrated" && dial.percent !== null
-    ? `${number(dial.percent)}% of ${dial.window} allowance · ${number(dial.used)} of ${number(dial.limit)} ${dial.unit}`
+        : lit ? "Lit"
+          : dial.state === "calibrated" ? "Dim · reading is too old to trust"
+            : dial.limit === null ? "Dim · no limit known"
+              : "Dim · not yet cross-checked";
+  const unitName = dial.kind === "engine" && dial.unit === "tokens" ? "weighted tokens" : dial.unit;
+  const reading = lit && dial.percent !== null
+    ? `${number(dial.percent)}% of ${dial.window} allowance · ${number(dial.used)} of ${number(dial.limit)} ${unitName}`
     : dial.state === "unclaimed" ? "No account yet · no measurement"
       : dial.state === "idle" ? `No calls in the current ${dial.window} window`
         : dial.state === "stale" ? `Last known ${number(dial.used ?? 0)} ${dial.unit}; not current`
           : noReader(dial) ? "No reader yet · no reading"
             : dial.kind === "engine" && dial.used !== null
-              ? `${number(dial.used)} ${dial.unit} this week · context load`
+              ? `${number(dial.used)} ${dial.unit} this week · count only, no limit known`
               : dial.kind === "engine" ? "Context load · weekly pacing uncalibrated"
               : `${number(dial.used ?? 0)} ${dial.unit} this ${dial.window.replace("rolling ", "")} · no limit reader yet`;
-  const lamp = dial.state === "calibrated" ? " on" : "";
-  const percentageArc = dial.percent === null ? "" :
+  const lamp = lit ? " on" : "";
+  const percentageArc = !showNeedle ? "" :
     `<path class="progress${dial.percent > 100 ? " over" : ""}" d="M 47 119 A 63 63 0 0 1 173 119" pathLength="100" stroke-dasharray="${ratio * 100} 100"/>`;
   const isCodex = dial.id === "codex";
   const codexNote = isCodex && Date.now() < Date.parse("2026-11-01T00:00:00Z")
@@ -242,7 +273,7 @@ function gaugeMarkup(dial) {
         ${percentageArc}
         <path class="tick" d="M 47 119 l 8 -3 M 110 56 v 9 M 173 119 l -8 -3"/>
         <text class="scale" x="41" y="134">0</text><text class="scale" x="105" y="50">50</text><text class="scale" x="171" y="134">100</text>
-        <line class="needle${dial.state === "stale" ? " stale" : dial.percent === null ? " rest" : ""}" x1="110" y1="119" x2="173" y2="119" data-angle="${angle.toFixed(1)}" style="transform:rotate(-180deg)"/>
+        <line class="needle${dial.state === "stale" ? " stale" : !showNeedle ? " rest" : ""}" x1="110" y1="119" x2="173" y2="119" data-angle="${angle.toFixed(1)}" style="transform:rotate(-180deg)"/>
         <circle class="hub" cx="110" cy="119" r="6"/>
       </svg>
     </div>
@@ -250,7 +281,9 @@ function gaugeMarkup(dial) {
     <p class="state"><span class="lamp${lamp}" aria-hidden="true"></span>${status}</p>
     <dl class="facts">
       <div><dt>Window</dt><dd>${dial.window}</dd></div>
+      <div><dt>Source</dt><dd>${sourceText(dial)}</dd></div>
       <div><dt>Last read</dt><dd>${dateText(dial.as_of)}</dd></div>
+      <div><dt>Last cross-check</dt><dd>${checkText(dial)}</dd></div>
       <div><dt>Reset</dt><dd>${dateText(dial.resets_at)}</dd></div>
     </dl>
     <p class="context"><strong>Context:</strong> ${contextText(dial)}</p>
@@ -261,8 +294,8 @@ function gaugeMarkup(dial) {
 }
 
 function renderTable(dials) {
-  const rows = dials.map(dial => `<tr><th scope="row">${dial.display_name}</th><td>${dial.kind}</td><td>${dial.state}</td><td>${dial.percent === null ? "—" : `${number(dial.percent)}%`}</td><td>${dial.used === null ? "—" : `${number(dial.used)} ${dial.unit}`}</td><td>${dial.window}</td><td>${contextText(dial)}</td></tr>`).join("");
-  document.getElementById("table-view").innerHTML = `<table><thead><tr><th>Dial</th><th>Kind</th><th>State</th><th>Percent</th><th>Reading</th><th>Window</th><th>Context</th></tr></thead><tbody>${rows}</tbody></table>`;
+  const rows = dials.map(dial => `<tr><th scope="row">${dial.display_name}</th><td>${dial.kind}</td><td>${dial.state}</td><td>${isLit(dial) ? "yes" : "no"}</td><td>${sourceText(dial)}</td><td>${checkText(dial)}</td><td>${dial.percent === null ? "—" : `${number(dial.percent)}%`}</td><td>${dial.used === null ? "—" : `${number(dial.used)} ${dial.unit}`}</td><td>${dial.window}</td><td>${contextText(dial)}</td></tr>`).join("");
+  document.getElementById("table-view").innerHTML = `<table><thead><tr><th>Dial</th><th>Kind</th><th>State</th><th>Lit</th><th>Source</th><th>Last cross-check</th><th>Percent</th><th>Reading</th><th>Window</th><th>Context</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 async function loadSnapshot() {
@@ -274,6 +307,7 @@ async function loadSnapshot() {
   if (Number.isNaN(generated.getTime())) throw new Error("Snapshot timestamp is invalid");
   document.getElementById("updated").textContent = `Updated ${generated.toLocaleString()} · ${ageText(snapshot.generated_at)}`;
   document.getElementById("activity").textContent = `Fleet activity: ${snapshot.activity}`;
+  document.getElementById("lit-count").textContent = `Lit: ${snapshot.providers.filter(isLit).length} of ${snapshot.providers.length}`;
   document.getElementById("gauges").innerHTML = snapshot.providers.map(gaugeMarkup).join("");
   renderTable(snapshot.providers);
   document.getElementById("stale-banner").hidden = !snapshot.providers.every(dial => dial.state === "stale");

@@ -63,6 +63,7 @@ class GroqReaderTests(unittest.TestCase):
         self.assertEqual(report["provider_id"], "groq")
         self.assertEqual(report["used"], 15)
         self.assertEqual(report["limit"], 2000)
+        self.assertEqual(report["refill_seconds"], 86.4)
         self.assertEqual(report["source"], "provider")
         self.assertTrue(report["window_complete"])
         self.assertEqual(report["as_of"], "2026-10-19T01:00:00Z")

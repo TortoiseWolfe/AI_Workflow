@@ -157,6 +157,11 @@ class CopilotReaderTests(unittest.TestCase):
         class FakeReader(ReaderHelpers):
             DEFAULT_PROJECT_GLOB = "*"
             Ledger = FakeLedger
+            DEFAULT_CAL = "unused"
+
+            @staticmethod
+            def load_calibration(path):
+                return None
 
             @staticmethod
             def open_ro(path):
@@ -165,7 +170,8 @@ class CopilotReaderTests(unittest.TestCase):
                 conn.execute("INSERT INTO meta VALUES ('last_ingest', ?)", (str(NOW.timestamp()),))
                 return conn
 
-        payload = read_local_ledger.build_input(FakeReader, Path("unused"), NOW, self.db)
+        payload = read_local_ledger.build_input(
+            FakeReader, Path("unused"), NOW, self.db, codex_sessions=Path("no-such-codex-sessions"))
         snapshot = collect_gauges.build_snapshot(payload, NOW)
 
         copilot = next(dial for dial in snapshot["providers"] if dial["id"] == "copilot")
