@@ -107,7 +107,7 @@ class GaugePrivacyTests(unittest.TestCase):
             set(dial_schema["properties"]),
             {
                 "as_of", "id", "display_name", "kind", "window", "weight", "used",
-                "limit", "unit", "percent", "state", "resets_at", "source",
+                "limit", "unit", "percent", "state", "resets_at", "source", "reason",
                 "context", "context_state",
             },
         )
@@ -211,6 +211,55 @@ class GaugePrivacyTests(unittest.TestCase):
         self.assertTrue(all(value is None for value in codex["context"].values()))
         for dial in snapshot["providers"]:
             self.assertNotIn("calibrated", dial["context_state"].values(), dial["id"])
+
+    def test_copilot_calibration_requires_the_premium_request_report(self):
+        payload = copy.deepcopy(self.fixture)
+        payload["copilot_report"] = {
+            "local_used": 100,
+            "reported_used": None,
+            "as_of": None,
+            "reason": "github-report-404-user-scope",
+        }
+        dial = self.dial(collect_gauges.build_snapshot(payload, NOW), "copilot")
+        self.assertEqual(dial["used"], 100)
+        self.assertEqual(dial["unit"], "requests")
+        self.assertEqual(dial["state"], "uncalibrated")
+        self.assertIn("needs the user scope", dial["reason"])
+
+        payload["copilot_report"].update(
+            reported_used=105,
+            as_of="2026-10-16T14:29:00Z",
+            reason=None,
+        )
+        dial = self.dial(collect_gauges.build_snapshot(payload, NOW), "copilot")
+        self.assertEqual(dial["state"], "calibrated")
+        self.assertIsNone(dial["reason"])
+
+        payload["copilot_report"]["reported_used"] = 120
+        dial = self.dial(collect_gauges.build_snapshot(payload, NOW), "copilot")
+        self.assertEqual(dial["state"], "uncalibrated")
+        self.assertIn("more than 5%", dial["reason"])
+
+    def test_unavailable_copilot_database_preserves_the_empty_dial(self):
+        payload = copy.deepcopy(self.fixture)
+        copilot = next(row for row in payload["engines"] if row["id"] == "copilot")
+        copilot["as_of"] = None
+        for field in collect_gauges.CONTEXT_FIELDS:
+            copilot[field] = None
+        payload["copilot_report"] = {
+            "local_used": None,
+            "reported_used": None,
+            "as_of": None,
+            "reason": "local-database-unavailable",
+        }
+
+        dial = self.dial(collect_gauges.build_snapshot(payload, NOW), "copilot")
+
+        self.assertIsNone(dial["as_of"])
+        self.assertIsNone(dial["used"])
+        self.assertTrue(all(value is None for value in dial["context"].values()))
+        self.assertEqual(dial["state"], "uncalibrated")
+        self.assertIn("database", dial["reason"])
 
     def test_activity_follows_the_last_ledger_row(self):
         self.assertEqual(collect_gauges.build_snapshot(self.fixture, NOW)["activity"], "working")

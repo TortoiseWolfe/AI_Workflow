@@ -26,5 +26,6 @@
     {"id": "claude-fable", "as_of": null, "window_turns": null, "tokens_per_turn_median": null, "tokens_per_turn_p90": null, "turns_over_200k": null, "compactions_total": null, "compactions_auto": null, "compactions_manual": null, "reread_share": null, "input_tokens_per_call_median": null},
     {"id": "codex", "as_of": null, "window_turns": null, "tokens_per_turn_median": null, "tokens_per_turn_p90": null, "turns_over_200k": null, "compactions_total": null, "compactions_auto": null, "compactions_manual": null, "reread_share": null, "input_tokens_per_call_median": null},
     {"id": "copilot", "as_of": "2026-10-16T14:29:00Z", "window_turns": 40, "tokens_per_turn_median": 24000, "tokens_per_turn_p90": 70000, "turns_over_200k": 0, "compactions_total": null, "compactions_auto": null, "compactions_manual": null, "reread_share": 0.42, "input_tokens_per_call_median": null}
-  ]
+  ],
+  "copilot_report": {"local_used": null, "reported_used": null, "as_of": null, "reason": null}
 }
