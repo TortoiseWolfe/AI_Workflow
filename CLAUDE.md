@@ -92,6 +92,7 @@ When showing a `CLAUDE.md` example, pull an annotated excerpt from an actual rep
 ## Editing etiquette
 
 - **Do not rewrite existing chapters to match a new idea.** If a new insight doesn't fit the existing structure, add a new file or amend the relevant principle. Don't restructure what already works.
+- **Every web page we publish gets Open Graph tags and a preview image.** A new or changed `.html` page needs `og:title`, `og:description`, `og:url`, `og:image` (absolute URL, 1200x630 PNG committed in the repo), `og:image:alt`, and `twitter:card` set to `summary_large_image` with a matching `twitter:image`, so a shared link unfurls with a picture. `tests/test_og_meta.py` fails on any page that lacks them. Pages whose tests ban external hosts (gauges) skip the `<link rel="canonical">`; `og:url` carries the address.
 - **Do not add emojis unless requested.** This repo ships to professional interns.
 - **Do not add installation instructions for tools Anthropic already documents.** Link to `docs.claude.com/claude-code`, don't re-document it.
 - **Do not create new chapters.** Six chapters plus `principles/`. If you think there should be a seventh, flag it to the user — don't just add it.
