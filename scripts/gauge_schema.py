@@ -13,7 +13,7 @@ SCHEMA_PATH = ROOT / "data" / "gauges.schema.json"
 
 PROVIDERS = (
     ("gemini", "Gemini (AI Studio)", "daily", "requests", True),
-    ("groq", "Groq", "daily", "requests", True),
+    ("groq", "Groq", "rolling day", "requests", True),
     ("cloudflare-workers-ai", "Cloudflare Workers AI", "daily", "requests", True),
     ("openrouter", "OpenRouter free", "daily", "requests", True),
     ("antigravity", "Antigravity CLI", "weekly", "invocations", True),
@@ -121,6 +121,8 @@ def load_catalog() -> dict[str, dict[str, str]]:
 
 
 def window_start(window: str, now: datetime) -> datetime:
+    if window == "rolling day":
+        return now - timedelta(hours=24)
     if window == "daily":
         return now.replace(hour=0, minute=0, second=0, microsecond=0)
     if window == "monthly":

@@ -1,15 +1,15 @@
 {
-  "generated_at": "2026-10-19T00:14:24Z",
+  "generated_at": "2026-10-19T00:20:41Z",
   "activity": "working",
   "providers": [
     {
-      "as_of": "2026-10-19T00:09:57Z",
+      "as_of": "2026-10-19T00:20:25Z",
       "id": "gemini",
       "display_name": "Gemini (AI Studio)",
       "kind": "free-tier",
       "window": "daily",
       "weight": "large",
-      "used": 0,
+      "used": 1,
       "limit": null,
       "unit": "requests",
       "percent": null,
@@ -25,7 +25,7 @@
         "compactions_auto": null,
         "compactions_manual": null,
         "reread_share": null,
-        "input_tokens_per_call_median": null
+        "input_tokens_per_call_median": 272
       },
       "context_state": {
         "turns": "not-applicable",
@@ -35,19 +35,19 @@
       }
     },
     {
-      "as_of": "2026-10-19T00:09:57Z",
+      "as_of": "2026-10-19T00:20:24Z",
       "id": "groq",
       "display_name": "Groq",
       "kind": "free-tier",
-      "window": "daily",
+      "window": "rolling day",
       "weight": "large",
-      "used": 0,
-      "limit": null,
+      "used": 10,
+      "limit": 2000,
       "unit": "requests",
-      "percent": null,
-      "state": "uncalibrated",
+      "percent": 0.5,
+      "state": "calibrated",
       "resets_at": null,
-      "source": "local-count",
+      "source": "provider",
       "context": {
         "window_turns": null,
         "tokens_per_turn_median": null,
@@ -57,7 +57,7 @@
         "compactions_auto": null,
         "compactions_manual": null,
         "reread_share": null,
-        "input_tokens_per_call_median": null
+        "input_tokens_per_call_median": 310.0
       },
       "context_state": {
         "turns": "not-applicable",
@@ -67,13 +67,13 @@
       }
     },
     {
-      "as_of": "2026-10-19T00:09:57Z",
+      "as_of": "2026-10-19T00:20:25Z",
       "id": "cloudflare-workers-ai",
       "display_name": "Cloudflare Workers AI",
       "kind": "free-tier",
       "window": "daily",
       "weight": "medium",
-      "used": 0,
+      "used": 1,
       "limit": null,
       "unit": "requests",
       "percent": null,
@@ -99,13 +99,13 @@
       }
     },
     {
-      "as_of": "2026-10-19T00:09:57Z",
+      "as_of": "2026-10-19T00:20:25Z",
       "id": "openrouter",
       "display_name": "OpenRouter free",
       "kind": "free-tier",
       "window": "daily",
       "weight": "medium",
-      "used": 0,
+      "used": 1,
       "limit": null,
       "unit": "requests",
       "percent": null,
@@ -121,7 +121,7 @@
         "compactions_auto": null,
         "compactions_manual": null,
         "reread_share": null,
-        "input_tokens_per_call_median": null
+        "input_tokens_per_call_median": 285
       },
       "context_state": {
         "turns": "not-applicable",
@@ -131,13 +131,13 @@
       }
     },
     {
-      "as_of": "2026-10-19T00:09:57Z",
+      "as_of": "2026-10-19T00:20:25Z",
       "id": "antigravity",
       "display_name": "Antigravity CLI",
       "kind": "free-tier",
       "window": "weekly",
       "weight": "medium",
-      "used": 0,
+      "used": 1,
       "limit": null,
       "unit": "invocations",
       "percent": null,
@@ -153,7 +153,7 @@
         "compactions_auto": null,
         "compactions_manual": null,
         "reread_share": null,
-        "input_tokens_per_call_median": null
+        "input_tokens_per_call_median": 232
       },
       "context_state": {
         "turns": "not-applicable",
@@ -163,17 +163,17 @@
       }
     },
     {
-      "as_of": "2026-10-01T19:16:13Z",
+      "as_of": "2026-10-19T00:20:25Z",
       "id": "ollama",
       "display_name": "Ollama (local, unlimited)",
       "kind": "free-tier",
       "window": "rolling hour",
       "weight": "medium",
-      "used": 0,
+      "used": 1,
       "limit": null,
       "unit": "requests/hour",
       "percent": null,
-      "state": "idle",
+      "state": "uncalibrated",
       "resets_at": null,
       "source": "local-count",
       "context": {
@@ -185,7 +185,7 @@
         "compactions_auto": null,
         "compactions_manual": null,
         "reread_share": null,
-        "input_tokens_per_call_median": null
+        "input_tokens_per_call_median": 279
       },
       "context_state": {
         "turns": "not-applicable",
@@ -195,7 +195,7 @@
       }
     },
     {
-      "as_of": "2026-10-19T00:09:57Z",
+      "as_of": "2026-10-19T00:20:25Z",
       "id": "mistral",
       "display_name": "Mistral Experiment",
       "kind": "free-tier",
@@ -227,7 +227,7 @@
       }
     },
     {
-      "as_of": "2026-10-19T00:09:57Z",
+      "as_of": "2026-10-19T00:20:25Z",
       "id": "sambanova",
       "display_name": "SambaNova Cloud",
       "kind": "free-tier",
@@ -259,7 +259,7 @@
       }
     },
     {
-      "as_of": "2026-10-19T00:09:57Z",
+      "as_of": "2026-10-19T00:20:25Z",
       "id": "github-models",
       "display_name": "GitHub Models",
       "kind": "free-tier",
@@ -291,7 +291,7 @@
       }
     },
     {
-      "as_of": "2026-10-19T00:09:57Z",
+      "as_of": "2026-10-19T00:20:25Z",
       "id": "claude-opus",
       "display_name": "Claude Opus",
       "kind": "engine",
@@ -305,12 +305,12 @@
       "resets_at": null,
       "source": "local-count",
       "context": {
-        "window_turns": 9649,
-        "tokens_per_turn_median": 146620,
-        "tokens_per_turn_p90": 291660,
+        "window_turns": 9694,
+        "tokens_per_turn_median": 146461.5,
+        "tokens_per_turn_p90": 291322,
         "turns_over_200k": 2815,
-        "compactions_total": 69,
-        "compactions_auto": 69,
+        "compactions_total": 70,
+        "compactions_auto": 70,
         "compactions_manual": 0,
         "reread_share": 0.976,
         "input_tokens_per_call_median": null
@@ -323,7 +323,7 @@
       }
     },
     {
-      "as_of": "2026-10-19T00:09:57Z",
+      "as_of": "2026-10-19T00:20:25Z",
       "id": "claude-sonnet",
       "display_name": "Claude Sonnet",
       "kind": "engine",
@@ -337,14 +337,14 @@
       "resets_at": null,
       "source": "local-count",
       "context": {
-        "window_turns": 9956,
-        "tokens_per_turn_median": 92272.5,
-        "tokens_per_turn_p90": 152526,
+        "window_turns": 10007,
+        "tokens_per_turn_median": 92027,
+        "tokens_per_turn_p90": 152397,
         "turns_over_200k": 124,
         "compactions_total": 71,
         "compactions_auto": 71,
         "compactions_manual": 0,
-        "reread_share": 0.959,
+        "reread_share": 0.96,
         "input_tokens_per_call_median": null
       },
       "context_state": {
@@ -355,7 +355,7 @@
       }
     },
     {
-      "as_of": "2026-10-19T00:09:57Z",
+      "as_of": "2026-10-19T00:20:25Z",
       "id": "claude-haiku",
       "display_name": "Claude Haiku",
       "kind": "engine",
@@ -369,9 +369,9 @@
       "resets_at": null,
       "source": "local-count",
       "context": {
-        "window_turns": 2588,
-        "tokens_per_turn_median": 57135.0,
-        "tokens_per_turn_p90": 69018,
+        "window_turns": 2598,
+        "tokens_per_turn_median": 57145.0,
+        "tokens_per_turn_p90": 69171,
         "turns_over_200k": 2,
         "compactions_total": null,
         "compactions_auto": null,
@@ -387,7 +387,7 @@
       }
     },
     {
-      "as_of": "2026-10-19T00:09:57Z",
+      "as_of": "2026-10-19T00:20:25Z",
       "id": "claude-fable",
       "display_name": "Claude Fable",
       "kind": "engine",
@@ -451,7 +451,7 @@
       }
     },
     {
-      "as_of": "2026-10-19T00:14:07Z",
+      "as_of": "2026-10-19T00:20:24Z",
       "id": "copilot",
       "display_name": "Copilot",
       "kind": "engine",
