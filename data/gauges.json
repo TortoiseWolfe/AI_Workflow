@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-10-21T14:22:21Z",
+  "generated_at": "2026-10-21T22:22:33Z",
   "activity": "working",
   "providers": [
     {
-      "as_of": "2026-10-21T14:22:02Z",
+      "as_of": "2026-10-21T22:22:03Z",
       "id": "gemini",
       "display_name": "Gemini (AI Studio)",
       "kind": "free-tier",
@@ -37,7 +37,7 @@
       }
     },
     {
-      "as_of": "2026-10-21T14:22:01Z",
+      "as_of": "2026-10-21T22:22:01Z",
       "id": "groq",
       "display_name": "Groq",
       "kind": "free-tier",
@@ -51,7 +51,7 @@
       "resets_at": null,
       "source": "provider",
       "cross_check": {
-        "at": "2026-10-21T14:22:01Z",
+        "at": "2026-10-21T22:22:01Z",
         "against": "provider headers",
         "theirs": 2,
         "ours": 2.0
@@ -76,7 +76,7 @@
       }
     },
     {
-      "as_of": "2026-10-21T14:22:02Z",
+      "as_of": "2026-10-21T22:22:03Z",
       "id": "cloudflare-workers-ai",
       "display_name": "Cloudflare Workers AI",
       "kind": "free-tier",
@@ -110,7 +110,7 @@
       }
     },
     {
-      "as_of": "2026-10-21T14:22:02Z",
+      "as_of": "2026-10-21T22:22:03Z",
       "id": "openrouter",
       "display_name": "OpenRouter free",
       "kind": "free-tier",
@@ -144,7 +144,7 @@
       }
     },
     {
-      "as_of": "2026-10-21T14:22:02Z",
+      "as_of": "2026-10-21T22:22:03Z",
       "id": "antigravity",
       "display_name": "Antigravity CLI",
       "kind": "free-tier",
@@ -178,7 +178,7 @@
       }
     },
     {
-      "as_of": "2026-10-21T14:22:02Z",
+      "as_of": "2026-10-21T22:22:03Z",
       "id": "ollama",
       "display_name": "Ollama (local, unlimited)",
       "kind": "free-tier",
@@ -212,7 +212,7 @@
       }
     },
     {
-      "as_of": "2026-10-21T14:22:02Z",
+      "as_of": "2026-10-21T22:22:03Z",
       "id": "mistral",
       "display_name": "Mistral Experiment",
       "kind": "free-tier",
@@ -246,7 +246,7 @@
       }
     },
     {
-      "as_of": "2026-10-21T14:22:02Z",
+      "as_of": "2026-10-21T22:22:03Z",
       "id": "sambanova",
       "display_name": "SambaNova Cloud",
       "kind": "free-tier",
@@ -280,7 +280,7 @@
       }
     },
     {
-      "as_of": "2026-10-21T14:22:02Z",
+      "as_of": "2026-10-21T22:22:03Z",
       "id": "github-models",
       "display_name": "GitHub Models",
       "kind": "free-tier",
@@ -314,7 +314,7 @@
       }
     },
     {
-      "as_of": "2026-10-21T14:22:02Z",
+      "as_of": "2026-10-21T22:22:03Z",
       "id": "claude-opus",
       "display_name": "Claude Opus",
       "kind": "engine",
@@ -325,19 +325,19 @@
       "unit": "tokens",
       "percent": null,
       "state": "uncalibrated",
-      "resets_at": "2026-10-21T16:00:00Z",
+      "resets_at": "2026-10-28T16:00:00Z",
       "source": "local-count",
       "cross_check": null,
       "lit": false,
       "context": {
-        "window_turns": 16278,
-        "tokens_per_turn_median": 134299.0,
-        "tokens_per_turn_p90": 265898,
-        "turns_over_200k": 3424,
-        "compactions_total": 128,
-        "compactions_auto": 128,
-        "compactions_manual": 0,
-        "reread_share": 0.974,
+        "window_turns": 1866,
+        "tokens_per_turn_median": 113747.5,
+        "tokens_per_turn_p90": 193601,
+        "turns_over_200k": 159,
+        "compactions_total": null,
+        "compactions_auto": null,
+        "compactions_manual": null,
+        "reread_share": 0.977,
         "input_tokens_per_call_median": null
       },
       "context_state": {
@@ -349,7 +349,7 @@
       "reason": "The weekly estimate has no recent match with Claude's own usage reading (within 5 points), so no percent is shown."
     },
     {
-      "as_of": "2026-10-21T14:22:02Z",
+      "as_of": "2026-10-21T22:22:03Z",
       "id": "claude-sonnet",
       "display_name": "Claude Sonnet",
       "kind": "engine",
@@ -360,18 +360,88 @@
       "unit": "tokens",
       "percent": null,
       "state": "uncalibrated",
-      "resets_at": "2026-10-21T16:00:00Z",
+      "resets_at": "2026-10-28T16:00:00Z",
       "source": "local-count",
       "cross_check": null,
       "lit": false,
       "context": {
-        "window_turns": 14521,
-        "tokens_per_turn_median": 89926,
-        "tokens_per_turn_p90": 149706,
-        "turns_over_200k": 124,
-        "compactions_total": 97,
-        "compactions_auto": 97,
-        "compactions_manual": 0,
+        "window_turns": 1244,
+        "tokens_per_turn_median": 86906.5,
+        "tokens_per_turn_p90": 141557,
+        "turns_over_200k": 0,
+        "compactions_total": null,
+        "compactions_auto": null,
+        "compactions_manual": null,
+        "reread_share": 0.966,
+        "input_tokens_per_call_median": null
+      },
+      "context_state": {
+        "turns": "uncalibrated",
+        "compactions": "uncalibrated",
+        "reread": "uncalibrated",
+        "input_tokens": "not-applicable"
+      },
+      "reason": "The weekly estimate has no recent match with Claude's own usage reading (within 5 points), so no percent is shown."
+    },
+    {
+      "as_of": "2026-10-21T22:22:03Z",
+      "id": "claude-haiku",
+      "display_name": "Claude Haiku",
+      "kind": "engine",
+      "window": "weekly",
+      "weight": "medium",
+      "used": null,
+      "limit": null,
+      "unit": "tokens",
+      "percent": null,
+      "state": "uncalibrated",
+      "resets_at": "2026-10-28T16:00:00Z",
+      "source": "local-count",
+      "cross_check": null,
+      "lit": false,
+      "context": {
+        "window_turns": 253,
+        "tokens_per_turn_median": 47058,
+        "tokens_per_turn_p90": 60579,
+        "turns_over_200k": 0,
+        "compactions_total": null,
+        "compactions_auto": null,
+        "compactions_manual": null,
+        "reread_share": 0.807,
+        "input_tokens_per_call_median": null
+      },
+      "context_state": {
+        "turns": "uncalibrated",
+        "compactions": "uncalibrated",
+        "reread": "uncalibrated",
+        "input_tokens": "not-applicable"
+      },
+      "reason": "The weekly estimate has no recent match with Claude's own usage reading (within 5 points), so no percent is shown."
+    },
+    {
+      "as_of": "2026-10-21T22:22:03Z",
+      "id": "claude-fable",
+      "display_name": "Claude Fable",
+      "kind": "engine",
+      "window": "weekly",
+      "weight": "medium",
+      "used": null,
+      "limit": null,
+      "unit": "tokens",
+      "percent": null,
+      "state": "uncalibrated",
+      "resets_at": "2026-10-28T16:00:00Z",
+      "source": "local-count",
+      "cross_check": null,
+      "lit": false,
+      "context": {
+        "window_turns": 703,
+        "tokens_per_turn_median": 104688,
+        "tokens_per_turn_p90": 145407,
+        "turns_over_200k": 0,
+        "compactions_total": null,
+        "compactions_auto": null,
+        "compactions_manual": null,
         "reread_share": 0.96,
         "input_tokens_per_call_median": null
       },
@@ -384,83 +454,13 @@
       "reason": "The weekly estimate has no recent match with Claude's own usage reading (within 5 points), so no percent is shown."
     },
     {
-      "as_of": "2026-10-21T14:22:02Z",
-      "id": "claude-haiku",
-      "display_name": "Claude Haiku",
-      "kind": "engine",
-      "window": "weekly",
-      "weight": "medium",
-      "used": null,
-      "limit": null,
-      "unit": "tokens",
-      "percent": null,
-      "state": "uncalibrated",
-      "resets_at": "2026-10-21T16:00:00Z",
-      "source": "local-count",
-      "cross_check": null,
-      "lit": false,
-      "context": {
-        "window_turns": 3623,
-        "tokens_per_turn_median": 56008,
-        "tokens_per_turn_p90": 67998,
-        "turns_over_200k": 2,
-        "compactions_total": null,
-        "compactions_auto": null,
-        "compactions_manual": null,
-        "reread_share": 0.789,
-        "input_tokens_per_call_median": null
-      },
-      "context_state": {
-        "turns": "uncalibrated",
-        "compactions": "uncalibrated",
-        "reread": "uncalibrated",
-        "input_tokens": "not-applicable"
-      },
-      "reason": "The weekly estimate has no recent match with Claude's own usage reading (within 5 points), so no percent is shown."
-    },
-    {
-      "as_of": "2026-10-21T14:22:02Z",
-      "id": "claude-fable",
-      "display_name": "Claude Fable",
-      "kind": "engine",
-      "window": "weekly",
-      "weight": "medium",
-      "used": null,
-      "limit": null,
-      "unit": "tokens",
-      "percent": null,
-      "state": "uncalibrated",
-      "resets_at": "2026-10-21T16:00:00Z",
-      "source": "local-count",
-      "cross_check": null,
-      "lit": false,
-      "context": {
-        "window_turns": 1602,
-        "tokens_per_turn_median": 121261.5,
-        "tokens_per_turn_p90": 210785,
-        "turns_over_200k": 189,
-        "compactions_total": 51,
-        "compactions_auto": 51,
-        "compactions_manual": 0,
-        "reread_share": 0.951,
-        "input_tokens_per_call_median": null
-      },
-      "context_state": {
-        "turns": "uncalibrated",
-        "compactions": "uncalibrated",
-        "reread": "uncalibrated",
-        "input_tokens": "not-applicable"
-      },
-      "reason": "The weekly estimate has no recent match with Claude's own usage reading (within 5 points), so no percent is shown."
-    },
-    {
-      "as_of": "2026-10-21T14:22:01Z",
+      "as_of": "2026-10-21T22:22:01Z",
       "id": "codex",
       "display_name": "Codex",
       "kind": "engine",
       "window": "weekly",
       "weight": "medium",
-      "used": 56639556,
+      "used": 0,
       "limit": null,
       "unit": "tokens",
       "percent": null,
@@ -489,13 +489,13 @@
       "reason": "Codex's own log last reported 100% of its 30-day free window used, on 14 Oct 2026; that window resets 31 Oct 2026. No token limit is published."
     },
     {
-      "as_of": "2026-10-21T14:22:01Z",
+      "as_of": "2026-10-21T22:22:01Z",
       "id": "copilot",
       "display_name": "Copilot",
       "kind": "engine",
       "window": "weekly",
       "weight": "medium",
-      "used": 1273.0,
+      "used": 0,
       "limit": null,
       "unit": "requests",
       "percent": null,
@@ -505,10 +505,10 @@
       "cross_check": null,
       "lit": false,
       "context": {
-        "window_turns": 1273,
-        "tokens_per_turn_median": 122775,
-        "tokens_per_turn_p90": 290887,
-        "turns_over_200k": 362,
+        "window_turns": 0,
+        "tokens_per_turn_median": null,
+        "tokens_per_turn_p90": null,
+        "turns_over_200k": 0,
         "compactions_total": null,
         "compactions_auto": null,
         "compactions_manual": null,
