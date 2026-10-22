@@ -1,15 +1,15 @@
 {
-  "generated_at": "2026-10-21T22:22:33Z",
-  "activity": "working",
+  "generated_at": "2026-10-22T06:22:21Z",
+  "activity": "idle",
   "providers": [
     {
-      "as_of": "2026-10-21T22:22:03Z",
+      "as_of": "2026-10-22T06:22:01Z",
       "id": "gemini",
       "display_name": "Gemini (AI Studio)",
       "kind": "free-tier",
       "window": "daily",
       "weight": "large",
-      "used": 0,
+      "used": 5,
       "limit": null,
       "unit": "requests",
       "percent": null,
@@ -27,7 +27,7 @@
         "compactions_auto": null,
         "compactions_manual": null,
         "reread_share": null,
-        "input_tokens_per_call_median": null
+        "input_tokens_per_call_median": 5944.0
       },
       "context_state": {
         "turns": "not-applicable",
@@ -37,7 +37,7 @@
       }
     },
     {
-      "as_of": "2026-10-21T22:22:01Z",
+      "as_of": "2026-10-22T06:22:01Z",
       "id": "groq",
       "display_name": "Groq",
       "kind": "free-tier",
@@ -51,7 +51,7 @@
       "resets_at": null,
       "source": "provider",
       "cross_check": {
-        "at": "2026-10-21T22:22:01Z",
+        "at": "2026-10-22T06:22:01Z",
         "against": "provider headers",
         "theirs": 2,
         "ours": 2.0
@@ -66,7 +66,7 @@
         "compactions_auto": null,
         "compactions_manual": null,
         "reread_share": null,
-        "input_tokens_per_call_median": null
+        "input_tokens_per_call_median": 8961.0
       },
       "context_state": {
         "turns": "not-applicable",
@@ -76,13 +76,13 @@
       }
     },
     {
-      "as_of": "2026-10-21T22:22:03Z",
+      "as_of": "2026-10-22T06:22:01Z",
       "id": "cloudflare-workers-ai",
       "display_name": "Cloudflare Workers AI",
       "kind": "free-tier",
       "window": "daily",
       "weight": "medium",
-      "used": 0,
+      "used": 5,
       "limit": null,
       "unit": "requests",
       "percent": null,
@@ -110,13 +110,13 @@
       }
     },
     {
-      "as_of": "2026-10-21T22:22:03Z",
+      "as_of": "2026-10-22T06:22:01Z",
       "id": "openrouter",
       "display_name": "OpenRouter free",
       "kind": "free-tier",
       "window": "daily",
       "weight": "medium",
-      "used": 0,
+      "used": 5,
       "limit": null,
       "unit": "requests",
       "percent": null,
@@ -134,7 +134,7 @@
         "compactions_auto": null,
         "compactions_manual": null,
         "reread_share": null,
-        "input_tokens_per_call_median": null
+        "input_tokens_per_call_median": 8825
       },
       "context_state": {
         "turns": "not-applicable",
@@ -144,13 +144,13 @@
       }
     },
     {
-      "as_of": "2026-10-21T22:22:03Z",
+      "as_of": "2026-10-22T06:22:01Z",
       "id": "antigravity",
       "display_name": "Antigravity CLI",
       "kind": "free-tier",
       "window": "weekly",
       "weight": "medium",
-      "used": 1,
+      "used": 6,
       "limit": null,
       "unit": "invocations",
       "percent": null,
@@ -168,7 +168,7 @@
         "compactions_auto": null,
         "compactions_manual": null,
         "reread_share": null,
-        "input_tokens_per_call_median": 232
+        "input_tokens_per_call_median": 302
       },
       "context_state": {
         "turns": "not-applicable",
@@ -178,7 +178,7 @@
       }
     },
     {
-      "as_of": "2026-10-21T22:22:03Z",
+      "as_of": "2026-10-22T06:22:01Z",
       "id": "ollama",
       "display_name": "Ollama (local, unlimited)",
       "kind": "free-tier",
@@ -212,7 +212,7 @@
       }
     },
     {
-      "as_of": "2026-10-21T22:22:03Z",
+      "as_of": "2026-10-22T06:22:01Z",
       "id": "mistral",
       "display_name": "Mistral Experiment",
       "kind": "free-tier",
@@ -246,7 +246,7 @@
       }
     },
     {
-      "as_of": "2026-10-21T22:22:03Z",
+      "as_of": "2026-10-22T06:22:01Z",
       "id": "sambanova",
       "display_name": "SambaNova Cloud",
       "kind": "free-tier",
@@ -280,7 +280,7 @@
       }
     },
     {
-      "as_of": "2026-10-21T22:22:03Z",
+      "as_of": "2026-10-22T06:22:01Z",
       "id": "github-models",
       "display_name": "GitHub Models",
       "kind": "free-tier",
@@ -314,7 +314,7 @@
       }
     },
     {
-      "as_of": "2026-10-21T22:22:03Z",
+      "as_of": "2026-10-22T06:22:01Z",
       "id": "claude-opus",
       "display_name": "Claude Opus",
       "kind": "engine",
@@ -330,14 +330,14 @@
       "cross_check": null,
       "lit": false,
       "context": {
-        "window_turns": 1866,
-        "tokens_per_turn_median": 113747.5,
-        "tokens_per_turn_p90": 193601,
-        "turns_over_200k": 159,
+        "window_turns": 2355,
+        "tokens_per_turn_median": 113906,
+        "tokens_per_turn_p90": 214974,
+        "turns_over_200k": 278,
         "compactions_total": null,
         "compactions_auto": null,
         "compactions_manual": null,
-        "reread_share": 0.977,
+        "reread_share": 0.978,
         "input_tokens_per_call_median": null
       },
       "context_state": {
@@ -349,7 +349,7 @@
       "reason": "The weekly estimate has no recent match with Claude's own usage reading (within 5 points), so no percent is shown."
     },
     {
-      "as_of": "2026-10-21T22:22:03Z",
+      "as_of": "2026-10-22T06:22:01Z",
       "id": "claude-sonnet",
       "display_name": "Claude Sonnet",
       "kind": "engine",
@@ -365,14 +365,14 @@
       "cross_check": null,
       "lit": false,
       "context": {
-        "window_turns": 1244,
-        "tokens_per_turn_median": 86906.5,
-        "tokens_per_turn_p90": 141557,
+        "window_turns": 1981,
+        "tokens_per_turn_median": 86941,
+        "tokens_per_turn_p90": 136628,
         "turns_over_200k": 0,
         "compactions_total": null,
         "compactions_auto": null,
         "compactions_manual": null,
-        "reread_share": 0.966,
+        "reread_share": 0.964,
         "input_tokens_per_call_median": null
       },
       "context_state": {
@@ -384,7 +384,7 @@
       "reason": "The weekly estimate has no recent match with Claude's own usage reading (within 5 points), so no percent is shown."
     },
     {
-      "as_of": "2026-10-21T22:22:03Z",
+      "as_of": "2026-10-22T06:22:01Z",
       "id": "claude-haiku",
       "display_name": "Claude Haiku",
       "kind": "engine",
@@ -400,14 +400,14 @@
       "cross_check": null,
       "lit": false,
       "context": {
-        "window_turns": 253,
-        "tokens_per_turn_median": 47058,
-        "tokens_per_turn_p90": 60579,
+        "window_turns": 451,
+        "tokens_per_turn_median": 47749,
+        "tokens_per_turn_p90": 61308,
         "turns_over_200k": 0,
         "compactions_total": null,
         "compactions_auto": null,
         "compactions_manual": null,
-        "reread_share": 0.807,
+        "reread_share": 0.82,
         "input_tokens_per_call_median": null
       },
       "context_state": {
@@ -419,7 +419,7 @@
       "reason": "The weekly estimate has no recent match with Claude's own usage reading (within 5 points), so no percent is shown."
     },
     {
-      "as_of": "2026-10-21T22:22:03Z",
+      "as_of": "2026-10-22T06:22:01Z",
       "id": "claude-fable",
       "display_name": "Claude Fable",
       "kind": "engine",
@@ -435,14 +435,14 @@
       "cross_check": null,
       "lit": false,
       "context": {
-        "window_turns": 703,
-        "tokens_per_turn_median": 104688,
+        "window_turns": 734,
+        "tokens_per_turn_median": 105426.5,
         "tokens_per_turn_p90": 145407,
         "turns_over_200k": 0,
         "compactions_total": null,
         "compactions_auto": null,
         "compactions_manual": null,
-        "reread_share": 0.96,
+        "reread_share": 0.961,
         "input_tokens_per_call_median": null
       },
       "context_state": {
@@ -454,7 +454,7 @@
       "reason": "The weekly estimate has no recent match with Claude's own usage reading (within 5 points), so no percent is shown."
     },
     {
-      "as_of": "2026-10-21T22:22:01Z",
+      "as_of": "2026-10-22T06:22:01Z",
       "id": "codex",
       "display_name": "Codex",
       "kind": "engine",
@@ -489,7 +489,7 @@
       "reason": "Codex's own log last reported 100% of its 30-day free window used, on 14 Oct 2026; that window resets 31 Oct 2026. No token limit is published."
     },
     {
-      "as_of": "2026-10-21T22:22:01Z",
+      "as_of": "2026-10-22T06:22:01Z",
       "id": "copilot",
       "display_name": "Copilot",
       "kind": "engine",
