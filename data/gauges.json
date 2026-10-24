@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-10-23T22:22:39Z",
+  "generated_at": "2026-10-24T06:22:34Z",
   "activity": "working",
   "providers": [
     {
-      "as_of": "2026-10-23T22:22:04Z",
+      "as_of": "2026-10-24T06:22:01Z",
       "id": "gemini",
       "display_name": "Gemini (AI Studio)",
       "kind": "free-tier",
@@ -37,7 +37,7 @@
       }
     },
     {
-      "as_of": "2026-10-23T22:22:03Z",
+      "as_of": "2026-10-24T06:22:00Z",
       "id": "groq",
       "display_name": "Groq",
       "kind": "free-tier",
@@ -51,7 +51,7 @@
       "resets_at": null,
       "source": "provider",
       "cross_check": {
-        "at": "2026-10-23T22:22:03Z",
+        "at": "2026-10-24T06:22:00Z",
         "against": "provider headers",
         "theirs": 2,
         "ours": 2.0
@@ -66,7 +66,7 @@
         "compactions_auto": null,
         "compactions_manual": null,
         "reread_share": null,
-        "input_tokens_per_call_median": 385.5
+        "input_tokens_per_call_median": null
       },
       "context_state": {
         "turns": "not-applicable",
@@ -76,7 +76,7 @@
       }
     },
     {
-      "as_of": "2026-10-23T22:22:04Z",
+      "as_of": "2026-10-24T06:22:01Z",
       "id": "cloudflare-workers-ai",
       "display_name": "Cloudflare Workers AI",
       "kind": "free-tier",
@@ -110,7 +110,7 @@
       }
     },
     {
-      "as_of": "2026-10-23T22:22:04Z",
+      "as_of": "2026-10-24T06:22:01Z",
       "id": "openrouter",
       "display_name": "OpenRouter free",
       "kind": "free-tier",
@@ -144,7 +144,7 @@
       }
     },
     {
-      "as_of": "2026-10-23T22:22:04Z",
+      "as_of": "2026-10-24T06:22:01Z",
       "id": "antigravity",
       "display_name": "Antigravity CLI",
       "kind": "free-tier",
@@ -178,7 +178,7 @@
       }
     },
     {
-      "as_of": "2026-10-23T22:22:04Z",
+      "as_of": "2026-10-24T06:22:01Z",
       "id": "ollama",
       "display_name": "Ollama (local, unlimited)",
       "kind": "free-tier",
@@ -212,7 +212,7 @@
       }
     },
     {
-      "as_of": "2026-10-23T22:22:04Z",
+      "as_of": "2026-10-24T06:22:01Z",
       "id": "mistral",
       "display_name": "Mistral Experiment",
       "kind": "free-tier",
@@ -246,7 +246,7 @@
       }
     },
     {
-      "as_of": "2026-10-23T22:22:04Z",
+      "as_of": "2026-10-24T06:22:01Z",
       "id": "sambanova",
       "display_name": "SambaNova Cloud",
       "kind": "free-tier",
@@ -280,7 +280,7 @@
       }
     },
     {
-      "as_of": "2026-10-23T22:22:04Z",
+      "as_of": "2026-10-24T06:22:01Z",
       "id": "github-models",
       "display_name": "GitHub Models",
       "kind": "free-tier",
@@ -314,7 +314,7 @@
       }
     },
     {
-      "as_of": "2026-10-23T22:22:04Z",
+      "as_of": "2026-10-24T06:22:01Z",
       "id": "claude-opus",
       "display_name": "Claude Opus",
       "kind": "engine",
@@ -330,10 +330,10 @@
       "cross_check": null,
       "lit": false,
       "context": {
-        "window_turns": 6667,
-        "tokens_per_turn_median": 120559,
-        "tokens_per_turn_p90": 231017,
-        "turns_over_200k": 1159,
+        "window_turns": 7653,
+        "tokens_per_turn_median": 124420,
+        "tokens_per_turn_p90": 231105,
+        "turns_over_200k": 1408,
         "compactions_total": null,
         "compactions_auto": null,
         "compactions_manual": null,
@@ -349,7 +349,7 @@
       "reason": "The weekly estimate has no recent match with Claude's own usage reading (within 5 points), so no percent is shown."
     },
     {
-      "as_of": "2026-10-23T22:22:04Z",
+      "as_of": "2026-10-24T06:22:01Z",
       "id": "claude-sonnet",
       "display_name": "Claude Sonnet",
       "kind": "engine",
@@ -365,12 +365,12 @@
       "cross_check": null,
       "lit": false,
       "context": {
-        "window_turns": 6710,
-        "tokens_per_turn_median": 87491.5,
-        "tokens_per_turn_p90": 138349,
-        "turns_over_200k": 0,
-        "compactions_total": 22,
-        "compactions_auto": 22,
+        "window_turns": 8143,
+        "tokens_per_turn_median": 87408,
+        "tokens_per_turn_p90": 137310,
+        "turns_over_200k": 18,
+        "compactions_total": 23,
+        "compactions_auto": 23,
         "compactions_manual": 0,
         "reread_share": 0.954,
         "input_tokens_per_call_median": null
@@ -384,7 +384,7 @@
       "reason": "The weekly estimate has no recent match with Claude's own usage reading (within 5 points), so no percent is shown."
     },
     {
-      "as_of": "2026-10-23T22:22:04Z",
+      "as_of": "2026-10-24T06:22:01Z",
       "id": "claude-haiku",
       "display_name": "Claude Haiku",
       "kind": "engine",
@@ -400,14 +400,14 @@
       "cross_check": null,
       "lit": false,
       "context": {
-        "window_turns": 1654,
-        "tokens_per_turn_median": 49513.5,
-        "tokens_per_turn_p90": 64888,
+        "window_turns": 2116,
+        "tokens_per_turn_median": 50466.5,
+        "tokens_per_turn_p90": 68040,
         "turns_over_200k": 0,
         "compactions_total": null,
         "compactions_auto": null,
         "compactions_manual": null,
-        "reread_share": 0.834,
+        "reread_share": 0.826,
         "input_tokens_per_call_median": null
       },
       "context_state": {
@@ -419,7 +419,7 @@
       "reason": "The weekly estimate has no recent match with Claude's own usage reading (within 5 points), so no percent is shown."
     },
     {
-      "as_of": "2026-10-23T22:22:04Z",
+      "as_of": "2026-10-24T06:22:01Z",
       "id": "claude-fable",
       "display_name": "Claude Fable",
       "kind": "engine",
@@ -454,7 +454,7 @@
       "reason": "The weekly estimate has no recent match with Claude's own usage reading (within 5 points), so no percent is shown."
     },
     {
-      "as_of": "2026-10-23T22:22:03Z",
+      "as_of": "2026-10-24T06:22:00Z",
       "id": "codex",
       "display_name": "Codex",
       "kind": "engine",
@@ -489,7 +489,7 @@
       "reason": "Codex's own log last reported 100% of its 30-day free window used, on 14 Oct 2026; that window resets 31 Oct 2026. No token limit is published."
     },
     {
-      "as_of": "2026-10-23T22:22:03Z",
+      "as_of": "2026-10-24T06:22:00Z",
       "id": "copilot",
       "display_name": "Copilot",
       "kind": "engine",
