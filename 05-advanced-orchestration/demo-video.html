@@ -44,6 +44,11 @@ h1 em{font-style:normal;color:var(--accent)}
 .lede{margin:0;max-width:62ch}
 .fact{margin:0;padding:10px 12px;margin-left:18px;border-left:2px solid var(--rule);background:var(--fact-bg);font-family:var(--mono);font-size:12.5px;line-height:1.55;color:var(--muted);white-space:pre-wrap;overflow-x:auto;min-width:0}
 .fact a{color:inherit}
+/* the worked example */
+.example{display:grid;gap:10px}
+.example p{margin:0;max-width:64ch}
+.example video{display:block;width:100%;height:auto;background:#000;border:1px solid var(--rule)}
+.example .fact{margin-top:0}
 /* the tickets */
 .tickets{display:grid;gap:0;border-top:1px solid var(--rule)}
 details.t{border-bottom:1px solid var(--rule)}
@@ -84,6 +89,20 @@ footer a{color:inherit}
   <p class="fact">Every point has two layers: the plain line, then the detail under it.
 Open one section at a time. The commands are the ones a Claude Code lane runs.</p>
 </header>
+
+<section class="example" aria-label="Worked example">
+<p>This is the finished product, made from a shot list for a real ScriptHammer pull request. It is under a minute: the shot list and the one command, then the change working on a real screen, with the checks that passed.</p>
+<video controls preload="metadata" playsinline poster="media/pr-1403-poster.png">
+<source src="media/pr-1403-demo.mp4" type="video/mp4">
+<track kind="captions" src="media/pr-1403.vtt" srclang="en" label="English" default>
+Your browser cannot play this video. <a href="media/pr-1403-demo.mp4">Download the mp4</a>.
+</video>
+<p class="fact">Change: ScriptHammer #1403, ask for a new confirmation email with no session. Recorded against the local Docker stack, so no real email went out.
+Shot list: <a href="media/pr-1403.json">media/pr-1403.json</a> (the spec behind this video)
+Setup hook: <a href="media/hooks.cjs">media/hooks.cjs</a> (off-camera: one account waiting on its email)
+Captions: <a href="media/pr-1403.vtt">media/pr-1403.vtt</a>
+Re-make it: python3 demo_video.py run pr-1403.json --out out/</p>
+</section>
 
 <div class="tickets">
 
