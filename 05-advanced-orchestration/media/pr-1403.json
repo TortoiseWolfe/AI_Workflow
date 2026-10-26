@@ -1,0 +1,65 @@
+{
+  "name": "pr-1403",
+  "baseUrl": "http://localhost:3012",
+  "title": "ScriptHammer #1403: ask for a new confirmation email with no session",
+  "viewport": {"width": 1280, "height": 800},
+  "gap": 0.6,
+  "runner": {
+    "network": "host",
+    "mounts": [{"host": "~/path/to/the/app/checkout/env-file", "container": "/demo-env", "ro": true}],
+    "timeoutSec": 600
+  },
+  "setup": {"module": "hooks.cjs", "export": "setup"},
+  "cleanup": {"module": "hooks.cjs"},
+  "start": {"path": "/demo-spec.html", "waitFor": {"css": "main"}, "settleMs": 800},
+  "steps": [
+    {
+      "say": "This video is built from a shot list: one JSON file and one command.",
+      "caption": "A shot list and one command",
+      "actions": [
+        {"check": "visible", "target": {"text": "demo_video.py run pr-1403.json"}, "msg": "the one command shows"},
+        {"do": "highlight", "target": {"css": "#cmd"}, "ms": 2200}
+      ]
+    },
+    {
+      "say": "The change is pull request 1403. Someone whose confirmation link expired can ask for a new one, without being signed in.",
+      "caption": "PR #1403: new confirmation email, no session",
+      "actions": [
+        {"do": "goto", "path": "/verify-email/"},
+        {"do": "hook", "name": "accept"},
+        {"check": "visible", "target": {"text": "Link expired or never arrived? Ask for a new one."}, "msg": "the resend control shows while signed out"},
+        {"do": "highlight", "target": {"role": "button", "name": "Resend the confirmation email"}, "ms": 1800}
+      ]
+    },
+    {
+      "say": "I type the address, let the human check pass, and press the button. The page answers with one plain sentence.",
+      "actions": [
+        {"do": "fill", "target": {"label": "Email"}, "value": "reader@example.com"},
+        {"do": "wait", "ms": 2500},
+        {"do": "click", "target": {"role": "button", "name": "Resend the confirmation email"}},
+        {"do": "wait_for", "target": {"text": "If that address is waiting to be confirmed, a new link is on its way. Check your inbox."}, "state": "visible"},
+        {"check": "visible", "target": {"text": "If that address is waiting to be confirmed, a new link is on its way. Check your inbox."}, "msg": "the page says a new link is on its way"}
+      ]
+    },
+    {
+      "say": "An address with no account gets the very same sentence, so the page cannot be used to find out who is registered, and I will check the inbox next.",
+      "caption": "Same answer for an unknown address",
+      "actions": [
+        {"do": "wait", "ms": 3000},
+        {"do": "fill", "target": {"label": "Email"}, "value": "nobody@example.com"},
+        {"do": "click", "target": {"role": "button", "name": "Resend the confirmation email"}},
+        {"do": "wait", "ms": 1200},
+        {"check": "visible", "target": {"text": "If that address is waiting to be confirmed, a new link is on its way. Check your inbox."}, "msg": "the unknown address gets the same sentence"}
+      ]
+    },
+    {
+      "say": "In the local inbox there are two messages for the real address: the sign-up one, and the new one. Nothing went to the unknown address.",
+      "caption": "Inbox: two messages, all for the real address",
+      "actions": [
+        {"do": "goto", "path": "http://localhost:54324/"},
+        {"do": "wait", "ms": 1500},
+        {"check": "count", "target": {"css": "a.message"}, "equals": 2, "msg": "two messages in the inbox"}
+      ]
+    }
+  ]
+}
