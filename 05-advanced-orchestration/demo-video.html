@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="How one command turns a shot list into a narrated demo video for a pull request: AI voice, captions, on-screen checks, and the video attached to the PR itself.">
+<link rel="canonical" href="https://tortoisewolfe.github.io/AI_Workflow/05-advanced-orchestration/demo-video.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="TurtleWolfe · AI Workflow">
+<meta property="og:title" content="Demo video: a pull request that shows its work">
+<meta property="og:description" content="One command turns a shot list into a narrated, captioned demo video, checked against the real screen, and attached to the PR.">
+<meta property="og:url" content="https://tortoisewolfe.github.io/AI_Workflow/05-advanced-orchestration/demo-video.html">
+<meta property="og:image" content="https://tortoisewolfe.github.io/AI_Workflow/05-advanced-orchestration/ai-kitchen-map-og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Map of the workflow: an Opus head chef hands a goal to the director line, with Muse notes over Gmail and the OpenClaw tray on the side.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://tortoisewolfe.github.io/AI_Workflow/05-advanced-orchestration/ai-kitchen-map-og.png">
+<title>Demo video</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Same tokens as the fleet page: one narrow reading column, the folded tickets below. */
+:root{
+  --paper:#f3f4f1; --ink:#1d2327; --muted:#5d676d; --rule:#cfd4d2; --fact-bg:#e8ebe8; --field:#fbfbf9;
+  --accent:#b8412c; --ok:#2f6b4f; --warn:#9a6a12;
+  --display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --body:"Literata",Georgia,serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#15191b; --ink:#e3e6e4; --muted:#97a1a6; --rule:#2c3337; --fact-bg:#1c2225; --field:#1a1f22;
+  --accent:#e0735c; --ok:#6fb892; --warn:#d6a54a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#15191b; --ink:#e3e6e4; --muted:#97a1a6; --rule:#2c3337; --fact-bg:#1c2225; --field:#1a1f22;
+  --accent:#e0735c; --ok:#6fb892; --warn:#d6a54a; color-scheme:dark}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;padding-inline:16px;padding-block:40px 64px}
+.wrap{max-width:44rem;margin:0 auto;display:grid;gap:28px}
+header{display:grid;gap:10px;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(2.2rem,6vw,3.4rem);line-height:1;margin:0;text-wrap:balance;letter-spacing:.01em}
+h1 em{font-style:normal;color:var(--accent)}
+.lede{margin:0;max-width:62ch}
+.fact{margin:0;padding:10px 12px;margin-left:18px;border-left:2px solid var(--rule);background:var(--fact-bg);font-family:var(--mono);font-size:12.5px;line-height:1.55;color:var(--muted);white-space:pre-wrap;overflow-x:auto;min-width:0}
+.fact a{color:inherit}
+/* the tickets */
+.tickets{display:grid;gap:0;border-top:1px solid var(--rule)}
+details.t{border-bottom:1px solid var(--rule)}
+details.t>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:3.2rem 1fr auto;gap:12px;align-items:baseline;padding:16px 4px}
+details.t>summary::-webkit-details-marker{display:none}
+.tno{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.tname{font-family:var(--display);font-weight:600;font-size:1.45rem;line-height:1.15;text-wrap:balance}
+.chev{font-family:var(--mono);color:var(--accent);transition:transform .15s}
+details[open]>summary .chev{transform:rotate(90deg)}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.body{padding:0 4px 22px 3.2rem;display:grid;gap:14px;min-width:0}
+.body p{margin:0;max-width:64ch}
+ol.steps{margin:0;padding-left:1.2rem;display:grid;gap:12px}
+ol.steps li>p{margin:0}
+ol.steps .fact{margin-top:6px}
+.stack{display:grid;gap:8px}
+details.n>summary{line-height:1.45}
+details.n>p.plain{margin:0 12px 10px;max-width:60ch}
+details.n{border:1px solid var(--rule);border-radius:3px}
+details.n>summary{cursor:pointer;padding:10px 12px}
+details.n>summary::marker{color:var(--accent)}
+details.n>.fact{margin:0 12px 12px 18px}
+footer{font-family:var(--mono);font-size:12px;color:var(--muted);border-top:1px solid var(--rule);padding-top:14px}
+footer a{color:inherit}
+@media (max-width:520px){details.t>summary{grid-template-columns:2.2rem 1fr auto}.body{padding-left:4px}}
+@media (prefers-reduced-motion:reduce){.chev{transition:none}}
+</style>
+<style>/* AI Workflow series navigation */.series-top{margin:0;font-family:var(--mono,ui-monospace,monospace);font-size:12px;letter-spacing:.04em;color:var(--muted,#5d676d)}nav.series{display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;font-family:var(--mono,ui-monospace,monospace);font-size:13px;line-height:1.5;border-top:1px solid var(--rule,#cfd4d2);padding-top:14px}.series-top a,nav.series a{color:var(--accent,#b8412c);text-underline-offset:3px}nav.series .here{color:var(--muted,#5d676d)}</style>
+</head>
+<body>
+
+<div class="wrap">
+<p class="series-top"><a href="../series.html">AI Workflow series</a> · chapter 05 · tools</p>
+<header>
+  <div class="eyebrow">TurtleWolfe · tools · updated 2026-10-26</div>
+  <h1>Demo <em>video</em></h1>
+  <p class="lede">A pull request that shows its work. You write a shot list, run one command, and get a short narrated video of the change working on a real screen.</p>
+  <p class="fact">Every point has two layers: the plain line, then the detail under it.
+Open one section at a time. The commands are the ones a Claude Code lane runs.</p>
+</header>
+
+<div class="tickets">
+
+<details class="t"><summary><span class="tno">01</span><span class="tname">The idea: film it from a recipe card</span><span class="chev">›</span></summary>
+<div class="body">
+<p>A cooking show is shot from a recipe card: what the host says, and what the camera sees, step by step. A demo video is the same. The shot list comes first, and the film is made from it, the same way every time.</p>
+<p class="fact">Before this, each demo video was a one-off pile of scripts.
+Now it is one tool and one skill, so any lane can make one for any PR.
+Tool:   <a href="https://github.com/TortoiseWolfe/Claude_Commandz/blob/main/global/.claude/scripts/demo_video.py">global/.claude/scripts/demo_video.py</a>
+Skill:  <a href="https://github.com/TortoiseWolfe/Claude_Commandz/blob/main/global/.claude/skills/demo-video/SKILL.md">global/.claude/skills/demo-video/SKILL.md</a>
+Repo:   <a href="https://github.com/TortoiseWolfe/Claude_Commandz">github.com/TortoiseWolfe/Claude_Commandz</a></p>
+<p>The reviewer gets to watch the change work instead of taking the description on trust. The video is on the PR, next to the code.</p>
+</div>
+</details>
+
+<details class="t"><summary><span class="tno">02</span><span class="tname">The spec file: the shot list</span><span class="chev">›</span></summary>
+<div class="body">
+<p>For each shot you write two things: the line the narrator says, and what the camera does while they say it. That's the whole file.</p>
+<p class="fact">One JSON file per video. Top level: name, baseUrl, steps, and optional viewport, runner, setup and start.
+Each step is a say line (spoken, and shown as the caption) plus a list of actions.
+A real spec carries the app's address and details, so it lives with the job, never in a public repo.
+The template: <a href="https://github.com/TortoiseWolfe/Claude_Commandz/blob/main/global/.claude/skills/demo-video/spec.template.json">spec.template.json</a></p>
+<div class="stack">
+<details class="n"><summary>A tiny example: a shopping list page, three shots.</summary>
+<p class="fact">{
+  "name": "smoke",
+  "baseUrl": "http://localhost:8765",
+  "steps": [
+    {
+      "say": "I add one more item, and it joins the list.",
+      "actions": [
+        {"do": "fill", "target": {"placeholder": "Add an item"}, "value": "Dates"},
+        {"do": "click", "target": {"role": "button", "name": "Add"}},
+        {"check": "order", "within": "#list",
+          "texts": ["Apples", "Bread", "Cheese", "Dates"]}
+      ]
+    }
+  ]
+}</p></details>
+<details class="n"><summary>What the camera can do: the verbs.</summary>
+<p class="fact">goto · scroll_to · scroll · point · highlight · click · fill · press · wait · wait_for · hook
+A target is one of: css, text, role (with name), label, placeholder, testId.
+It can also take exact, within and nth to be sure it picks the right one.</p></details>
+<details class="n"><summary>What the continuity person checks: the claims.</summary>
+<p class="fact">visible · absent · count · order · text · url
+Each check can carry a message that says what it proves, such as "the list reads Apples, Bread, Cheese, Dates".</p></details>
+<details class="n"><summary>Signing in, off camera: the setup hook.</summary>
+<p class="fact">If the app needs a sign-in, it is the spec's own setup hook, running before the first shot,
+against a local demo copy of the app with an account made just for the demo.
+The tool itself never signs in anywhere.</p></details>
+</div>
+</div>
+</details>
+
+<details class="t"><summary><span class="tno">03</span><span class="tname">One command, three verbs</span><span class="chev">›</span></summary>
+<div class="body">
+<p>One button on the oven. You don't run the voice, the camera and the editing room yourself. You press run.</p>
+<p class="fact">Check the shot list is well formed:
+python3 ~/.claude/scripts/demo_video.py validate SPEC.json
+
+Make the video:
+python3 ~/.claude/scripts/demo_video.py run SPEC.json --out DIR
+
+Check the kitchen has what it needs:
+python3 ~/.claude/scripts/demo_video.py doctor</p>
+<p>Out comes a small set of files, named after the spec.</p>
+<p class="fact">NAME-demo.mp4            the narrated cut, with the AI voice
+NAME-captions-only.mp4   the same film, no sound, captions burned in
+NAME.srt                 the captions as a subtitle file
+NAME-contact-sheet.png   six frames side by side, for a quick look
+NAME-result.json         durations, check results and warnings</p>
+<div class="stack">
+<details class="n"><summary>Setting up the kitchen: no sudo needed.</summary>
+<p class="fact">Install what doctor reports missing:
+python3 ~/.claude/scripts/demo_video.py doctor --install
+
+It builds the voice image from a Dockerfile in the skill, pulls a pinned Playwright image,
+and caches the matching Playwright package into ~/.cache/demo-video. Nothing is installed on the host.
+Your ffmpeg needs the subtitles filter (libass) and the DejaVu Sans font.</p></details>
+<details class="n"><summary>Doing only part of the job.</summary>
+<p class="fact">Stages are audio, record and assemble:
+python3 ~/.claude/scripts/demo_video.py run SPEC.json --out DIR --stages audio,record
+
+Say the lines again even if they were cached:
+--force-audio
+
+Send the recorder through the shared-Docker queue:
+--heavy</p></details>
+</div>
+</div>
+</details>
+
+<details class="t"><summary><span class="tno">04</span><span class="tname">What happens inside</span><span class="chev">›</span></summary>
+<div class="body">
+<p>Four jobs, done in order, each by the tool that does it best.</p>
+<div class="stack">
+<details class="n"><summary>The narrator in the booth: one take per line.</summary>
+<p class="fact">Piper, a text-to-speech program, runs in a Docker image and says each line into its own audio file.
+The voice is en_US-lessac-medium. The length of each recording sets how long that shot holds,
+plus a short gap (0.7 s by default).</p></details>
+<details class="n"><summary>The camera operator: follows the card, never improvises.</summary>
+<p class="fact">Playwright drives the app in its own browser inside a container, at 1280 by 800, and records the screen.
+It moves the cursor to what the narrator is talking about, highlights it, and waits for the voice to finish.
+It uses its own browser. It never borrows a browser that something else is using.</p></details>
+<details class="n"><summary>Title cards on the film: captions you can't switch off.</summary>
+<p class="fact">ffmpeg burns the captions into the picture and mixes the voice in.
+The first caption of every video is always: Narration: AI voice.
+It is added for you, so a viewer always knows the voice is synthetic.
+You get two cuts: with the voice, and silent with captions only (for a muted autoplay).</p></details>
+<details class="n"><summary>The continuity person: if the screen disagrees, stop the tape.</summary>
+<p class="fact">The checks in the spec run against the live page while it is filmed.
+A check that fails means the video says something the app doesn't show, so it is a failed recording.
+Fix the app or the shot list, never the check.
+Afterwards, open the contact sheet: captions readable, highlight on the right thing, no personal data on screen.</p></details>
+<details class="n"><summary>A camera that blinks: freezes in some Docker setups.</summary>
+<p class="fact">On some Windows-with-Linux machines, any browser container freezes about 2.6 seconds every 33 seconds.
+This was reproduced with an idle script and no video, so it isn't the tool.
+The recorder logs each freeze. The result file has stalledSec and netOfStalls,
+and a warning appears above 1 second. Run again for a cleaner take if it matters.</p></details>
+</div>
+</div>
+</details>
+
+<details class="t"><summary><span class="tno">05</span><span class="tname">Onto the pull request</span><span class="chev">›</span></summary>
+<div class="body">
+<p>The finished film goes where the audience already is: on the pull request itself, not in another tool they'd have to sign in to.</p>
+<ol class="steps">
+<li><p>Open the PR's description (Edit) or a new comment.</p>
+<p class="fact">Any text box on the PR takes attachments.</p></li>
+<li><p>Click the paperclip, Attach files, and choose the narrated mp4. Dragging the file into the box works too.</p>
+<p class="fact">GitHub's own attach control. Wait for the link to appear in the box, then save the comment.
+It plays inline on the PR page.</p></li>
+<li><p>Say in a line what the video shows and that the voice is AI.</p>
+<p class="fact">The caption already says it on screen. A sentence beside the video helps the reader who skips it.</p></li>
+</ol>
+<div class="stack">
+<details class="n"><summary>Will it fit? The size limits.</summary>
+<p class="fact">GitHub's limits for attached videos:
+10 MB on a free plan, 100 MB on a paid plan.
+Formats: mp4, mov, webm. H.264 plays in the most browsers, and the tool's output is H.264.
+A 50 to 70 second demo comes out at about 2 to 3 MB.
+Source: <a href="https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/attaching-files">docs.github.com, Attaching files</a></p></details>
+<details class="n"><summary>Why not a hosted video tool?</summary>
+<p class="fact">The video on the PR is enough. Nobody has to sign in, there is no second account to keep up,
+and the film stays with the code it shows.</p></details>
+</div>
+</div>
+</details>
+
+<details class="t"><summary><span class="tno">06</span><span class="tname">The house rules</span><span class="chev">›</span></summary>
+<div class="body">
+<p>Four rules keep it honest, and the tool enforces the first one for you.</p>
+<div class="stack">
+<details class="n"><summary>Say it's a machine voice.</summary>
+<p class="fact">Narration: AI voice. is the first caption of every cut, added automatically.</p></details>
+<details class="n"><summary>Never sign in anywhere new.</summary>
+<p class="fact">The only sign-in is the app's own, in the spec's setup hook, on a local copy, with a demo account.
+The tool doesn't touch any other account, and it doesn't reuse a browser someone is logged in on.</p></details>
+<details class="n"><summary>Keep private details out of public specs.</summary>
+<p class="fact">The skill and template here are generic. A spec for a client's app, with its address and accounts,
+stays with the job.</p></details>
+<details class="n"><summary>Look before you say it's ready.</summary>
+<p class="fact">Read the result file, check every on-screen check passed, and open the contact sheet.
+Then attach the video to the PR.</p></details>
+</div>
+</div>
+</details>
+
+<details class="t"><summary><span class="tno">07</span><span class="tname">Where it came from</span><span class="chev">›</span></summary>
+<div class="body">
+<p>Two demo videos made by hand in one morning worked well, so the pieces got pulled out and tidied into a tool.</p>
+<p class="fact">2026-10-26  two PR demo videos made by hand: a 53 s one and a 73 s one,
+            each with a narrated cut and a captions-only cut
+2026-10-26  extracted into one tool, one skill and a shot-list format; re-rendering one of them from its spec
+            gave the same captions, the same checks, and a length within 0.03 s
+2026-10-26  68 tests for the spec reader and the runner, none skipped, plus a smoke test that runs the real
+            voice, recording and editing steps against a small test page</p>
+</div>
+</div>
+</details>
+
+</div>
+
+<nav class="series" aria-label="AI Workflow series"><a href="voice-check.html">← Part 8: Voice check</a><a href="../series.html#build-log">All parts</a><span class="here">Latest part</span></nav>
+<footer>Written 2026-10-26 from the tool as it ships. Source: <a href="https://github.com/TortoiseWolfe/Claude_Commandz/blob/main/global/.claude/scripts/demo_video.py">demo_video.py</a> and the <a href="https://github.com/TortoiseWolfe/Claude_Commandz/blob/main/global/.claude/skills/demo-video/SKILL.md">demo-video skill</a>.</footer>
+</div>
+
+<script>
+// One section open at a time.
+document.querySelectorAll("details.t").forEach(function (d) {
+  d.addEventListener("toggle", function () {
+    if (d.open) document.querySelectorAll("details.t").forEach(function (o) { if (o !== d) o.open = false; });
+  });
+});
+</script>
+</body>
+</html>
