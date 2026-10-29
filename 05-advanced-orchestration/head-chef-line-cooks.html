@@ -254,9 +254,78 @@ Step-down order: Fable to Opus, then Sonnet or Haiku for mechanical work, then a
 </div></details>
 
 
+<details class="t"><summary><span class="tno">T-11</span><span class="tname">29 Oct: where the first day's tokens went</span><span class="chev">›</span></summary>
+<div class="body">
+<p>By the first morning after the weekly reset the gauge read about a fifth used. I went looking for the leak the way you check a restaurant's till: not "who is spending", but "what was bought, and was any of it bought twice".</p>
+<pre class="fact">Window: Wednesday 28 Oct 12:00 PM to Thursday 29 Oct about 7:30 AM (America/New_York).
+The weekly gauge read about 20%; the ledger, fitted against the gauge, gives 16.5% with a margin of 3.5 points.
+Source: the local usage ledger, built from the session transcripts. No client data is on this page.</pre>
+
+<details class="n"><summary><span><b>Two ways to count.</b> A bill for the whole meal versus the till total.</span></summary>
+<pre class="fact">Dollar view: what the work would cost at list price, with re-read context at one tenth. 74% of it is a session re-reading its own history on every turn.
+Gauge view: what the weekly limit actually counts. Re-reads weigh zero there. Only new tokens count: the start-up context of each session, tool results, prompts and output.
+So re-reading explains the dollars, and new tokens explain the gauge. Cutting the first helps the bill; cutting the second moves the dial.</pre></details>
+
+<details class="n"><summary><span><b>Who spent it.</b> Most of the till total came from three tills.</span></summary>
+<div class="fact tbl"><table>
+<thead><tr><th scope="col">Spender</th><th scope="col">Share of the dollar view</th><th scope="col">Share of the gauge view</th></tr></thead>
+<tbody>
+<tr><td>Head chef, working sessions (13 sessions)</td><td>39%</td><td>23%</td></tr>
+<tr><td>Head chef, one-shot helper calls (229)</td><td>9%</td><td>19%</td></tr>
+<tr><td>Creative robot lanes (48)</td><td>27%</td><td>28%</td></tr>
+<tr><td>Other lanes (61)</td><td>14%</td><td>21%</td></tr>
+<tr><td>Test-and-build pipeline (7)</td><td>8%</td><td>10%</td></tr>
+</tbody></table></div></details>
+
+<details class="n"><summary><span><b>The biggest avoidable burn.</b> Opening a new shop for every errand.</span></summary>
+<pre class="fact">The 229 one-shot helper calls (checks, a notes poller, graph extraction) each start in the head chef's own folder, so each loads 45 to 61K tokens of standing instructions before doing a few lines of work.
+60% of their gauge units are that start-up. Running them from an empty folder with the lane trims should start them near 30K.
+Estimate: about 0.75 gauge points of the 16.5, and about 1.5% of the dollar view.</pre></details>
+
+<details class="n"><summary><span><b>Where the head chef's turns went.</b> A third of the day was walking the line to ask each cook how it was going.</span></summary>
+<pre class="fact">Per turn, by what the turn did: shell reads 23%, lane status checks 10%, starting or messaging lanes 10%, reading a lane's screen 8%, reading lane reports 6%, inline python scripts 4%, mail 3%, everything else under 3% each, text-only turns 13%.
+Checking on lanes (status, screen, reports, send) is about 34% of the head chef's turns.
+Stable facts were re-read by hand 79 times, against 22 lookups through the knowledge graph.</pre></details>
+
+<details class="n"><summary><span><b>Compared with 11 Oct.</b> The pan got smaller; the number of pans went up.</span></summary>
+<pre class="fact">                      7-11 Oct     28-29 Oct
+Opus turns            1,152        1,696
+Turns per session     288          130
+Median context        321K         168K
+New tokens per turn   5,274        2,878
+Re-read share         87%          86%
+Per-turn context halved and new tokens per turn fell 45%. The re-read share held, because short sessions are re-primed more often.</pre></details>
+
+<details class="n"><summary><span><b>Chores that should be scripts.</b> If you do the same prep three times, write the prep card.</span></summary>
+<pre class="fact">Counted across the week's transcripts: 636 reads of lane reports, 704 one-off python scripts typed inline, 614 turns spent only to ask the clock for a time stamp, 336 reads of hand-off notes, 309 runs of the lane watcher, 164 screen captures.
+Nine helpers are specified (specs only, nothing built yet), ranked by how often the chore happens times the turns each run saves:
+1 lane_brief: one screen with a lane's report line, state, engine, context size and last 12 screen lines.
+2 lane_note: append a stamped line to a lane's report, with the time read from the clock at that moment.
+3 lane_dialog: show a held safety dialog in full with its targets, then approve or deny.
+4 reprime pack: prompt and hand-off read together in one call.
+5 lane resume on the next engine: keep partial edits, rewrite the opening paragraph, wait for the reset.
+6 prompt-copy path fix: stop a copied lane prompt from naming the old report path.
+7 session report: one ledger table per session with median context and re-read share.
+8 tier guard fix: scan the task text, not the rules it quotes.
+9 stable-fact lookup: print one memory or rule entry instead of printing the whole file.</pre></details>
+
+<details class="n"><summary><span><b>Cuts to the head chef's own apron.</b> Keep the safety card on the wall, put the recipe books on the shelf.</span></summary>
+<pre class="fact">1. Move recipes that gate no action out of the always-loaded workspace file (about 6K tokens) into files fetched on demand. Keep loaded: credentials, mail and link rules, pronouns, production windows, merge rules, the Nextcloud guard, the process-kill rule.
+2. Trim the memory index by about 2.5K tokens; the knowledge graph finds the rest.
+3. Hand off at about 150K tokens of context instead of letting sessions run to 326K.
+4. Show the head chef's own share in each morning digest, one line.
+Rough total: about 10% of the dollar view and 6 to 8% of gauge units, which at this pace is close to a day of weekly budget.
+Estimates only. The ledger gets re-run after each cut and the result recorded.</pre></details>
+
+<details class="n"><summary><span><b>Where the knowledge graph fits.</b> A filing cabinet beside the desk, not another stack on it.</span></summary>
+<pre class="fact">The graph holds 1,725 nodes and 3,080 links, built from the hub notes, the memory folder and the rule files, and refreshed every 15 minutes. A browsable Obsidian export of it (1,860 notes) is written from the same graph; there is no separate vault.
+The lookup helper prints the top 8 matches inside a 1,500-token budget, so a stable fact costs about a tenth of reading its whole file.
+Rule of thumb: anything that gates an action stays loaded; anything that only informs is fetched.</pre></details>
+</div></details>
+
 </div>
 <nav class="series" aria-label="AI Workflow series"><a href="https://scripthammer.com/blog/facebook-export-knowledge-graph/">← Part 4: I graphed 15 years of my own Facebook</a><a href="../series.html#build-log">All parts</a><a href="setup-tutorial.html">Part 6: Build your AI kitchen →</a></nav>
-<footer>Sources verified 2026-09-30; T-07 updated 2026-10-01; T-10 added 2026-10-16. A companion to the AI Kitchen map in this chapter. Numbers that come from press rather than the vendor are marked as such in the plan.</footer>
+<footer>Sources verified 2026-09-30; T-07 updated 2026-10-01; T-10 added 2026-10-16; T-11 added 2026-10-29. A companion to the AI Kitchen map in this chapter. Numbers that come from press rather than the vendor are marked as such in the plan.</footer>
 </div>
 
 <script>
