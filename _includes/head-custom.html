@@ -1,0 +1,48 @@
+<!-- Accessibility fixes for every course page (WCAG 2.1 A and AA); one place, no chapter edited. -->
+<style>
+/* 1.4.1 Use of colour: links in running text are marked by more than colour. */
+.markdown-body :is(p, li, td, dd, blockquote) a,
+.footer a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+/* 1.4.3 Contrast: quoted text and the inline code inside it, a step darker than the theme grey. */
+.markdown-body blockquote {
+  color: #57606a;
+}
+/* 1.4.3 Contrast: code-colouring tokens that were too faint on the #f8f8f8 code box, each darkened just past 4.5 to 1. */
+.highlight .c, .highlight .cd, .highlight .cm, .highlight .c1, .highlight .cs, .highlight .cp,
+.highlight .gh, .highlight .go, .highlight .gu, .highlight .bp { color: #6e6e62; }
+.highlight .m, .highlight .mb, .highlight .mx, .highlight .mf, .highlight .mh, .highlight .il,
+.highlight .mi, .highlight .mo { color: #007a7a; }
+.highlight .na, .highlight .no, .highlight .nv, .highlight .vc, .highlight .vg, .highlight .vi { color: #007676; }
+.highlight .sr { color: #007a1f; }
+.highlight .nb { color: #00678a; }
+/* 2.4.7 Focus visible on the scrolling boxes the script below makes reachable. */
+.markdown-body [tabindex="0"]:focus-visible {
+  outline: 2px solid #1e6bb8;
+  outline-offset: 2px;
+}
+</style>
+<script>
+/* 2.1.1 Keyboard: any code box or table that scrolls sideways joins the Tab order,
+   so the arrow keys can scroll it, and gets a name for screen readers. */
+(function () {
+  function mark() {
+    var boxes = document.querySelectorAll(".markdown-body pre, .markdown-body table");
+    for (var i = 0; i < boxes.length; i++) {
+      var el = boxes[i];
+      if (el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1) {
+        if (!el.hasAttribute("tabindex")) { el.setAttribute("tabindex", "0"); }
+        if (!el.hasAttribute("role")) { el.setAttribute("role", "region"); }
+        if (!el.hasAttribute("aria-label")) {
+          el.setAttribute("aria-label", el.tagName === "PRE" ? "Code example, scrolls sideways" : "Table, scrolls sideways");
+        }
+      }
+    }
+  }
+  if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", mark); } else { mark(); }
+  window.addEventListener("load", mark);
+  window.addEventListener("resize", mark);
+})();
+</script>
