@@ -28,7 +28,7 @@ The starter kit ships **30 commands across 7 families** — every command Turtle
 >
 > **The 5 quality/testing/git/session/reading families are 100% TurtleWolfe-authored** — wrappers around lint, type-check, conventional commits, Docker exec, and the SpecKit workflow. They depend on the project being Docker-first.
 
-All 30 are ready to copy from [`starter-kit/.claude/commands/`](starter-kit/.claude/commands/). Drop them in your project's `.claude/commands/` directory and they work immediately.
+All 30 are ready to copy from [`starter-kit/.claude/commands/`](https://github.com/TortoiseWolfe/AI_Workflow/tree/main/03-slash-commands/starter-kit/.claude/commands). Drop them in your project's `.claude/commands/` directory and they work immediately.
 
 **Start here:** [exercise.md](exercise.md) — install all 30 in your project, then write your first custom command.
 
@@ -111,7 +111,7 @@ What Claude should say when done.
 - **`scope: project`** — shipped with a specific project. SpecKit commands are usually project-scoped because they depend on `.specify/` scripts in the repo.
 - **Body** — the actual prompt. Be specific. Use numbered steps. Tell Claude what output you want.
 
-Files can be as short as 12 lines ([`starter-kit/.claude/commands/prep.md`](starter-kit/.claude/commands/prep.md)) or as long as 530 lines (`starter-kit/.claude/commands/speckit.workflow.md`). Start short.
+Files can be as short as 12 lines ([`starter-kit/.claude/commands/prep.md`](https://github.com/TortoiseWolfe/AI_Workflow/blob/main/03-slash-commands/starter-kit/.claude/commands/prep.md)) or as long as 530 lines (`starter-kit/.claude/commands/speckit.workflow.md`). Start short.
 
 ### When to write your own vs use a built-in
 

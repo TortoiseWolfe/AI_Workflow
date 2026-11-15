@@ -26,7 +26,7 @@
 /* Layout: one wide map (scrolls sideways inside its frame on phones), then the rules, then click-to-open notes. */
 :root{
   --paper:#f3f4f1; --ink:#1d2327; --muted:#5d676d; --rule:#cfd4d2; --panel:#e8ebe8;
-  --opus:#eb6834; --opus-bg:#fbe1d6;
+  --opus:#eb6834; --opus-ink:#d65424; --opus-bg:#fbe1d6;
   --cheap:#1baf7a; --cheap-bg:#d4f1e5;
   --ext:#2a78d6; --ext-bg:#dbe8f8;
   --tool:#6b6a66; --tool-bg:#eeeeec;
@@ -35,11 +35,11 @@
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --paper:#15191b; --ink:#e3e6e4; --muted:#97a1a6; --rule:#2c3337; --panel:#1c2225;
-  --opus:#d95926; --opus-bg:#3a2218; --cheap:#199e70; --cheap-bg:#15302a; --ext:#3987e5; --ext-bg:#172a40;
+  --opus:#d95926; --opus-ink:#d95926; --opus-bg:#3a2218; --cheap:#199e70; --cheap-bg:#15302a; --ext:#3987e5; --ext-bg:#172a40;
   --tool:#9a9992; --tool-bg:#26282a; --map:#1c2225; --ink2:#c3c9cc; --edge:#98a1a6; color-scheme:dark}}
 :root[data-theme="dark"]{
   --paper:#15191b; --ink:#e3e6e4; --muted:#97a1a6; --rule:#2c3337; --panel:#1c2225;
-  --opus:#d95926; --opus-bg:#3a2218; --cheap:#199e70; --cheap-bg:#15302a; --ext:#3987e5; --ext-bg:#172a40;
+  --opus:#d95926; --opus-ink:#d95926; --opus-bg:#3a2218; --cheap:#199e70; --cheap-bg:#15302a; --ext:#3987e5; --ext-bg:#172a40;
   --tool:#9a9992; --tool-bg:#26282a; --map:#1c2225; --ink2:#c3c9cc; --edge:#98a1a6; color-scheme:dark}
 body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;padding-inline:16px;padding-block:36px 64px}
 .wrap{max-width:80rem;margin:0 auto;display:grid;gap:30px}
@@ -47,7 +47,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 header{display:grid;gap:10px;border-bottom:2px solid var(--ink);padding-bottom:18px}
 .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 h1{font-family:var(--display);font-weight:700;font-size:clamp(2.2rem,6vw,3.4rem);line-height:1;margin:0;text-wrap:balance}
-h1 em{font-style:normal;color:var(--opus)}
+h1 em{font-style:normal;color:var(--opus-ink)}
 h2{font-family:var(--display);font-weight:600;font-size:1.6rem;margin:0}
 .lede{margin:0;max-width:62ch}
 figure{margin:0;display:grid;gap:10px}
@@ -107,7 +107,7 @@ footer{font-family:var(--mono);font-size:12px;color:var(--muted);border-top:1px 
 <p class="series-top narrow">Part 5 of the <a href="../series.html#build-log">AI Workflow series</a> build log</p>
 
 <figure>
-<div class="mapframe">
+<div class="mapframe" tabindex="0" role="region" aria-label="Kitchen map, scrolls sideways">
 <svg viewBox="0 0 1200 840" role="img" aria-label="A task goes from me to the head chef (Claude Code on Opus), which hands it to the director line: an Opus planner writes specs, Haiku or Sonnet cooks work in separate worktrees, tests in Docker decide pass or fail, a Jev check and a free panel of seven free models, behind a privacy gate, are logged on the side, and a blind Opus reviewer tastes before merge and push. Only results return to the head chef. Muse exchanges notes with the head chef through Gmail. The OpenClaw tray shows notifications and runs short commands I approve, and its agent thinks with a free Gemini Flash model. The tmux crew runs 13 Opus, 12 Sonnet and 1 Haiku roles with a morning crew manager. A per-client ledger sits on the memory shelf. The MoltBot co-host is planned.">
 <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
 <rect class="band" x="462" y="26" width="732" height="268" rx="8"/>
